@@ -1,0 +1,14 @@
+#!/bin/bash
+WALLPAPER_DIR="$HOME/.config/theme/backgrounds"
+
+# Pick a random image from the directory
+RANDOM_IMAGE=$(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.gif" \) 2>/dev/null | shuf -n 1)
+
+if [[ -z "$RANDOM_IMAGE" ]]; then
+  echo "No images found in $WALLPAPER_DIR" >&2
+  exit 1
+fi
+
+# Kill existing swaybg and start new one
+pkill -x swaybg
+swaybg -i "$RANDOM_IMAGE" -m fill &

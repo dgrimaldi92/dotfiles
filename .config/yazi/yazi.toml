@@ -1,0 +1,17 @@
+[opener]
+edit = [
+	{ run = "nvim %s", block = true, for = "unix" },
+]
+terminal = [
+  	{ run = "ghostty --working-directory=%s", block = false, for = "unix" },
+]
+[open]
+rules = [
+	{ mime = "inode/directory", use = "terminal" },
+	# Multiple openers for a single rule
+	{ url = "*.*", use = "edit" },
+]
+
+
+
+

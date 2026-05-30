@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# omarchy:summary=Launch Chromium browser
+# omarchy:args=[url]
+
+exec setsid uwsm-app -- chromium "${@/--private/--incognito}"

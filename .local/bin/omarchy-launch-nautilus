@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# omarchy:summary=Launch Yazi file manager in Ghostty terminal
+
+exec setsid uwsm-app -- ghostty -e yazi

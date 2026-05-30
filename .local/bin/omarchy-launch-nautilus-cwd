@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# omarchy:summary=Launch Yazi in Ghostty at a specified directory
+
+TARGET_DIR="${1:-$HOME}"
+exec setsid uwsm-app -- ghostty -e yazi "$TARGET_DIR"
