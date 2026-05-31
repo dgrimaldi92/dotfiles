@@ -36,4 +36,4 @@ hyprland internals
 
 ---
 
-other packages: chromium,bluetui, chawa, ghostyy, yazi, nvim 
+other packages: chromium,bluetui,wiremix, chawa, ghostyy, yazi, nvim 
