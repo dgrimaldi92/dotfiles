@@ -11,7 +11,7 @@ rules = [
 	# Multiple openers for a single rule
 	{ url = "*.*", use = "edit" },
 ]
-
-
-
+[mgr]
+show_hidden = true
+sort_by="mtime"
 
