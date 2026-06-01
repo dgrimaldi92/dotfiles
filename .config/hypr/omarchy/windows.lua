@@ -19,7 +19,11 @@ hl.window_rule({
 })
 
 -- App-specific tweaks (may remove default-opacity tag).
-require("hypr.omarchy.apps")
+-- apps/ is an extension-style folder of individual *.lua files, not a single
+-- module, so load every file in it (same pattern as bindings.lua).
+local paths = require("hypr.omarchy.paths")
+local require_all = require("hypr.omarchy.require_all")
+require_all.files(paths.config_home .. "/hypr/omarchy/apps", "hypr.omarchy.apps")
 
 -- Apply default opacity after apps have had a chance to opt out.
 o.window({ tag = "default-opacity" }, { opacity = "0.97 0.9" })

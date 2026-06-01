@@ -1,0 +1,134 @@
+--------------------------------------------
+   Hyprland Crash Report
+--------------------------------------------
+All these computers...
+
+Hyprland received signal 6(ABRT)
+Version: 39d7e209c79d451efab1b21151d5938289da838d
+Tag: v0.55.2
+Date: Sat May 16 12:59:19 2026
+Flags:
+
+System info:
+	System name: Linux
+	Node name: dave-arch
+	Release: 7.0.10-arch1-1
+	Version: #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+GPU:
+	01:00.0 VGA compatible controller [0300]: NVIDIA Corporation AD103 [GeForce RTX 4070] [10de:2709] (rev a1) (prog-if 00 [VGA controller])
+10:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Raphael [1002:164e] (rev cb) (prog-if 00 [VGA controller])
+
+
+os-release:
+	NAME="Arch Linux"
+	PRETTY_NAME="Arch Linux"
+	ID=arch
+	BUILD_ID=rolling
+	ANSI_COLOR="38;2;23;147;209"
+	HOME_URL="https://archlinux.org/"
+	DOCUMENTATION_URL="https://wiki.archlinux.org/"
+	SUPPORT_URL="https://bbs.archlinux.org/"
+	BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+	PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+	LOGO=archlinux-logo
+
+Libraries:
+Hyprgraphics: built against 0.5.1, system has 0.5.1
+Hyprutils: built against 0.13.1, system has 0.13.1
+Hyprcursor: built against 0.1.13, system has 0.1.13
+Hyprlang: built against 0.6.8, system has 0.6.8
+Aquamarine: built against 0.11.0, system has 0.11.0
+
+Backtrace:
+	# | Hyprland(_Z12getBacktracev+0x73) [0x5619a27a3c73]
+		getBacktrace()
+		??:?
+	#1 | Hyprland(_ZN13CrashReporter18createAndSaveCrashEi+0xc8c) [0x5619a26eb25c]
+		CrashReporter::createAndSaveCrash(int)
+		??:?
+	#2 | Hyprland(+0x3bbede) [0x5619a25aeede]
+		void std::println<>(_IO_FILE*, std::basic_format_string<char>)
+		??:?
+	#3 | /usr/lib/libc.so.6(+0x3e8f0) [0x7f2b5a23e8f0]
+		??
+		??:0
+	#4 | /usr/lib/libc.so.6(+0x9a29c) [0x7f2b5a29a29c]
+		??
+		??:0
+	#5 | /usr/lib/libc.so.6(gsignal+0x20) [0x7f2b5a23e7d0]
+		??
+		??:0
+	#6 | /usr/lib/libc.so.6(abort+0x26) [0x7f2b5a225681]
+		??
+		??:0
+	#7 | /usr/lib/libstdc++.so.6(+0x9ac50) [0x7f2b5a69ac50]
+		??
+		??:0
+	#8 | /usr/lib/libstdc++.so.6(+0xb673a) [0x7f2b5a6b673a]
+		??
+		??:0
+	#9 | /usr/lib/libstdc++.so.6(_ZSt10unexpectedv+0) [0x7f2b5a69a5e9]
+		??
+		??:0
+	#1 | /usr/lib/libstdc++.so.6(+0xb69f6) [0x7f2b5a6b69f6]
+		??
+		??:0
+	#11 | Hyprland(+0x1a79b6) [0x5619a239a9b6]
+		std::__throw_bad_variant_access(unsigned int)
+		??:?
+	#12 | Hyprland(_ZN11CCompositor10initServerENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi+0x1dca) [0x5619a25cdd5a]
+		CCompositor::initServer(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int)
+		??:?
+	#13 | Hyprland(main+0x170e) [0x5619a2467b2e]
+		main
+		??:?
+	#14 | /usr/lib/libc.so.6(+0x27741) [0x7f2b5a227741]
+		??
+		??:0
+	#15 | /usr/lib/libc.so.6(__libc_start_main+0x89) [0x7f2b5a227879]
+		??
+		??:0
+	#16 | Hyprland(_start+0x25) [0x5619a2598e45]
+		_start
+		??:?
+
+
+Log tail:
+DEBUG ]: Old rlimit: soft -> 1024, hard -> 524288
+DEBUG ]: New rlimit: soft -> 524288, hard -> 524288
+WARN ]: WARNING: Hyprland is being launched without start-hyprland. This is highly advised against.
+DEBUG ]: Creating the EventLoopManager!
+DEBUG ]: Creating the KeybindManager!
+DEBUG ]: Creating the AnimationManager!
+DEBUG ]: Creating the DynamicPermissionManager!
+DEBUG ]: Creating the ConfigManager!
+DEBUG ]: [cfg] Regular config at /home/dav/.config/hypr/hyprland.lua
+DEBUG ]: [cfg] Using lua config found at /home/dav/.config/hypr/hyprland.lua
+DEBUG ]: Creating the Error Overlay!
+DEBUG ]: Creating the LayoutManager!
+DEBUG ]: Creating the TokenManager!
+DEBUG ]: [Lua] mako
+DEBUG ]: Disabling stdout logs! Check the log for further logs.
+DEBUG ]: Creating the PointerManager!
+DEBUG ]: Creating the EventManager!
+DEBUG ]: Creating the AsyncResourceGatherer!
+DEBUG from aquamarine ]: Creating an Aquamarine backend!
+DEBUG from aquamarine ]: [libseat] [libseat/backend/seatd.c:64] Could not connect to socket /run/seatd.sock: No such file or directory
+DEBUG from aquamarine ]: [libseat] [libseat/libseat.c:76] Backend 'seatd' failed to open seat, skipping
+DEBUG from aquamarine ]: [libseat] [libseat/libseat.c:73] Seat opened with backend 'logind'
+DEBUG from aquamarine ]: drm: Enumerated device /sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0/drm/card2
+DEBUG from aquamarine ]: libseat: Device /dev/dri/card2 supports kms
+DEBUG from aquamarine ]: drm: Enumerated device /sys/devices/pci0000:00/0000:00:08.1/0000:10:00.0/drm/card1
+DEBUG from aquamarine ]: libseat: Device /dev/dri/card1 supports kms
+DEBUG from aquamarine ]: drm: Explicit device list /dev/dri/card0
+ERR from aquamarine ]: drm: Failed to canonicalize path /dev/dri/card0
+ERR from aquamarine ]: drm: Explicit device /dev/dri/card0 not found
+ERR from aquamarine ]: drm: Found no gpus to use, cannot continue
+ERR from aquamarine ]: DRM Backend failed
+DEBUG from aquamarine ]: Starting the Aquamarine backend!
+DEBUG from aquamarine ]: Starting the Wayland backend!
+ERR from aquamarine ]: Wayland backend cannot start: wl_display_connect failed (is a wayland compositor running?)
+ERR from aquamarine ]: Requested backend (wayland) could not start, enabling fallbacks
+ERR from aquamarine ]: Implementation wayland failed, erasing.
+CRIT from aquamarine ]: Cannot open backend: no allocator available

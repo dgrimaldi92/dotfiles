@@ -32,15 +32,17 @@ end
 
 local c = load_colors(os.getenv("HOME") .. "/.config/theme/color.toml")
 
+-- Gradients use the table form { colors = {...}, angle = N } under a nested
+-- `col = {}` table — NOT a "rgba(..) rgba(..) 45deg" string with a dotted key.
+-- The string form is what caused `invalid color`. See looknfeel.lua for the idiom.
 hl.config({
 	general = {
-		["col.active_border"] = "rgba(" .. c.accent .. "ee) rgba(" .. c.color5 .. "ee) 45deg",
-		["col.inactive_border"] = "rgba(" .. c.color0 .. "aa)",
-		-- ...
+		col = {
+			active_border = { colors = { "rgba(7aa2f7ee)", "rgba(bb9af7ee)" }, angle = 45 },
+			inactive_border = "rgba(414868aa)",
+		},
 	},
 	decoration = {
-		shadow = { color = "rgba(" .. c.background:sub(1, 6) .. "ee)" },
-		-- ...
+		shadow = { color = "rgba(1a1b26ee)" },
 	},
-	-- etc.
 })

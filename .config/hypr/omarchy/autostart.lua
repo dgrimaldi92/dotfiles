@@ -1,6 +1,6 @@
 -- o.launch_on_start("hypridle")
 o.launch_on_start("mako")
-o.lanunc_on_start("waybar")
+o.lanuch_on_start("waybar")
 o.launch_on_start("swaybg -i ~/.config/theme/backgrounds -m fill")
 o.exec_on_start("systemctl --user enable --now hyprpolkitagent.service")
 
