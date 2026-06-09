@@ -1,6 +1,7 @@
 # hyprland setup — arch linux (omarchy structure)
 
-    needs to install all /bin/bash file before starting. they are located in .local/bin
+    needs to install all /bin/bash file before starting. they are located in .local/bin. 
+    chmod +x ~/.local/bin/*
 ---
 
 ## architecture overview
