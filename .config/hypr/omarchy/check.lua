@@ -11,48 +11,66 @@ package.path = table.concat({
 
 -- 2) Fake Hyprland's native `hl` API: every access/call returns the same stub,
 --    so hl.env(...), hl.config{...}, hl.dsp.exec_cmd(...), hl.on(...) all no-op.
-local stub = setmetatable({}, {
-	__index = function(t)
-		return t
+stub = setmetatable({}, {
+	__index = function(t, k)
+		return stub
 	end,
-	__call = function(t)
-		return t
+	__newindex = function() end,
+	__call = function(t, ...)
+		return stub
+	end,
+	__tostring = function()
+		return "<hl:stub>"
+	end,
+	__concat = function(a, b)
+		return tostring(a) .. tostring(b)
 	end,
 })
 _G.hl = stub
-_G.o = nil -- helpers.lua creates the global `o`
+--_G.o = nil -- helpers.lua creates the global `o`
+require("hypr.omarchy.helpers")
 
+-- Use Omarchy defaults, but don't edit these directly.
+require("hypr.omarchy.autostart")
+-- require("hypr.omarchy.bindings.media") TODO
+require("hypr.omarchy.bindings.clipboard")
+require("hypr.omarchy.bindings.tiling-v2")
+-- require("hypr.omarchy.bindings.utilities") TODO
+require("hypr.omarchy.envs")
+require("hypr.omarchy.looknfeel")
+require("hypr.omarchy.input")
+require("hypr.omarchy.windows")
 -- 3) Load each module main.lua loads, in order. Report the first failure
 --    with a full traceback. KEEP THIS LIST IN SYNC WITH YOUR main.lua.
-local steps = {
-	"hypr.omarchy.helpers",
-	"hypr.omarchy.autostart",
-	"hypr.omarchy.bindings.clipboard",
-	"hypr.omarchy.bindings.tiling-v2",
-	"hypr.omarchy.envs",
-	"hypr.omarchy.looknfeel",
-	"hypr.omarchy.input",
-	"hypr.omarchy.windows",
-}
-
-for _, mod in ipairs(steps) do
-	io.write(("loading %-34s "):format(mod))
-	local ok, err = xpcall(require, debug.traceback, mod)
-	print(ok and "OK" or "FAILED")
-	if not ok then
-		print("\n" .. err)
-		os.exit(1)
-	end
-
-	-- Right after helpers: dump what `o` actually provides. This instantly shows
-	-- whether o.launch_on_start / o.exec_on_start exist on THIS machine.
-	if mod == "hypr.omarchy.helpers" then
-		local names = {}
-		for k, v in pairs(_G.o or {}) do
-			names[#names + 1] = k .. "(" .. type(v) .. ")"
-		end
-		table.sort(names)
-		print("  o.* = " .. table.concat(names, ", "))
-	end
-end
-print("\nAll modules loaded — no Lua errors.")
+-- local steps = {
+-- 	"hypr.omarchy.helpers",
+-- 	"hypr.omarchy.autostart",
+-- 	"hypr.omarchy.bindings.clipboard",
+-- 	"hypr.omarchy.bindings.tiling-v2",
+-- 	"hypr.omarchy.envs",
+-- 	"hypr.omarchy.looknfeel",
+-- 	"hypr.omarchy.input",
+-- 	"hypr.omarchy.windows",
+-- }
+--
+-- for _, mod in ipairs(steps) do
+-- 	io.write(("loading %-34s "):format(mod))
+-- 	local ok, err = xpcall(require, debug.traceback, mod)
+-- 	print(ok and "OK" or "FAILED")
+-- 	if not ok then
+-- 		print("\n" .. err)
+-- 		os.exit(1)
+-- 	end
+--
+-- 	-- Right after helpers: dump what `o` actually provides. This instantly shows
+-- 	-- whether o.launch_on_start / o.exec_on_start exist on THIS machine.
+-- 	if mod == "hypr.omarchy.helpers" then
+-- 		local names = {}
+-- 		for k, v in pairs(_G.o or {}) do
+-- 			names[#names + 1] = k .. "(" .. type(v) .. ")"
+-- 		end
+-- 		table.sort(names)
+-- 		print("  o.* = " .. table.concat(names, ", "))
+-- 	end
+-- end
+-- print("\nAll modules loaded — no Lua errors.")

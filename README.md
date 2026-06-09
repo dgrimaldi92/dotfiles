@@ -14,6 +14,10 @@ hl.*()         ← hyprland's native lua api
     ↓
 hyprland internals
 ```
+---
+## sending hyper notification
+
+hl.dispatch
 
 ---
 
@@ -29,11 +33,12 @@ hyprland internals
 | package | purpose | install |
 |---|---|---|
 | `hyprpolkitagent` | gui sudo popups (needed by file managers, package managers, etc.) | `pacman -s hyprpolkitagent` |
-| `mako` `libnotify` | notification daemon (wayland-native) | `pacman -s mako libnotify` |
-| `waybar` | status bar | `pacman -s waybar` |
-| `swaybg` | wallpaper | `pacman -s swaybg` |
+| `fnott` | notification daemon (wayland-native) | `pacman -s fnott` |
+| `quickshell` | status bar | `pacman -s quickshell` |
+| `quickshell` | wallpaper | `pacman -s quickshell` |
 | `uwsm uwsm-app` | session manager (wraps app launches) | `pacman -s uwsm uwsm-app` |
-
+| `wireplumber` | for audio manager | `sudo pacman -S wireplumber` |
 ---
 
-other packages: chromium,bluetui,wiremix, chawa, ghostyy, yazi, nvim 
+other packages: qutebrowser,bluetui,wiremix, ghostyy, yazi, nvim, lib32-nvidia-utils
+optional: upower, chawa, retroarch, Heroic

@@ -68,9 +68,17 @@ done
 summary="$glyph    $headline"
 args+=("-u" "$urgency")
 
+case "$urgency" in
+  critical) hl_icon=3; hl_color="rgb(f38ba8)" ;;  # WARNING
+  normal)   hl_icon=5; hl_color="rgb(89b4fa)" ;;  # INFO
+  low|*)    hl_icon=1; hl_color="rgb(a6e3a1)" ;;  # HINT
+esac
+
 if [[ -n $description ]]; then
   description=$(printf '%b' "$description" | sed 's/^/      /')
-  notify-send "${args[@]}" "$summary" "$description"
+  # notify-send "${args[@]}" "$summary" "$description"
+  hyprctl notify "$hl_icon" 4000 "$hl_color" "$summary: $description"
 else
-  notify-send "${args[@]}" "$summary"
+  # notify-send "${args[@]}" "$summary"
+  hyprctl notify "$hl_icon" 4000 "$hl_color" "$summary"
 fi

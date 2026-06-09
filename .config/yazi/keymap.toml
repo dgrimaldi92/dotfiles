@@ -1,0 +1,4 @@
+[[manager.prepend_keymap]]
+on = ["a"]
+run = '''shell --block -- zsh -c 'read "name?New file: " && [[ -n "$name" ]] && touch "$name" && nvim "$name"'''
+desc = "New file → open in nvim"

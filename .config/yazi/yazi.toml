@@ -7,9 +7,10 @@ terminal = [
 ]
 [open]
 rules = [
-	{ mime = "inode/directory", use = "terminal" },
-	# Multiple openers for a single rule
-	{ url = "*.*", use = "edit" },
+    { mime = "inode/directory", use = "terminal" },
+    { mime = "text/*", use = "edit" },
+    { mime = "application/x-shellscript", use = "edit" },
+    { url = "*", use = "edit" },
 ]
 [mgr]
 show_hidden = true

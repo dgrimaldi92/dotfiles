@@ -55,6 +55,7 @@ function o.launch(command)
 end
 
 function o.exec_on_start(command)
+	print("hyprland.start")
 	hl.on("hyprland.start", function()
 		hl.exec_cmd(command)
 	end)
