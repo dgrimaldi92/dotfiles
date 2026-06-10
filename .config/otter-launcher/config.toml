@@ -1,0 +1,83 @@
+# ~/.config/otter-launcher/config.toml
+
+[general]
+default_module = "app"
+empty_module = "app"
+exec_cmd = "sh -c"
+vi_mode = false
+esc_to_abort = true
+cheatsheet_entry = "?"
+cheatsheet_viewer = "less -R; clear"
+clear_screen_after_execution = true
+loop_mode = false
+external_editor = "vi"
+delay_startup = 0
+callback = ""
+
+[interface]
+header = ""
+header_cmd = ""
+header_cmd_trimmed_lines = 0
+place_holder = "Search applications..."
+suggestion_mode = "list"
+separator = ""
+footer = ""
+suggestion_lines = 8
+list_prefix = "  "
+selection_prefix = "> "
+prefix_padding = 0
+default_module_message = ""
+empty_module_message = ""
+customized_list_order = false
+indicator_with_arg_module = ""
+indicator_no_arg_module = ""
+prefix_color = ""
+description_color = "\u001B[90m"
+place_holder_color = "\u001B[90m"
+hint_color = "\u001B[90m"
+move_interface_right = 0
+move_interface_down = 0
+
+[overlay]
+overlay_cmd = ""
+overlay_trimmed_lines = 0
+overlay_height = 0
+move_overlay_right = 0
+move_overlay_down = 0
+
+[[modules]]
+description = "Applications"
+prefix = "app"
+cmd = """
+desktop_file() {
+  find /usr/share/applications -name "*.desktop" 2>/dev/null
+  find /usr/local/share/applications -name "*.desktop" 2>/dev/null
+  find "$HOME/.local/share/applications" -name "*.desktop" 2>/dev/null
+  find /var/lib/flatpak/exports/share/applications -name "*.desktop" 2>/dev/null
+  find "$HOME/.local/share/flatpak/exports/share/applications" -name "*.desktop" 2>/dev/null
+}
+
+selected="$(
+  desktop_file |
+  awk -F/ '{name=$NF; sub(/\\.desktop$/, "", name); print name "|" $0}' |
+  sort -f |
+  fzf \
+    --layout=reverse \
+    --height=100% \
+    --border=none \
+    --prompt='' \
+    --info=hidden \
+    --pointer='>' \
+    --marker='' \
+    --cycle \
+    --delimiter='|' \
+    --with-nth=1
+)"
+
+[ -z "$selected" ] && exit 0
+
+desktop_id="$(printf '%s\n' "$selected" | cut -d'|' -f2)"
+setsid -f gtk-launch "$(basename "$desktop_id" .desktop)"
+"""
+with_argument = false
+unbind_proc = true
