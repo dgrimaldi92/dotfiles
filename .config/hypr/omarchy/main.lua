@@ -4,14 +4,11 @@ require("hypr.omarchy.helpers")
 
 -- Use Omarchy defaults, but don't edit these directly.
 require("hypr.omarchy.autostart")
--- require("hypr.omarchy.bindings.media") TODO
-require("hypr.omarchy.bindings.clipboard")
-require("hypr.omarchy.bindings.tiling-v2")
--- require("hypr.omarchy.bindings.utilities") TODO
 require("hypr.omarchy.envs")
 require("hypr.omarchy.looknfeel")
 require("hypr.omarchy.input")
 require("hypr.omarchy.windows")
+require("hypr.omarchy.plain-bindings")
 
 -- Read color.toml and strip the # prefix, just like {{ variable_strip }}
 local function load_colors(path)

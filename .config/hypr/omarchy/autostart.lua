@@ -1,7 +1,4 @@
--- o.launch_on_start("hypridle")
-o.launch_on_start("mako")
-o.launch_on_start("waybar")
-o.launch_on_start("swaybg -i ~/.config/theme/backgrounds -m fill")
+o.launch_on_start("quickshell")
 o.exec_on_start("systemctl --user enable --now hyprpolkitagent.service")
 
 -- Slow app launch fix -- set systemd vars.
