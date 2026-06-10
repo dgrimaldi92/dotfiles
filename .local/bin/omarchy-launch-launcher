@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# omarchy:summary=Launch a launcher TUI command in the default terminal with Omarchy styling
+# omarchy:args=<command> [args...]
+
+exec setsid uwsm-app -- ghostty --title="otter-launcher" -e otter-launcher

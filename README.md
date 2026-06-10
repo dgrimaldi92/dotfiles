@@ -41,5 +41,6 @@ hl.dispatch
 | `wireplumber` | for audio manager | `sudo pacman -S wireplumber` |
 ---
 
-other packages: qutebrowser,bluetui,wiremix, ghostyy, yazi, nvim, lib32-nvidia-utils
-optional: upower, chawa, retroarch, Heroic
+**other packages**: qutebrowser,bluetui,wiremix, ghostyy, yazi, nvim, lib32-nvidia-utils, btop
+
+**optional**: upower, chawa, retroarch, Heroic

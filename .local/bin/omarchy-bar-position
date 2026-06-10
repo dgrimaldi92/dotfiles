@@ -1,0 +1,28 @@
+#!/bin/bash
+# Usage: qs-pos.sh [top|bottom|left|right]
+
+CONFIG="$HOME/.config/quickshell/Bar.qml"
+POS="${1:-top}"
+
+case "$POS" in
+  top)    T=true;  B=false; L=true;  R=true  ;;
+  bottom) T=false; B=true;  L=true;  R=true  ;;
+  left)   T=true;  B=true;  L=true;  R=false ;;
+  right)  T=true;  B=true;  L=false; R=true  ;;
+  *)
+    echo "Usage: $0 [top|bottom|left|right]"
+    exit 1 ;;
+esac
+
+sed -i \
+  -e "s/top: \(true\|false\)/top: $T/" \
+  -e "s/bottom: \(true\|false\)/bottom: $B/" \
+  -e "s/left: \(true\|false\)/left: $L/" \
+  -e "s/right: \(true\|false\)/right: $R/" \
+  "$CONFIG"
+
+echo "QuickShell position → $POS"
+
+pkill qs 2>/dev/null || pkill quickshell 2>/dev/null
+sleep 0.3
+qs &

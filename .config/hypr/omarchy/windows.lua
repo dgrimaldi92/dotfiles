@@ -27,3 +27,23 @@ require_all.files(paths.config_home .. "/hypr/omarchy/apps", "hypr.omarchy.apps"
 
 -- Apply default opacity after apps have had a chance to opt out.
 o.window({ tag = "default-opacity" }, { opacity = "0.97 0.9" })
+
+-- Move the launcher window to the center of the screen
+hl.window_rule({
+	match = { --[[class = "com.mitchellh.ghostty",]]
+		title = "otter-launcher",
+	},
+	float = true,
+})
+hl.window_rule({
+	match = { --[[class = "com.mitchellh.ghostty",]]
+		title = "otter-launcher",
+	},
+	center = true,
+})
+hl.window_rule({
+	match = { --[[class = "com.mitchellh.ghostty",]]
+		title = "otter-launcher",
+	},
+	size = { 800, 500 },
+})
