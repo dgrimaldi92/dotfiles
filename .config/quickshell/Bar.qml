@@ -1,4 +1,5 @@
 import Quickshell
+import "widgets" as QsWidgets
 
 Scope {
     // no more time object
@@ -16,17 +17,17 @@ Scope {
                 right: true
             }
 
-            height: 30
+            implicitHeight: 30
 
-            ClockWidget {
+            QsWidgets.ClockWidget {
                 anchors.centerIn: parent
 
                 // no more time binding
             }
-            CpuWidget {
-                anchors.centerIn: parent
-            }
-            GpuWidget {
+            // QsWidgets.CpuWidget {
+            //     anchors.centerIn: parent
+            // }
+            QsWidgets.Power {
                 anchors.centerIn: parent
             }
         }

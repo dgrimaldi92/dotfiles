@@ -43,7 +43,6 @@ QtObject {
     property color border2: "#828bb8"
 
     // Alpha version for bar background (85% opacity)
-    property real barOpacity: 0.85
     property color bgBaseAlpha: Qt.rgba(parseInt(bgBase.toString().substr(1, 2), 16) / 255, parseInt(bgBase.toString().substr(3, 2), 16) / 255, parseInt(bgBase.toString().substr(5, 2), 16) / 255, barOpacity)
 
     // Font sizes

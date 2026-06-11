@@ -1,0 +1,4 @@
+module qs.singletons
+
+singleton Time Time.qml
+singleton Theme Theme.qml
