@@ -30,20 +30,12 @@ o.window({ tag = "default-opacity" }, { opacity = "0.97 0.9" })
 
 -- Move the launcher window to the center of the screen
 hl.window_rule({
-	match = { --[[class = "com.mitchellh.ghostty",]]
-		title = "otter-launcher",
+	match = {
+		-- class = "com.mitchellh.ghostty",
+		title = "launcher",
 	},
 	float = true,
-})
-hl.window_rule({
-	match = { --[[class = "com.mitchellh.ghostty",]]
-		title = "otter-launcher",
-	},
 	center = true,
-})
-hl.window_rule({
-	match = { --[[class = "com.mitchellh.ghostty",]]
-		title = "otter-launcher",
-	},
-	size = { 800, 500 },
+	size = { "monitor_w * 0.5", "monitor_h * 0.5" },
+	opacity = "0.8 override 0.8 override 1.0 override",
 })
