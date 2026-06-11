@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.singletons
 
 Rectangle {
     width: 70
@@ -34,7 +35,6 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            root.requestClose();
             Quickshell.execdetached(["systemctl", "poweroff"]);
         }
     }
