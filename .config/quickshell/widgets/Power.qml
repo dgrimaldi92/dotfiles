@@ -35,7 +35,7 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            Quickshell.execdetached(["systemctl", "poweroff"]);
+            Quickshell.execDetached(["systemctl", "poweroff"]);
         }
     }
 }

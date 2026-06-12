@@ -34,7 +34,6 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            root.requestClose();
             Quickshell.execDetached(["blueman-manager"]); //TODO replace with TUI manager
         }
     }
