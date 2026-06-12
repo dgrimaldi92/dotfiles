@@ -51,7 +51,9 @@ QtObject {
     property int fontSizeUpdates: 14
     property int fontSizeIcon: 16
     property int fontSizeLargeIcon: 24
-
+    
+    property bool barLarge: false
+    property string uiFont: "Sen"
     // To change themes, edit the colors above to match your theme:
     // Colors can be found in ~/.config/hypr/themes/[theme-name].conf
     //

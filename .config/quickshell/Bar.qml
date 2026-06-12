@@ -1,5 +1,9 @@
+import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import "widgets" as QsWidgets
+import qs.singletons
+
 
 Scope {
     // no more time object
@@ -16,7 +20,7 @@ Scope {
                 left: true
                 right: true
             }
-
+            
             implicitHeight: 30
             color: "transparent"
             surfaceFormat.opaque: false
@@ -83,13 +87,9 @@ Scope {
                 // ArchButton {
                 //     id: archComponent
                 // }
-                QsWidgets.CpuWidget {
-                    anchors.centerIn: parent
-                }
-                QsWidgets.Workspace {}
-                QsWidgets.Separator {}
+               QsWidgets.Workspace {}
             }
-            QsWidgets.Clock {
+            QsWidgets.ClockWidget {
                 id: clockComponent
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -98,7 +98,7 @@ Scope {
             // RIGHT SECTION
             Item {
                 anchors.right: parent.right
-                anchors.rightMargin: bar.floating ? 8 : 4
+                anchors.rightMargin: 50 
                 anchors.verticalCenter: parent.verticalCenter
                 height: parent.height
                 width: rightRow.width
@@ -109,8 +109,12 @@ Scope {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 8
 
-                    QsWidgets.Terminal {}
+                    QsWidgets.Power {} 
+                    QsWidgets.Bluetooth {
+                    anchors.centerIn: parent
                 }
+                QsWidgets.Separator {}
+                                }
             }
         }
     }

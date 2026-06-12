@@ -1,4 +1,5 @@
 import QtQuick
+import qs.singletons
 
 Item {
     width: 20

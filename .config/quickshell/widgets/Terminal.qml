@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.singletons
 
 Rectangle {
     width: 70

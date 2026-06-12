@@ -1,4 +1,5 @@
 import QtQuick
+import qs.singletons
 
 Text {
     // we no longer need time as an input
