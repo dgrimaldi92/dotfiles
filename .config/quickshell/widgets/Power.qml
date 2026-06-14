@@ -3,8 +3,8 @@ import Quickshell
 import qs.singletons
 
 Rectangle {
-    width: 70
-    height: 70
+    width: 20
+    height: 20
     color: shutdownMouseArea.containsMouse ? Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.25) : "transparent"
     radius: 12
     border.width: shutdownMouseArea.containsMouse ? 1 : 0
@@ -25,7 +25,7 @@ Rectangle {
         anchors.centerIn: parent
         text: "󰐥"
         font.family: "Symbols Nerd Font"
-        font.pixelSize: 32
+        font.pixelSize: 12 
         color: ThemeManager.fgPrimary
     }
 

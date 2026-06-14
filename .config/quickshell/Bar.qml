@@ -109,12 +109,24 @@ Scope {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 8
 
-                    QsWidgets.Power {} 
+                    QsWidgets.Power {
+                        anchors.centerIn: parent
+                    } 
                     QsWidgets.Bluetooth {
-                    anchors.centerIn: parent
-                }
-                QsWidgets.Separator {}
-                                }
+                        anchors.centerIn: parent
+                    }
+                    QsWidgets.Terminal {
+                        anchors.centerIn: parent
+                    }
+                    QsWidgets.GpuWidget {
+                        anchors.centerIn: parent
+                    }
+                    QsWidgets.CpuWidget {
+                        anchors.centerIn: parent
+                    }
+
+                    // QsWidgets.Separator {}
+               }
             }
         }
     }
