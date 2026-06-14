@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.singletons
+import Quickshell.Io
 
 Rectangle {
     width: 20
@@ -11,10 +12,10 @@ Rectangle {
     border.color: Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.5)
 
 
-    property string gpuTemp: "..."
+    property string cpuTemp: "..."
 
     Process {
-        id: gpuTempProcess
+        id: cpuTempProcess
         command: ["bash", "-c", "sensors -u | awk '/^k10temp/{f=1} f && /temp1_input/{printf \"%.0f\\n\", $2; exit}'"]
         stdout: StdioCollector {
             onStreamFinished: cpuTemp = this.text.trim()
@@ -42,7 +43,7 @@ Rectangle {
 
     Text {
         anchors.centerIn: parent
-        text: " " + gpuTemp + "°"
+        text: " " + cpuTemp + "°"
         font.family: "Symbols Nerd Font"
         font.pixelSize: 12
         color: ThemeManager.fgPrimary

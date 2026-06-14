@@ -103,26 +103,21 @@ Scope {
                 height: parent.height
                 width: rightRow.width
 
-                Row {
+                RowLayout {
                     id: rightRow
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+                    spacing: 20
 
                     QsWidgets.Power {
-                        anchors.centerIn: parent
                     } 
                     QsWidgets.Bluetooth {
-                        anchors.centerIn: parent
                     }
                     QsWidgets.Terminal {
-                        anchors.centerIn: parent
                     }
                     QsWidgets.GpuWidget {
-                        anchors.centerIn: parent
                     }
                     QsWidgets.CpuWidget {
-                        anchors.centerIn: parent
                     }
 
                     // QsWidgets.Separator {}

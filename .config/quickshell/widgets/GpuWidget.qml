@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.singletons
+import Quickshell.Io
 
 Rectangle {
     width: 20
