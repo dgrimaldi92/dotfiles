@@ -1,4 +1,3 @@
-import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
@@ -6,11 +5,10 @@ import QtQuick.Layouts
 
 
     RowLayout {
-        anchors.fill: parent
         anchors.margins: 8
 
         Repeater {
-            model: 9
+            model: 5
 
             Text {
                 property var ws: Hyprland.workspaces.values.find(w => w.id === index + 1)
@@ -21,10 +19,8 @@ import QtQuick.Layouts
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: Hyprland.dispatch("workspace " + (index + 1))
+                    onClicked: ws ? ws.activate() : null 
                 }
             }
         }
-
-        Item { Layout.fillWidth: true }
     }

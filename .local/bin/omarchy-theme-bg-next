@@ -4,12 +4,10 @@
 # omarchy:examples=omarchy theme bg next
 
 THEME_NAME=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null)
-THEME_BACKGROUNDS_PATH="$HOME/.config/omarchy/current/theme/backgrounds/"
-USER_BACKGROUNDS_PATH="$HOME/.config/omarchy/backgrounds/$THEME_NAME/"
-CURRENT_BACKGROUND_LINK="$HOME/.config/omarchy/current/background"
+THEME_BACKGROUNDS_PATH="$HOME/.config/theme/backgrounds/"
 
 mapfile -d '' -t BACKGROUNDS < <(
-  find -L "$USER_BACKGROUNDS_PATH" "$THEME_BACKGROUNDS_PATH" -maxdepth 1 -type f \
+  find -L "$THEME_BACKGROUNDS_PATH" -maxdepth 1 -type f \
     \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
     -print0 2>/dev/null | sort -z
 )
@@ -19,12 +17,9 @@ if (( TOTAL == 0 )); then
   omarchy-notification-send "No background was found for theme" -t 2000
 else
   # Get current background from symlink
-  if [[ -L $CURRENT_BACKGROUND_LINK ]]; then
-    CURRENT_BACKGROUND=$(readlink "$CURRENT_BACKGROUND_LINK")
-  else
-    # Default to first background if no symlink exists
-    CURRENT_BACKGROUND=""
-  fi
+  
+  CURRENT_BACKGROUND=$(hyprctl hyprpaper listactive | awk '{print $2}')
+  echo "back: $CURRENT_BACKGROUND"
 
   # Find current background index
   INDEX=-1

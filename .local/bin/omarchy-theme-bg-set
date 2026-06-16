@@ -1,14 +1,15 @@
 #!/bin/bash
-WALLPAPER_DIR="$HOME/.config/theme/backgrounds"
+WALLPAPER_DIR="$HOME/.config/theme/backgrounds/"
 
-# Pick a random image from the directory
-RANDOM_IMAGE=$(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.gif" \) 2>/dev/null | shuf -n 1)
-
-if [[ -z "$RANDOM_IMAGE" ]]; then
-  echo "No images found in $WALLPAPER_DIR" >&2
-  exit 1
+echo "Directory $#"
+if [[ $# -eq 0 ]]; then
+  # Pick a random image from the directory
+  path=$(find "$WALLPAPER_DIR" -type f | shuf -n 1)
+else
+  path=$(realpath "$1")
 fi
 
+echo "Wallpaper: $path"
 # Kill existing swaybg and start new one
-pkill -x swaybg
-swaybg -i "$RANDOM_IMAGE" -m fill &
+hyprctl hyprpaper wallpaper ,"$path"
+# hyprctl hyprpaper wallpaper , /home/dav/.config/theme/backgrounds/5-oma.jpg
