@@ -4,7 +4,6 @@ import Quickshell
 import "widgets" as QsWidgets
 import qs.singletons
 
-
 Scope {
     // no more time object
 
@@ -17,10 +16,10 @@ Scope {
 
             anchors {
                 top: true
+                bottom: false
                 left: true
                 right: true
             }
-            
             implicitHeight: 30
             color: "transparent"
             surfaceFormat.opaque: false
@@ -87,7 +86,7 @@ Scope {
                 // ArchButton {
                 //     id: archComponent
                 // }
-               QsWidgets.Workspace {}
+                QsWidgets.Workspace {}
             }
             QsWidgets.ClockWidget {
                 id: clockComponent
@@ -98,7 +97,7 @@ Scope {
             // RIGHT SECTION
             Item {
                 anchors.right: parent.right
-                anchors.rightMargin: 50 
+                anchors.rightMargin: 50
                 anchors.verticalCenter: parent.verticalCenter
                 height: parent.height
                 width: rightRow.width
@@ -109,19 +108,14 @@ Scope {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 20
 
-                    QsWidgets.Power {
-                    } 
-                    QsWidgets.Bluetooth {
-                    }
-                    QsWidgets.Terminal {
-                    }
-                    QsWidgets.GpuWidget {
-                    }
-                    QsWidgets.CpuWidget {
-                    }
+                    QsWidgets.Power {}
+                    QsWidgets.Bluetooth {}
+                    QsWidgets.Terminal {}
+                    QsWidgets.GpuWidget {}
+                    QsWidgets.CpuWidget {}
 
                     // QsWidgets.Separator {}
-               }
+                }
             }
         }
     }

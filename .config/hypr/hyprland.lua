@@ -27,12 +27,7 @@ hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("WLR_NO_HARDWARE_CURSORS", "1")
 hl.env("AQ_DRM_DEVICES", "/dev/dri/card0")
 
-hl.on("hyprland.start", function()
-	hl.exec_cmd("ghostty")
-	hl.exec_cmd("hyprpaper")
-end)
-
 -- hl.env("AQ_DRM_DEVICES", "/dev/dri/by-path/pci-0000:01:00.0-card:/dev/dri/by-path/pci-0000:10:00.0-card")
 hl.env("AQ_DRM_DEVICES", "/dev/dri/card2:/dev/dri/card1")
 
-hl.config({ debug = { disable_logs = false, enable_stdout_logs = true, suppress_errors = false, gl_debugging = true } })
+-- hl.config({ debug = { disable_logs = false, enable_stdout_logs = true, suppress_errors = false, gl_debugging = true } })
