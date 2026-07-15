@@ -11,7 +11,7 @@ o.bind("SUPER + SHIFT + N", "Editor", { omarchy = "editor" })
 o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })
 o.bind("SUPER + SHIFT + G", "Signal", { launch = "signal-desktop", focus = "^signal$" })
 o.bind("SUPER + SHIFT + O", "Obsidian", { launch = "obsidian", focus = "^obsidian$" })
-o.bind("SUPER + SHIFT + W", "Typora", { launch = "typora --enable-wayland-ime" })
+o.bind("SUPER + SHIFT + W", "Whatsapp", { launch = "zapzap" })
 -- o.bind("SUPER + SHIFT + SLASH", "Passwords", { launch = "1password" })
 
 -- Web app bindings.
@@ -30,7 +30,7 @@ o.bind("SUPER + SHIFT + P", "Google Photos", { webapp = "https://photos.google.c
 o.bind("SUPER + SHIFT + S", "Google Maps", { webapp = "https://maps.google.com/", focus = true })
 o.bind("SUPER + SHIFT + X", "X", { webapp = "https://x.com/" })
 o.bind("SUPER + SHIFT + ALT + X", "X Post", { webapp = "https://x.com/compose/post" })
-
+o.bind("SUPER + SHIFT + "
 -- Add extra bindings below.
 -- o.bind("SUPER + SHIFT + R", "SSH", "alacritty -e ssh your-server")
 

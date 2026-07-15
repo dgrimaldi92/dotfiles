@@ -40,6 +40,34 @@ hl.config({
 		},
 	},
 	decoration = {
-		shadow = { color = "rgba(1a1b26ee)" },
+
+		rounding = 14, -- glass panels are rounder
+		active_opacity = 0.92, -- translucency is what sells "liquid"
+		inactive_opacity = 0.85,
+		dim_inactive = true,
+		dim_strength = 0.1,
+
+		blur = {
+			enabled = true,
+			size = 8, -- smaller size + passes = tighter, glassier
+			passes = 3,
+			brightness = 1.15,
+			contrast = 0.9, -- slightly lower = milkier glass
+			vibrancy = 0.45, -- this is the iridescence knob, 0.2 is subtle
+			vibrancy_darkness = 0.3,
+			noise = 0.02, -- frosted grain, key to the Apple look
+			new_optimizations = true,
+			ignore_opacity = true, -- blur shows through translucent windows
+			xray = false,
+			popups = true, -- blur menus/tooltips too
+			special = true, -- blur special workspace
+		},
+
+		shadow = {
+			enabled = true,
+			range = 24,
+			render_power = 3,
+			color = "rgba(1a1b26ee)", -- soft, diffuse depth
+		},
 	},
 })

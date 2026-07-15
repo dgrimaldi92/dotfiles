@@ -1,4 +1,4 @@
-o.bind("SUPER + SPACE", "Launch apps", { omarchy = "launcher" })
+o.bind("SUPER + SPACE", "Launch apps", { omarchy = "luncher" })
 -- o.bind_menu("SUPER + CTRL + C", "Capture menu", "capture")
 -- o.bind_menu("SUPER + CTRL + O", "Toggle menu", "toggle")
 -- o.bind_menu("SUPER + CTRL + H", "Hardware menu", "hardware")

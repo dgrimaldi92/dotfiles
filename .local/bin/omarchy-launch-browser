@@ -3,4 +3,4 @@
 # omarchy:summary=Launch Chromium browser
 # omarchy:args=[url]
 
-exec setsid uwsm-app -- ghostty -e qutebrowser "${@}"
+setsid uwsm-app brave-origin "${@}"

@@ -3,4 +3,4 @@
 # omarchy:summary=Launch a URL as a web app in Chromium
 # omarchy:args=<url>
 
-exec setsid uwsm-app -- chromium --app="$1" "${@:2}"/\1/p' {~/.local,~/.nix-profile,/usr}/share/applications/$browser 2>/dev/null | head -1) --app="$1" "${@:2}"
+setsid uwsm-app -- brave-origin --app="$1" "${@:2}"
