@@ -18,8 +18,8 @@ PanelWindow {
     id: root
 
     // ── Layer shell ───────────────────────────────────────────────────────────
-    WlrLayerShell.layer: WlrLayer.Top
-    WlrLayerShell.keyboardFocus: WlrKeyboardFocus.None
+    // WlrLayerShell.layer: WlrLayer.Top
+    // WlrLayerShell.keyboardFocus: WlrKeyboardFocus.None
 
     // ExclusionMode.Auto  → reserve space at bottom (windows won't overlap dock)
     // ExclusionMode.Ignore → floating overlay (windows slide under)
@@ -36,21 +36,20 @@ PanelWindow {
     // ── Sizing ────────────────────────────────────────────────────────────────
     // Panel is exactly as wide as the pill background; height accommodates
     // magnified icons (maxIconSize) + padding + the running dot row.
-    readonly property int baseIconSize: 52
-    readonly property int maxIconSize: 80
+    readonly property int baseIconSize: 32
+    readonly property int maxIconSize: 50
     readonly property int dockPadding: 10
-    readonly property int iconSpacing: 8
-    readonly property int bottomMargin: 6   // gap from screen edge
+    readonly property int iconSpacing: 0 
 
     implicitWidth: dockPill.width
-    implicitHeight: maxIconSize + dockPadding * 2 + 10
+    // implicitHeight: maxIconSize + dockPadding * 2 + 10
 
     color: "transparent"
 
     // ── Mouse tracking ────────────────────────────────────────────────────────
     // A transparent MouseArea covers the whole panel so we can pass a single
     // globalMouseX value to every DockIcon for magnification math.
-    property real globalMouseX: -9999
+    property real globalMouseX: 0 
 
     MouseArea {
         anchors.fill: parent
@@ -107,16 +106,16 @@ PanelWindow {
     Rectangle {
         id: dockGlow
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.bottomMargin - 5
+        // anchors.bottom: parent.bottom
+        // anchors.bottomMargin: root.bottomMargin - 5
 
         width: dockPill.width + 28
-        height: dockPill.height + 18
+        // height: dockPill.height + 18
         radius: (dockPill.height + 18) / 2
 
         color: "transparent"
         border.color: Qt.rgba(0.48, 0.63, 0.97, 0.06)  // #7aa2f7 at 6%
-        border.width: 9
+        border.width: 0
     }
 
     Rectangle {
@@ -152,16 +151,6 @@ PanelWindow {
         border.color: Qt.rgba(0.48, 0.63, 0.97, 0.22)  // #7aa2f7 at 22%
         border.width: 1
 
-        // 1px specular top-edge line — mimics light catching the glass lip
-        Rectangle {
-            anchors.top: parent.top
-            anchors.topMargin: 1
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 28
-            height: 1
-            radius: 1
-            color: Qt.rgba(1.0, 1.0, 1.0, 0.45)
-        }
 
         // Inner rim — secondary depth ring
         Rectangle {
@@ -178,8 +167,8 @@ PanelWindow {
     Row {
         id: iconRow
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.dockPadding + root.bottomMargin
+        // anchors.bottom: parent.bottom
+        // anchors.bottomMargin: root.dockPadding + root.bottomMargin
         spacing: root.iconSpacing
 
         Repeater {
@@ -195,12 +184,12 @@ PanelWindow {
 
                 baseSize: root.baseIconSize
                 maxSize: root.maxIconSize
-                magnifyRadius: 140.0
+                magnifyRadius: 100.0
                 mouseXInDock: root.globalMouseX
 
                 // itemCenterX: icon centre in panel coordinates
                 // x is relative to iconRow; we add iconRow.x to get panel coords
-                itemCenterX: iconRow.x + x + width / 2
+                itemCenterX:  x + width / 4 
             }
         }
     }

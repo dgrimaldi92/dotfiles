@@ -4,7 +4,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell.Io
-
+// https://github.com/crawraps/widgets-collection/blob/main/shell.qml
 Item {
     id: root
 
@@ -33,7 +33,6 @@ Item {
 
     // Animated current size — spring physics for that macOS snap feel
     property real currentSize: baseSize
-    onTargetSizeChanged: currentSize = _targetSize  // alias for binding clarity
     property real targetSizeAlias: _targetSize
     onTargetSizeAliasChanged: currentSize = _targetSize
 
@@ -64,20 +63,22 @@ Item {
     // --- Icon image ---
     // image://icon/ resolves through Qt's platform theme (XDG icon theme)
     Text {
-        id: iconImg
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: runDot.top
-        anchors.bottomMargin: 4
+        id: iconIm
+        anchors.fill: parent
+        // anchors.horizontalCenter: parent.horizontalCenter
+        // anchors.bottom: 5 //TODO
+        // anchors.topMargin: 5
+        // anchors.bottomMargin: 0.1
 
         width: root.currentSize
         height: root.currentSize
-        y: -root._lift
+        // y: -root._lift
 
         text: root.iconName
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: root.currentSize
         horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
+        // verticalAlignment: Text.AlignVCenter
         color: "white"
 
         Behavior on y {
@@ -139,7 +140,7 @@ Item {
             to: 1.0
             duration: 180
             easing.type: Easing.OutBack
-            overshoot: 1.5
+            // overshoot: 1.5
         }
     }
     // Keep yScale in sync
