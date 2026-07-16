@@ -4,6 +4,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell.Io
+
 // https://github.com/crawraps/widgets-collection/blob/main/shell.qml
 Item {
     id: root

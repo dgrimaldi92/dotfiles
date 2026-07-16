@@ -6,6 +6,7 @@ package.path = os.getenv("HOME") .. "/.config/?.lua;" .. package.path
 -- All Omarchy default setups
 require("hypr.omarchy.main")
 require("hypr.hyprbars.main")
+require("hypr.quickshell.dock")
 -- Change your own setup in these files and override defaults.
 -- require("hypr.monitors")
 -- require("hypr.input")

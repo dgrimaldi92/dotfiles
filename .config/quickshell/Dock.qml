@@ -1,195 +1,167 @@
-// Dock.qml
-// macOS-style floating bottom dock for Quickshell / Hyprland
-//
-// Drop both files into your Quickshell config directory, then add to shell.qml:
-//   Dock {}
-//
-// Icon theme: set your system icon theme so image://icon/ resolves correctly.
-//   e.g. gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark"
-//   or via nwg-look / lxappearance.
-
-import QtQuick
-import QtQuick.Layouts
 import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import Quickshell.Io
+import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell.Wayland
+
 import "widgets" as QsWidgets
+import qs.singletons
 
-PanelWindow {
-    id: root
+Scope {
+    property string name: "default"
 
-    // ── Layer shell ───────────────────────────────────────────────────────────
-    // WlrLayerShell.layer: WlrLayer.Top
-    // WlrLayerShell.keyboardFocus: WlrKeyboardFocus.None
+    property list<int> screenIds: Quickshell.screens.map((_, i) => i)
+    property list<ShellScreen> screens: Quickshell.screens.filter((_, i) => screenIds.includes(i))
 
-    // ExclusionMode.Auto  → reserve space at bottom (windows won't overlap dock)
-    // ExclusionMode.Ignore → floating overlay (windows slide under)
-    exclusionMode: ExclusionMode.Auto
+    Variants {
+        id: variants
+        property int spacing: 8
+        model: screens
 
-    // Anchor only to bottom: Hyprland will centre the window horizontally
-    anchors {
-        bottom: true
-        left: false
-        right: false
-        top: false
-    }
+        PanelWindow {
+            id: window
 
-    // ── Sizing ────────────────────────────────────────────────────────────────
-    // Panel is exactly as wide as the pill background; height accommodates
-    // magnified icons (maxIconSize) + padding + the running dot row.
-    readonly property int baseIconSize: 32
-    readonly property int maxIconSize: 50
-    readonly property int dockPadding: 10
-    readonly property int iconSpacing: 0 
-
-    implicitWidth: dockPill.width
-    // implicitHeight: maxIconSize + dockPadding * 2 + 10
-
-    color: "transparent"
-
-    // ── Mouse tracking ────────────────────────────────────────────────────────
-    // A transparent MouseArea covers the whole panel so we can pass a single
-    // globalMouseX value to every DockIcon for magnification math.
-    property real globalMouseX: 0 
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.NoButton
-        propagateComposedEvents: true
-
-        onPositionChanged: mouse => {
-            root.globalMouseX = mouse.x;
-        }
-        onExited: () => {
-            root.globalMouseX = -9999;
-        }
-    }
-
-    // ── App list ─────────────────────────────────────────────────────────────
-    // icon: XDG icon name from your active icon theme
-    // exec: command forwarded to `hyprctl dispatch exec`
-    property var apps: [
-        {
-            name: "Browser",
-            icon: "󰌀",
-            exec: "brave-origin"
-        },
-        {
-            name: "Terminal",
-            icon: "",
-            exec: "ghostty"
-        },
-        {
-            name: "Neovim",
-            icon: "",
-            exec: "ghostty -e nvim"
-        },
-        // {
-        //     name: "Files",
-        //     icon: "system-file-manager",
-        //     exec: "thunar"
-        // },
-        {
-            name: "WhatsApp",
-            icon: "󰖣",
-            exec: "zapzap"
-        },
-        {
-            name: "Xmind",
-            icon: "",
-            exec: "xmind"
-        },
-    ]
-
-    // ── Background pill ───────────────────────────────────────────────────────
-    // Outer glow halo — soft blue-purple corona behind the pill
-    Rectangle {
-        id: dockGlow
-        anchors.horizontalCenter: parent.horizontalCenter
-        // anchors.bottom: parent.bottom
-        // anchors.bottomMargin: root.bottomMargin - 5
-
-        width: dockPill.width + 28
-        // height: dockPill.height + 18
-        radius: (dockPill.height + 18) / 2
-
-        color: "transparent"
-        border.color: Qt.rgba(0.48, 0.63, 0.97, 0.06)  // #7aa2f7 at 6%
-        border.width: 0
-    }
-
-    Rectangle {
-        id: dockPill
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.bottomMargin
-
-        width: iconRow.implicitWidth + root.dockPadding * 2
-        height: root.baseIconSize + root.dockPadding * 2
-        radius: height / 2
-
-        // Liquid glass: keep alpha very low — Hyprland blur fills the rest.
-        // Top band: specular white (light hitting glass rim)
-        // Mid band: faint blue-purple glass tint (Tokyo Night)
-        // Bottom band: slightly denser dark base
-        gradient: Gradient {
-            GradientStop {
-                position: 0.00
-                color: Qt.rgba(1.00, 1.00, 1.00, 0.13)
+            mask: Region {
+                item: glass
+                regions: [
+                    Region {
+                        item: row
+                    }
+                ]
             }
-            GradientStop {
-                position: 0.30
-                color: Qt.rgba(0.10, 0.08, 0.22, 0.07)
+
+            // ── Liquid Glass pill ─────────────────────────────────────
+            Rectangle {
+                id: glass
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: row.width + 24
+                height: Config.data.iconSize + variants.spacing + 8
+                radius: height / 2
+
+                // translucent base — Hyprland blurs whatever is behind this
+                color: Qt.rgba(1, 1, 1, 0.10)
+                border.width: 1
+                border.color: Qt.rgba(1, 1, 1, 0.22)
+
+                // vertical sheen: brighter at the top, fades out
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    radius: parent.radius - 1
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0.0
+                            color: Qt.rgba(1, 1, 1, 0.16)
+                        }
+                        GradientStop {
+                            position: 0.35
+                            color: Qt.rgba(1, 1, 1, 0.03)
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: Qt.rgba(1, 1, 1, 0.0)
+                        }
+                    }
+                }
+
+                // specular top edge (the "wet" highlight)
+                Rectangle {
+                    anchors.top: parent.top
+                    anchors.topMargin: 1
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width * 0.6
+                    height: 1
+                    radius: 0.5
+                    color: Qt.rgba(1, 1, 1, 0.45)
+                }
+
+                // subtle bottom inner shadow for depth
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 1
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width - 8
+                    height: 1
+                    color: Qt.rgba(0, 0, 0, 0.25)
+                }
             }
-            GradientStop {
-                position: 1.00
-                color: Qt.rgba(0.05, 0.04, 0.12, 0.16)
+            // End of liquid glass pill ────────────────────────────────
+
+            anchors {
+                left: false
+                right: false
+                top: false
+                bottom: true
             }
-        }
 
-        // Prismatic rim — blue tint instead of neutral white
-        border.color: Qt.rgba(0.48, 0.63, 0.97, 0.22)  // #7aa2f7 at 22%
-        border.width: 1
+            // function getMargin(pos) {
+            //     return config.data.margins?.[pos] || 0;
+            // }
+            // margins {
+            //     left: getMargin("left")
+            //     right: getMargin("right")
+            //     top: getMargin("top")
+            //     bottom: getMargin("bottom")
+            // }
 
+            property int length: (Config.data.iconSize + variants.spacing) * apps.length
+            property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? .3) + 1) * 1.1 + variants.spacing
 
-        // Inner rim — secondary depth ring
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: 1
-            radius: parent.radius - 1
+            implicitWidth: length
+            implicitHeight: breadth
             color: "transparent"
-            border.color: Qt.rgba(1.0, 1.0, 1.0, 0.05)
-            border.width: 1
-        }
-    }
 
-    // ── Icon row ──────────────────────────────────────────────────────────────
-    Row {
-        id: iconRow
-        anchors.horizontalCenter: parent.horizontalCenter
-        // anchors.bottom: parent.bottom
-        // anchors.bottomMargin: root.dockPadding + root.bottomMargin
-        spacing: root.iconSpacing
+            mask: Region {
+                item: row
+            }
 
-        Repeater {
-            model: root.apps
+            readonly property var apps: Config.data.apps
 
-            QsWidgets.DockIcon {
-                required property var modelData
-                required property int index
+            function expand(startIndex) {
+                apps.forEach((_, ind) => {
+                    repeater.itemAt(ind).delay(Config.data.iconSize + variants.spacing, startIndex);
+                });
+            }
+            function collapse(startIndex) {
+                apps.forEach((_, ind) => {
+                    repeater.itemAt(ind).delay(0, startIndex);
+                });
+            }
 
-                appName: modelData.name
-                iconName: modelData.icon
-                exec: modelData.exec
+            Rectangle {
+                id: dock
+                height: parent.height + 2
+                width: parent.width + 2
+                anchors.bottom: parent.bottom
+                color: "transparent"
 
-                baseSize: root.baseIconSize
-                maxSize: root.maxIconSize
-                magnifyRadius: 100.0
-                mouseXInDock: root.globalMouseX
+                Grid {
+                    id: row
 
-                // itemCenterX: icon centre in panel coordinates
-                // x is relative to iconRow; we add iconRow.x to get panel coords
-                itemCenterX:  x + width / 4 
+                    columns: window.apps.length
+                    rows: 1
+
+                    horizontalItemAlignment: Grid.AlignHCenter
+
+                    verticalItemAlignment: Grid.AlignBottom
+                    anchors.bottom: parent.bottom
+                    anchors.margins: -2
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 0
+
+                    property int current: -1
+
+                    Repeater {
+                        id: repeater
+                        model: window.apps
+
+                        QsWidgets.DockItem {}
+                    }
+                }
             }
         }
     }
