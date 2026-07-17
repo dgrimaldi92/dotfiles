@@ -8,26 +8,31 @@ Rectangle {
     id: item
     property int additionalHeight: 0
     property int spacing: 8
-    property int animationDuration: 25
-    property real pseudoScale: {
-        if (row.current == -1)
-            return 0;
-        else {
-            const falloff = Config.data.falloff || 3;
-            const absDiff = Math.abs(index - row.current);
-            const diff = Math.max(0, falloff - absDiff);
-            const damp = falloff - Math.max(1, diff);
-            const sc = damp ? Config.data.scaleFactor / (damp * (Config.data.damp || 1)) : Config.data.scaleFactor;
+    property int animationDuration: 5 
+    property real pseudoScale: 
+    row.current == -1 ? 0 : 1 
+    // {
+    //     if (row.current == -1)
+    //         return 0;
+    //     else {
+    //         const falloff = Config.data.falloff || 3;
+    //         const absDiff = Math.abs(index - row.current);
+    //         const diff = Math.max(0, falloff - absDiff);
+    //         const damp = falloff - Math.max(1, diff);
+    //         const sc = damp ? Config.data.scaleFactor / (damp * (Config.data.damp || 1)) : Config.data.scaleFactor;
+    //
+    //         return diff / falloff * sc;
+    //     }
+    // }
+    Behavior on pseudoScale {
+        NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
 
-            return diff / falloff * sc;
-        }
-    }
-
+    } 
     property int length: Config.data.iconSize * pseudoScale + spacing + additionalHeight
     property int breadth: Config.data.iconSize + spacing
 
-    width: Config.data.orientation == "vertical" ? length : breadth
-    height: Config.data.orientation == "vertical" ? breadth : length
+    width: breadth
+    height: length
 
     color: "transparent"
 
@@ -49,7 +54,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: {
             row.current = index;
-            window.expand(); //TODO check
+            window.expand();
         }
         onExited: {
             if (row.current == index) {

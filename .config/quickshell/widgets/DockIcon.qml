@@ -37,14 +37,14 @@ Item {
     property real targetSizeAlias: _targetSize
     onTargetSizeAliasChanged: currentSize = _targetSize
 
-    Behavior on currentSize {
-        SpringAnimation {
-            spring: 8.0
-            damping: 0.65
-            mass: 1.0
-            epsilon: 0.25
-        }
-    }
+    // Behavior on currentSize {
+    //     SpringAnimation {
+    //         spring: 8.0
+    //         damping: 0.65
+    //         mass: 1.0
+    //         epsilon: 0.25
+    //     }
+    // }
 
     // Icon rises as it grows — the lift matches macOS feel
     readonly property real _lift: _factor * 10.0
@@ -157,7 +157,7 @@ Item {
         parent: root
         visible: mArea.containsMouse && !mArea.pressed
         text: root.appName
-        delay: 500
+        delay: 50
 
         contentItem: Text {
             text: tip.text
