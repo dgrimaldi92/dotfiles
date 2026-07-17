@@ -106,7 +106,7 @@ Scope {
             //     top: getMargin("top")
             //     bottom: getMargin("bottom")
             // }
-
+            readonly property var apps: Config.data.apps
             property int length: (Config.data.iconSize + variants.spacing) * apps.length
             property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? .3) + 1) * 1.1 + variants.spacing
 
@@ -114,11 +114,6 @@ Scope {
             implicitHeight: breadth
             color: "transparent"
 
-            mask: Region {
-                item: row
-            }
-
-            readonly property var apps: Config.data.apps
 
             function expand(startIndex) {
                 apps.forEach((_, ind) => {

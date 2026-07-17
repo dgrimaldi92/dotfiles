@@ -2,3 +2,4 @@ module qs.singletons
 
 singleton Time Time.qml
 singleton ThemeManager ThemeManager.qml
+singleton Config Config.qml

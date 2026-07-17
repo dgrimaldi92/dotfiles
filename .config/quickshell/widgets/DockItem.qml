@@ -6,9 +6,6 @@ import qs.singletons
 
 Rectangle {
     id: item
-    // required property string icon
-    // required property string name
-
     property int additionalHeight: 0
     property int spacing: 8
     property int animationDuration: 25
@@ -52,7 +49,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: {
             row.current = index;
-            window.expand(index); //TODO check
+            window.expand(); //TODO check
         }
         onExited: {
             if (row.current == index) {
@@ -85,7 +82,6 @@ Rectangle {
                 Text {
                     width: parent.width
                     height: width
-                    // source: Quickshell.iconPath(modelData.icon)
                     text: modelData.icon
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 52

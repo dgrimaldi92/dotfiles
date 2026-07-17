@@ -11,7 +11,7 @@ Rectangle {
     "transparent"
 
     radius: 12
-    border.width: shutdownMouseArea.containsMouse ? 1 : 0
+    // border.width: shutdownMouseArea.containsMouse ? 1 : 0
     // border.color: Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.5)
 
 

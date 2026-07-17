@@ -3,13 +3,15 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Controls
 
+import qs.singletons
+
 ToolTip {
     id: tooltip
     anchors.centerIn: parent
     text: modelData.name
     font.family: "Symbols Nerd Font"
     font.pixelSize: 12
-    color: ThemeManager.fgPrimary
+    // color: ThemeManager.fgPrimary
     delay: 1000
 
     contentItem: Text {
