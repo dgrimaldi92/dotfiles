@@ -35,7 +35,7 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            Quickshell.execDetached(["impala"]);
+            Quickshell.execDetached(["setsid", "uwsm-app", "--", "ghostty", "-e", "impala"])
         }
     }
 }
