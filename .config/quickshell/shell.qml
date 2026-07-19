@@ -4,6 +4,7 @@ import QtQuick
 
 ShellRoot {
     // visible widgets outside Variants/Scope
+    Desktop {}
     Bar {}
     Dock {}
 }

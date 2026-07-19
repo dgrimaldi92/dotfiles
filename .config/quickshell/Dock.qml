@@ -38,13 +38,15 @@ Scope {
                 id: glass
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: row.width + 3 
+                property int horizontalPadding: 10
+                width: row.width + horizontalPadding * 2 
+                anchors.bottomMargin: 1 
 
                 property int expandedHeight: Config.data.iconSize + variants.spacing + 8
                 property int additionalHeight: 0        // same idiom as DockItem
                 height: additionalHeight
                 visible: height > 0                     // hides the sheen/border children too
-                radius: expandedHeight / 2
+                radius: expandedHeight * 0.32 
 
                 Behavior on height {
                     NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
@@ -91,8 +93,8 @@ Scope {
             property int length: (Config.data.iconSize + variants.spacing) * apps.length
             property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? .3) + 1) * 1.1 + variants.spacing
 
-            implicitWidth: length
-            implicitHeight: breadth
+            implicitWidth: length +500 
+            implicitHeight: breadth 
             color: "transparent"
 
 
@@ -127,10 +129,9 @@ Scope {
 
                     verticalItemAlignment: Grid.AlignBottom
                     anchors.bottom: parent.bottom
-                    anchors.margins: -4
-
+                    anchors.bottomMargin: 0 
                     anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 0
+                    spacing: 1 
 
                     property int current: -1
 

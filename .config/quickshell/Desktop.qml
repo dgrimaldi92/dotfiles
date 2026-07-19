@@ -25,7 +25,7 @@ ShellRoot {
 
     FileView {
         id: state
-        path: `${Quickshell.env("HOME") + "/.local/state"}/qs-wallpaper.json`
+        path: `${Quickshell.env("HOME") + "/.local/state/quickshell"}/wallpaper.json`
         watchChanges: true                 // edit the json externally and it hot-applies
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()

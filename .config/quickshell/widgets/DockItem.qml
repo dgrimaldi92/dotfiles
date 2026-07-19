@@ -91,7 +91,7 @@ Rectangle {
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 52
                     horizontalAlignment: Text.AlignHCenter
-                    color: "white"
+                    color: "#eecdb4f8"
 
                     transform: Scale {
                         origin.x: Config.data.iconSize / 2
