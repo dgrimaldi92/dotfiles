@@ -64,9 +64,10 @@ Rectangle {
             }
         }
         onClicked: {
-            const client = HyprClients.findClient(modelData.class);
+            const client = HyprClients.getAppInstances(modelData.class);
             if (client) {
-                Quickshell.execDetached(["hyprctl", "dispatch", "focuswindow", "address:" + client.address]);
+                // Quickshell.execDetached(["hyprctl", "dispatch", "focuswindow", "address:" + client.address]);
+                HyprClients.activate(client);
                 return;
             }
             Quickshell.execDetached(["sh", "-c", "hyprctl dispatch workspace empty && uwsm-app -- " + modelData.exec.map(a => "'" + a.replace(/'/g, "'\\''") + "'").join(" ")]);
@@ -111,7 +112,24 @@ Rectangle {
             }
 
             Rectangle {
-                visible: HyprClients.isRunning(modelData.class)
+                id: dot
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 4
+                height: 4
+                radius: 2
+                color: "#cba6f7"
+
+                opacity: {
+                    const id = modelData.class;
+                    return Hyprland.toplevels.values.some(t => t.wayland?.appId === id) ? 1 : 0;
+                }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 200
+                        easing.type: Easing.OutCubic
+                    }
+                }
             }
         }
     }
