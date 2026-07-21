@@ -23,32 +23,38 @@ QtObject {
             {
                 name: "Browser",
                 icon: "󰌀",
-                exec: ["brave-origin"]
+                exec: ["brave-origin"],
+                class: ""
             },
             {
                 name: "Terminal",
                 icon: "",
-                exec: ["ghostty"]
+                exec: ["ghostty"],
+                class: ""
             },
             {
                 name: "Neovim",
                 icon: "",
-                exec: ["ghostty", "-e", "nvim"]
+                exec: ["ghostty", "-e", "nvim"],
+                class: ""
             },
             // {
             //     name: "Files",
             //     icon: "system-file-manager",
-            //     exec: "thunar"
+            //     exec: "thunar",
+            //     class: ""
             // },
             {
                 name: "WhatsApp",
                 icon: "󰖣",
-                exec: ["zapzap"]
+                exec: ["zapzap"],
+                class: ""
             },
             {
                 name: "Xmind",
                 icon: "",
-                exec: ["xmind"]
+                exec: ["xmind"],
+                class: ""
             },
         ]
     }

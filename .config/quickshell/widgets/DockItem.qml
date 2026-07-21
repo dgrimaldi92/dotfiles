@@ -8,9 +8,8 @@ Rectangle {
     id: item
     property int additionalHeight: 0
     property int spacing: 8
-    property int animationDuration: 5 
-    property real pseudoScale: 
-    row.current == -1 ? 0 : 1 
+    property int animationDuration: 5
+    property real pseudoScale: row.current == -1 ? 0 : 1
     // {
     //     if (row.current == -1)
     //         return 0;
@@ -25,9 +24,11 @@ Rectangle {
     //     }
     // }
     Behavior on pseudoScale {
-        NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
-
-    } 
+        NumberAnimation {
+            duration: 180
+            easing.type: Easing.OutCubic
+        }
+    }
     property int length: Config.data.iconSize * pseudoScale + spacing + additionalHeight
     property int breadth: Config.data.iconSize + spacing
 
@@ -62,7 +63,14 @@ Rectangle {
                 window.collapse(index);
             }
         }
-        onClicked: Quickshell.execDetached(["setsid", "uwsm-app", "--", ...modelData.exec])
+        onClicked: {
+            const client = HyprClients.findClient(modelData.class);
+            if (client) {
+                Quickshell.execDetached(["hyprctl", "dispatch", "focuswindow", "address:" + client.address]);
+                return;
+            }
+            Quickshell.execDetached(["sh", "-c", "hyprctl dispatch workspace empty && uwsm-app -- " + modelData.exec.map(a => "'" + a.replace(/'/g, "'\\''") + "'").join(" ")]);
+        }
         cursorShape: Qt.PointingHandCursor
         propagateComposedEvents: true
 
@@ -100,6 +108,10 @@ Rectangle {
                         yScale: itemMouseArea.containsPress ? 0.9 : 1
                     }
                 }
+            }
+
+            Rectangle {
+                visible: HyprClients.isRunning(modelData.class)
             }
         }
     }
