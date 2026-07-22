@@ -65,12 +65,16 @@ Rectangle {
         }
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
+            // console.log(client.address)
             if (client) {
                 // Quickshell.execDetached(["hyprctl", "dispatch", "focuswindow", "address:" + client.address]);
                 HyprClients.activate(client);
                 return;
             }
-            Quickshell.execDetached(["sh", "-c", "hyprctl dispatch workspace empty && uwsm-app -- " + modelData.exec.map(a => "'" + a.replace(/'/g, "'\\''") + "'").join(" ")]);
+            console.log(client)
+//https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/#dispatch
+// hyprctl dispatch exec "[workspace 5] ghostty -e impala"
+            Quickshell.execDetached(["hyprctl", "dispatch", 'hl.dsp.focus({ workspace = "empty" })']);
         }
         cursorShape: Qt.PointingHandCursor
         propagateComposedEvents: true
@@ -121,7 +125,8 @@ Rectangle {
 
                 opacity: {
                     const id = modelData.class;
-                    return Hyprland.toplevels.values.some(t => t.wayland?.appId === id) ? 1 : 0;
+                    console.log(modelData.class)
+                    return HyprClients.isAppRunning(id) ? 1 : 0;
                 }
 
                 Behavior on opacity {

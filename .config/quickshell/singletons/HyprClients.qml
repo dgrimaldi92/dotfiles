@@ -18,12 +18,15 @@ QtObject {
         return toplevels.values.filter(toplevel => toplevel.title === appId || toplevel.wayland.appId === appId);
     }
 
+    function isAppRunning(appId) {
+        return Hyprland.toplevels.values.some(t => t.wayland?.appId === appId) 
+    }
+
     function activate(app) {
         // const app = getAppInstances(appId);
         //
         // if (!app)
         //     return;
-
         app.wayland.activate();
     }
 

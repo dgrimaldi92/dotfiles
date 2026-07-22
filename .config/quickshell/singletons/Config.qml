@@ -24,13 +24,13 @@ QtObject {
                 name: "Browser",
                 icon: "󰌀",
                 exec: ["brave-origin"],
-                class: ""
+                class: "brave-origin"
             },
             {
                 name: "Terminal",
                 icon: "",
                 exec: ["ghostty"],
-                class: ""
+                class: "com.mitchellh.ghostty"
             },
             {
                 name: "Neovim",
@@ -48,13 +48,13 @@ QtObject {
                 name: "WhatsApp",
                 icon: "󰖣",
                 exec: ["zapzap"],
-                class: ""
+                class: "com.rtosta.zapzap"
             },
             {
                 name: "Xmind",
                 icon: "",
                 exec: ["xmind"],
-                class: ""
+                class: "Xmind"
             },
         ]
     }
