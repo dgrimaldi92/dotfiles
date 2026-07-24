@@ -32,7 +32,7 @@ hl.plugin.hyprbars.add_button({
 	fg_color = "rgb(1a1b26)",
 	size = 14,
 	icon = "󰧑",
-	action = "hyprctl dispatch 'hl.dsp.window.fullscreen()'",
+	action = "hyprctl eval 'hl.dispatch(hl.dsp.window.float()); hl.dispatch(hl.dsp.window.center({reserved = true}))'",
 })
 
 hl.plugin.hyprbars.add_button({

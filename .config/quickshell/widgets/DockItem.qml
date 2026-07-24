@@ -65,16 +65,14 @@ Rectangle {
         }
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
-            // console.log(client.address)
             if (client) {
-                // Quickshell.execDetached(["hyprctl", "dispatch", "focuswindow", "address:" + client.address]);
                 HyprClients.activate(client);
                 return;
             }
-//https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/#dispatch
-// hyprctl dispatch exec "[workspace 5] ghostty -e impala"
-// hyprctl dispatch 'hl.dsp.focus({ workspace = "empty" })' && ghostty
-// hyprctl dispatch 'hl.exec_cmd("uwsm-app -- ghostty", {workspace = "empty"})'       
+            // https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/#dispatch
+            // hyprctl dispatch exec "[workspace 5] ghostty -e impala"
+            // hyprctl dispatch 'hl.dsp.focus({ workspace = "empty" })' && ghostty
+            // hyprctl dispatch 'hl.exec_cmd("uwsm-app -- ghostty", {workspace = "empty"})'       
             Quickshell.execDetached(["hyprctl", "eval", `hl.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`]);
         }
         cursorShape: Qt.PointingHandCursor

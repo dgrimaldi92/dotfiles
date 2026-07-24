@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
+import Quickshell.Hyprland
 import "widgets" as QsWidgets
 import qs.singletons
 
@@ -13,12 +15,36 @@ Scope {
         PanelWindow {
             property var modelData
             screen: modelData
-
+            id: root
             anchors {
                 top: true
                 left: true
                 right: true
             }
+
+            property bool activeFloating: false
+            visible: !activeFloating
+
+            Process {
+                id: activeWin
+                command: ["hyprctl", "activewindow", "-j"]
+                stdout: StdioCollector {
+                    onStreamFinished: {
+                        const parsedInfo = JSON.parse(this.text)
+                        root.activeFloating = Boolean(parsedInfo.floating)
+                    }
+                }
+            }
+
+            Connections {
+                target: Hyprland
+                function onRawEvent(event) {
+                    if (["activewindow", "activewindowv2", "changefloatingmode", "openwindow", "closewindow", "movewindow"].includes(event.name)) {
+                        activeWin.running = true
+                    }
+                }
+            }
+
 
             implicitHeight: 30
             color: "transparent"
