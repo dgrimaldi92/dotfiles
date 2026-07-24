@@ -71,10 +71,11 @@ Rectangle {
                 HyprClients.activate(client);
                 return;
             }
-            console.log(client)
 //https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/#dispatch
 // hyprctl dispatch exec "[workspace 5] ghostty -e impala"
-            Quickshell.execDetached(["hyprctl", "dispatch", 'hl.dsp.focus({ workspace = "empty" })']);
+// hyprctl dispatch 'hl.dsp.focus({ workspace = "empty" })' && ghostty
+// hyprctl dispatch 'hl.exec_cmd("uwsm-app -- ghostty", {workspace = "empty"})'       
+            Quickshell.execDetached(["hyprctl", "eval", `hl.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`]);
         }
         cursorShape: Qt.PointingHandCursor
         propagateComposedEvents: true
@@ -117,15 +118,14 @@ Rectangle {
 
             Rectangle {
                 id: dot
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 4
-                height: 4
-                radius: 2
-                color: "#cba6f7"
+                // anchors.horizontalCenter: parent.horizontalCenter
+                width: 8 
+                height: 8 
+                radius:4 
+                // color: "#cba6f7"
 
                 opacity: {
                     const id = modelData.class;
-                    console.log(modelData.class)
                     return HyprClients.isAppRunning(id) ? 1 : 0;
                 }
 

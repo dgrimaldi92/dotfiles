@@ -35,7 +35,7 @@ QtObject {
             {
                 name: "Neovim",
                 icon: "",
-                exec: ["ghostty", "-e", "nvim"],
+                exec: ["setsid", "uwsm-app", "--", "ghostty", "-e", "nvim"],
                 class: ""
             },
             // {
