@@ -8,13 +8,13 @@ hl.config({
 			bar_text_size = 11,
 			-- bar_text_font = "Inter Medium", -- or your UI font
 			bar_text_align = "left", -- macOS-style; drop for centered
-			bar_blur = false,
+			bar_blur = true,
 			bar_part_of_window = true, -- bar inherits window rounding/shadow
-			bar_precedence_over_border = false,
+			bar_precedence_over_border = true,
 			bar_padding = 10,
 			bar_button_padding = 6,
 			icon_on_hover = true,
-			on_double_click = "hyprctl dispatch fullscreen 1",
+			on_double_click = "hyprctl eval 'hl.dispatch(hl.dsp.window.float()); hl.dispatch(hl.dsp.window.center())'",
 		},
 	},
 })
@@ -32,7 +32,7 @@ hl.plugin.hyprbars.add_button({
 	fg_color = "rgb(1a1b26)",
 	size = 14,
 	icon = "󰧑",
-	action = "hyprctl eval 'hl.dispatch(hl.dsp.window.float()); hl.dispatch(hl.dsp.window.center({reserved = true}))'",
+	action = "hyprctl eval 'hl.dispatch(hl.dsp.window.float()); hl.dispatch(hl.dsp.window.center())'",
 })
 
 hl.plugin.hyprbars.add_button({
@@ -40,5 +40,5 @@ hl.plugin.hyprbars.add_button({
 	fg_color = "rgb(1a1b26)",
 	size = 14,
 	icon = "󰏩",
-	action = "hyprctl dispatch 'hl.dsp.window.float({ action = \"toggle\" })'",
+	action = "hyprctl eval 'hl.dsp.window.float({ action = \"toggle\" })'",
 })
