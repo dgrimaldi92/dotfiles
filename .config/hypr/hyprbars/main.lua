@@ -32,7 +32,7 @@ hl.plugin.hyprbars.add_button({
 	fg_color = "rgb(1a1b26)",
 	size = 14,
 	icon = "󰧑",
-	action = "hyprctl eval 'hl.dispatch(hl.dsp.window.float()); hl.dispatch(hl.dsp.window.center())'",
+	action = "omarchy-hyprland-window-bar-pop",
 })
 
 hl.plugin.hyprbars.add_button({

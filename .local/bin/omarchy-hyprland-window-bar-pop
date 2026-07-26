@@ -1,0 +1,25 @@
+#!/bin/bash
+
+active=$(hyprctl activewindow -j)
+addr=$(echo "$active" | jq -r ".address")
+window="address:$addr"
+
+hypr_dispatch() {
+  hyprctl dispatch "$1" >/dev/null 2>&1 || hyprctl dispatch "$2" "$window" >/dev/null
+}
+
+# Make sure the window is floating first
+hypr_dispatch \
+  "hl.dsp.window.float({ window = \"$window\", action = \"toggle_on\" })" \
+  togglefloating
+
+# Center it
+hypr_dispatch \
+  "hl.dsp.window.center({ window = \"$window\" })" \
+  centerwindow
+
+# Nudge down by hyprbars bar_height (28px) so the bar doesn't get eaten
+# by your Quickshell top bar reserved area — tune this value if needed
+hypr_dispatch \
+  "hl.dsp.window.move({ window = \"$window\", x = 0, y = 28, relative = true })" \
+  "movewindowpixel 0 28"
