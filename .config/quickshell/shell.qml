@@ -7,4 +7,5 @@ ShellRoot {
     Desktop {}
     Bar {}
     Dock {}
+    TitleBar {}
 }
