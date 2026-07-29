@@ -30,7 +30,8 @@ QtObject {
         app.wayland.activate();
     }
 
-    function isCurrentWorkspaceFullScreen(workspaceId) {
+    function isCurrentWorkspaceFullScreen() {
+        return Hyprland.focusedWorkspace.hasFullscreen
     }
 
     // Connections {

@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell.Wayland
 
 import "widgets" as QsWidgets
+import qs.singletons
 
 PanelWindow {
     readonly property bool isBarVisible: false
@@ -11,12 +12,15 @@ PanelWindow {
     readonly property int topMargin: 5
 
     anchors.top: true
-    implicitHeight: control.hovered ? barHeight : 0
-    implicitWidth: screen.width
+    implicitHeight: control.hovered && HyprClients.isCurrentWorkspaceFullScreen() ?  barHeight: 0
+    anchors.left: true
+    anchors.right: true
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore // Ignore compositor space
     WlrLayershell.namespace: "quickshell:dock"
-
+    WlrLayershell.layer: WlrLayer.Overlay
+    
+    
     // mask: Region {
     //     item: row
     // } // TODO check if needed
@@ -67,6 +71,7 @@ PanelWindow {
             QsWidgets.TitleIcon {
                 color: "#f7768e" 
                 label: "󰖭"
+                handleOnClick:  Quickshell.execDetached("hyprctl dispatch 'hl.dsp.window.close()'") 
             }
         }
     }
