@@ -32,12 +32,12 @@ Scope {
                     }
                 ]
             }
-
+            
             QsWidgets.LiquidGlass {
                 id: glass
 
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottomMargin: 1
+                anchors.bottomMargin: 0 
 
                 property int horizontalPadding: 10
                 property int expandedHeight: Config.data.iconSize + variants.spacing + 8
@@ -113,10 +113,10 @@ Scope {
 
             readonly property var apps: Config.data.apps
             property int length: (Config.data.iconSize + variants.spacing) * apps.length
-            property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? .3) + 1) * 1.1 + variants.spacing
+            property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? .3) + 0.775)
 
             implicitWidth: length + 500
-            implicitHeight: breadth
+            implicitHeight: breadth 
             color: "transparent"
 
             function expand(startIndex) {

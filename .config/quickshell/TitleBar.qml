@@ -11,8 +11,9 @@ PanelWindow {
     readonly property int topMargin: 5
 
     anchors.top: true
-    implicitHeight: barHeight
+    implicitHeight: control.hovered ? barHeight : 0
     implicitWidth: screen.width
+    color: "transparent"
     exclusionMode: ExclusionMode.Ignore // Ignore compositor space
     WlrLayershell.namespace: "quickshell:dock"
 
@@ -35,7 +36,7 @@ PanelWindow {
     HoverHandler {
         id: control
     }
-
+ 
     FlexboxLayout {
         anchors.fill: parent
         justifyContent: FlexboxLayout.JustifySpaceBetween
@@ -43,31 +44,29 @@ PanelWindow {
         anchors.rightMargin: 10
         anchors.topMargin: topMargin
 
-        // translucent base — Hyprland blurs whatever is behind this
-        // color: Qt.rgba(1, 1, 1, 0.10)
-        // border.width: 1
-        // border.color: Qt.rgba(1, 1, 1, 0.22)
         Text {
             text: "App Name"
             font.family: "JetBrainsMono Nerd Font"
             font.pixelSize: 11
             horizontalAlignment: Text.AlignHCenter
-            color: "black"
+            color: "white"
             visible: control.hovered
         }
         Row {
             id: row
-            anchors.centerIn: parent
-            spacing: 5
+            spacing: 5 
             visible: control.hovered
             QsWidgets.TitleIcon {
-                label: ""
+                color: "#e0af68" 
+                label: "󰏩"
             }
             QsWidgets.TitleIcon {
+                color: "#9ece6a" 
                 label: "󰧑"
             }
             QsWidgets.TitleIcon {
-                label: "󰏩"
+                color: "#f7768e" 
+                label: "󰖭"
             }
         }
     }
