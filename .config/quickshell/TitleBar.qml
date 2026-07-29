@@ -1,27 +1,39 @@
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Wayland
 
 import "widgets" as QsWidgets
 
 PanelWindow {
-    anchors.top: true
     readonly property bool isBarVisible: false
     readonly property int barHeight: 28
+    readonly property int topMargin: 5
 
+    anchors.top: true
     implicitHeight: barHeight
     implicitWidth: screen.width
+    exclusionMode: ExclusionMode.Ignore // Ignore compositor space
+    WlrLayershell.namespace: "quickshell:dock"
+
+    // mask: Region {
+    //     item: row
+    // } // TODO check if needed
 
     QsWidgets.LiquidGlass {
         id: glass
 
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 1
+        anchors.topMargin: topMargin
 
         property int expandedHeight: 0
         property int additionalHeight: barHeight        // same idiom as DockItem
         width: parent.width
-        height: additionalHeight
+        height: control.hovered ? additionalHeight : 0
+    }
+
+    HoverHandler {
+        id: control
     }
 
     FlexboxLayout {
@@ -29,7 +41,7 @@ PanelWindow {
         justifyContent: FlexboxLayout.JustifySpaceBetween
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        anchors.topMargin: 5
+        anchors.topMargin: topMargin
 
         // translucent base — Hyprland blurs whatever is behind this
         // color: Qt.rgba(1, 1, 1, 0.10)
@@ -41,12 +53,22 @@ PanelWindow {
             font.pixelSize: 11
             horizontalAlignment: Text.AlignHCenter
             color: "black"
+            visible: control.hovered
         }
         Row {
             id: row
             anchors.centerIn: parent
             spacing: 5
-            // RedSquare {}
+            visible: control.hovered
+            QsWidgets.TitleIcon {
+                label: ""
+            }
+            QsWidgets.TitleIcon {
+                label: "󰧑"
+            }
+            QsWidgets.TitleIcon {
+                label: "󰏩"
+            }
         }
     }
 }

@@ -30,6 +30,9 @@ QtObject {
         app.wayland.activate();
     }
 
+    function isCurrentWorkspaceFullScreen(workspaceId) {
+    }
+
     // Connections {
     //     target: Hyprland
     //
