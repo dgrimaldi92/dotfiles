@@ -23,7 +23,7 @@ QtObject {
             {
                 name: "Browser",
                 icon: "󰌀",
-                exec: ["brave-origin"],
+                exec: [ "uwsm-app", "--", "brave-origin"],
                 class: "brave-origin"
             },
             {

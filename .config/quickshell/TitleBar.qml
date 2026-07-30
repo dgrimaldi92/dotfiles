@@ -63,17 +63,17 @@ PanelWindow {
             QsWidgets.TitleIcon {
                 color: "#e0af68"
                 label: "󰏩"
-                onClicked: Hyprland.dispatch("")
+                onClicked: Hyprland.dispatch('minimize_toggle()')
             }
             QsWidgets.TitleIcon {
                 color: "#9ece6a"
                 label: "󰧑"
-                onClicked: Hyprland.dispatch("")
+                onClicked: Hyprland.dispatch('hl.dsp.window.fullscreen({ mode = "fullscreen" })')
             }
             QsWidgets.TitleIcon {
                 color: "#f7768e"
                 label: "󰖭"
-                onClicked: Hyprland.dispatch("hyprctl dispatch 'hl.dsp.window.close()'")
+                onClicked: Hyprland.dispatch("hl.dsp.window.close()")
             }
         }
     }

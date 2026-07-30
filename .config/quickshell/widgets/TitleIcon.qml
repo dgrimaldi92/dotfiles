@@ -5,6 +5,7 @@ Rectangle {
     property string label
     signal clicked
 
+    
     width: 14
     height: 14
     radius: width / 2
@@ -14,10 +15,11 @@ Rectangle {
         onClicked: root.clicked()
     }
     Text {
-        anchors.fill: parent
+        // anchors.fill: parent
+        anchors.horizontalCenter: parent.horizontalCenter
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 10
-        horizontalAlignment: Text.AlignRight
+        // horizontalAlignment: Text.AlignRight
         color: "black"
         text: root.label
     }

@@ -22,6 +22,10 @@ QtObject {
         return Hyprland.toplevels.values.some(t => t.wayland?.appId === appId) 
     }
 
+    function isAppReduced(appId){
+        console.log(appId)
+    }
+
     function activate(app) {
         // const app = getAppInstances(appId);
         //

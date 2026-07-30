@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
+import Quickshell.Hyprland
 
 import qs.singletons
 
@@ -66,14 +67,30 @@ Rectangle {
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
             if (client) {
+                console.log(typeof client.workspace.name)
+                console.log(Hyprland.focusedWorkspace.id)
+                const workspaceName = client.workspace.name
+                if (
+                    workspaceName && 
+                    workspaceName.startsWith("special:minimized")
+                ){
+                    // HyprClients.activate(client);
+                    // Hyprland.dispatch(`hl.dsp.window.move({ workspace = "${Hyprland.focusedWorkspace.id}" })`)
+                    const windowName = workspaceName.replace('special','tag')
+                    console.log(windowName)
+                    Hyprland.dispatch(`hl.dsp.window.move({ workspace = "${Hyprland.focusedWorkspace.id}", window = "${windowName}" }))`)
+	                Hyprland.dispatch(`hl.dsp.window.clear_tags({ window = "${windowName}" }))`)
+                }
                 HyprClients.activate(client);
                 return;
             }
-            // https://wiki.hypr.land/Configuring/Advanced-and-Cool/Using-hyprctl/#dispatch
+            // https://wiki.hypr.land/Configuring/Advanced-and-C.ool/Using-hyprctl/#dispatch
             // hyprctl dispatch exec "[workspace 5] ghostty -e impala"
             // hyprctl dispatch 'hl.dsp.focus({ workspace = "empty" })' && ghostty
-            // hyprctl dispatch 'hl.exec_cmd("uwsm-app -- ghostty", {workspace = "empty"})'       
-            Quickshell.execDetached(["hyprctl", "eval", `hl.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`]);
+            // hyprctl dispatch 'hl.exec_cmd("uwsm-app -- ghostty", {workspace = "empty"})'
+            // Quickshell.execDetached(["hyprctl", "eval", `hl.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`]);
+            Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
+            Hyprland.dispatch(`hl.dsp.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`)
         }
         cursorShape: Qt.PointingHandCursor
         propagateComposedEvents: true

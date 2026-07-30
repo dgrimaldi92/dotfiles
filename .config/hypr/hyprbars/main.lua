@@ -19,21 +19,25 @@ hl.config({
 	},
 })
 function minimize_toggle()
-	local win = hl.get_active_window()
-	if not win then
+	local activeWindow = hl.get_active_window()
+	if not activeWindow then
 		return
 	end
 
-	local wsName = "special:minimized"
-	local tagName = "minimized"
+	local minimizedClass = activeWindow.class:gsub("[^%w]", "_")
 
-	if hl.get_workspace(wsName) then
-		hl.dispatch(hl.dsp.window.move({ workspace = hl.get_active_workspace(), window = "tag:" .. tagName }))
-		hl.dispatch(hl.dsp.window.clear_tags({ window = "tag:" .. tagName }))
-	else
-		hl.dispatch(hl.dsp.window.tag({ tag = tagName, window = win }))
-		hl.dispatch(hl.dsp.window.move({ workspace = wsName, follow = false }))
-	end
+	local wsName = "special:minimized_" .. minimizedClass
+	local tagName = "minimized_" .. minimizedClass
+
+	hl.dispatch(hl.dsp.window.tag({ tag = tagName, window = win }))
+	hl.dispatch(hl.dsp.window.move({ workspace = wsName, follow = false }))
+	-- if hl.get_workspace(wsName) then
+	-- 	hl.dispatch(hl.dsp.window.move({ workspace = hl.get_active_workspace(), window = "tag:" .. tagName }))
+	-- 	hl.dispatch(hl.dsp.window.clear_tags({ window = "tag:" .. tagName }))
+	-- else
+	-- 	hl.dispatch(hl.dsp.window.tag({ tag = tagName, window = win }))
+	-- 	hl.dispatch(hl.dsp.window.move({ workspace = wsName, follow = false }))
+	-- end
 end
 -- icons at https://www.nerdfonts.com/cheat-sheet "nf-md-"
 hl.plugin.hyprbars.add_button({
