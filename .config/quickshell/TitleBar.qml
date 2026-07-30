@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Wayland
+import Quickshell.Hyprland
 
 import "widgets" as QsWidgets
 import qs.singletons
@@ -12,15 +13,14 @@ PanelWindow {
     readonly property int topMargin: 5
 
     anchors.top: true
-    implicitHeight: control.hovered && HyprClients.isCurrentWorkspaceFullScreen() ?  barHeight: 0
+    implicitHeight: control.hovered && HyprClients.isCurrentWorkspaceFullScreen() ? barHeight : 0
     anchors.left: true
     anchors.right: true
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore // Ignore compositor space
     WlrLayershell.namespace: "quickshell:dock"
     WlrLayershell.layer: WlrLayer.Overlay
-    
-    
+
     // mask: Region {
     //     item: row
     // } // TODO check if needed
@@ -40,7 +40,7 @@ PanelWindow {
     HoverHandler {
         id: control
     }
- 
+
     FlexboxLayout {
         anchors.fill: parent
         justifyContent: FlexboxLayout.JustifySpaceBetween
@@ -58,20 +58,22 @@ PanelWindow {
         }
         Row {
             id: row
-            spacing: 5 
+            spacing: 5
             visible: control.hovered
             QsWidgets.TitleIcon {
-                color: "#e0af68" 
+                color: "#e0af68"
                 label: "󰏩"
+                onCLicked: Hyprland.dispatch("")
             }
             QsWidgets.TitleIcon {
-                color: "#9ece6a" 
+                color: "#9ece6a"
                 label: "󰧑"
+                onCLicked: Hyprland.dispatch("")
             }
             QsWidgets.TitleIcon {
-                color: "#f7768e" 
+                color: "#f7768e"
                 label: "󰖭"
-                handleOnClick:  Quickshell.execDetached("hyprctl dispatch 'hl.dsp.window.close()'") 
+                onClicked: Hyprland.dispatch("hyprctl dispatch 'hl.dsp.window.close()'")
             }
         }
     }

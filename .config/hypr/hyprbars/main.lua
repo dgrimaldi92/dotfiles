@@ -18,6 +18,23 @@ hl.config({
 		},
 	},
 })
+local function minimize_toggle()
+	local win = hl.get_active_window()
+	if not win then
+		return
+	end
+
+	local wsName = "special:minimized:" .. win.class
+	local tagName = "minimized:" .. win.class
+
+	if hl.get_workspace(wsName) then
+		hl.dispatch(hl.dsp.window.move({ workspace = hl.get_active_workspace(), window = "tag:" .. tagName }))
+		hl.dispatch(hl.dsp.window.clear_tags({ window = "tag:" .. tagName }))
+	else
+		hl.dispatch(hl.dsp.window.tag({ tag = tagName, window = win }))
+		hl.dispatch(hl.dsp.window.move({ workspace = wsName, follow = false }))
+	end
+end
 -- icons at https://www.nerdfonts.com/cheat-sheet "nf-md-"
 hl.plugin.hyprbars.add_button({
 	bg_color = "rgb(f7768e)",
@@ -32,7 +49,7 @@ hl.plugin.hyprbars.add_button({
 	fg_color = "rgb(1a1b26)",
 	size = 14,
 	icon = "󰧑",
-	action = "omarchy-hyprland-window-bar-pop",
+	action = "hyprctl eval 'hl.dsp.window.fullscreen({ mode = \"fullscreen\" }))'",
 })
 
 hl.plugin.hyprbars.add_button({
@@ -40,5 +57,5 @@ hl.plugin.hyprbars.add_button({
 	fg_color = "rgb(1a1b26)",
 	size = 14,
 	icon = "󰏩",
-	action = "hyprctl eval 'hl.dsp.window.float({ action = \"toggle\" })'",
+	action = "hyprctl eval 'minimize_toggle()'",
 })
