@@ -63,12 +63,12 @@ PanelWindow {
             QsWidgets.TitleIcon {
                 color: "#e0af68"
                 label: "󰏩"
-                onCLicked: Hyprland.dispatch("")
+                onClicked: Hyprland.dispatch("")
             }
             QsWidgets.TitleIcon {
                 color: "#9ece6a"
                 label: "󰧑"
-                onCLicked: Hyprland.dispatch("")
+                onClicked: Hyprland.dispatch("")
             }
             QsWidgets.TitleIcon {
                 color: "#f7768e"
