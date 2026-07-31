@@ -67,19 +67,14 @@ Rectangle {
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
             if (client) {
-                console.log(typeof client.workspace.name)
-                console.log(Hyprland.focusedWorkspace.id)
                 const workspaceName = client.workspace.name
                 if (
                     workspaceName && 
                     workspaceName.startsWith("special:minimized")
                 ){
-                    // HyprClients.activate(client);
-                    // Hyprland.dispatch(`hl.dsp.window.move({ workspace = "${Hyprland.focusedWorkspace.id}" })`)
                     const windowName = workspaceName.replace('special','tag')
-                    console.log(windowName)
-                    Hyprland.dispatch(`hl.dsp.window.move({ workspace = "${Hyprland.focusedWorkspace.id}", window = "${windowName}" }))`)
-	                Hyprland.dispatch(`hl.dsp.window.clear_tags({ window = "${windowName}" }))`)
+                    Hyprland.dispatch(`hl.dsp.window.move({ workspace = "empty", window = "${windowName}" })`)
+	                Hyprland.dispatch(`hl.dsp.window.clear_tags({ window = "${windowName}" })`)
                 }
                 HyprClients.activate(client);
                 return;
