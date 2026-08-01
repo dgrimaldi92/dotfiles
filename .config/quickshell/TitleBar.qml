@@ -49,7 +49,7 @@ PanelWindow {
         anchors.topMargin: topMargin
 
         Text {
-            text: "App Name"
+            text: HyprClients.currentFullScreenAppTitle()
             font.family: "JetBrainsMono Nerd Font"
             font.pixelSize: 11
             horizontalAlignment: Text.AlignHCenter

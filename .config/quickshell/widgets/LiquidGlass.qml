@@ -16,7 +16,8 @@ Rectangle {
     // translucent base — Hyprland blurs whatever is behind this
     visible: height > 0                     // hides the sheen/border children too
     radius: expandedHeight * 0.32
-    color: Qt.rgba(1, 1, 1, 0.10)
+    // color: Qt.rgba(1, 1, 1, 0.10)  //original shadow problem readibility
+    color: Qt.rgba(0.05, 0.05, 0.08, 0.55)
     border.width: 1
     border.color: Qt.rgba(1, 1, 1, 0.22)
 

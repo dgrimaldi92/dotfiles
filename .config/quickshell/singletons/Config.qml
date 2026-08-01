@@ -36,14 +36,20 @@ QtObject {
                 name: "Neovim",
                 icon: "",
                 exec: ["setsid", "uwsm-app", "--", "ghostty", "-e", "nvim"],
-                class: ""
+                class: "nvim"
+            },
+            {
+                name: "ChatGPT",
+                icon: "󰚩",
+                exec: ["omarchy-launch-webapp","https://chatgpt.com"],
+                class: "chatgpt"
             },
             // {
             //     name: "Files",
             //     icon: "system-file-manager",
             //     exec: "thunar",
             //     class: ""
-            // },
+            // },     
             {
                 name: "WhatsApp",
                 icon: "󰖣",
@@ -56,6 +62,30 @@ QtObject {
                 exec: ["xmind"],
                 class: "Xmind"
             },
+            {
+                name: "Grok",
+                icon: "",
+                exec: ["omarchy-launch-webapp","https://grok.com"],
+                class: "grok"
+            },
+            {
+                name: "Gmail",
+                icon: "󰊫",
+                exec: ["omarchy-launch-webapp","https://gmail.com"],
+                class: "gmail"
+            }, 
+            {
+                name: "Google Documents",
+                icon: "",
+                exec: ["omarchy-launch-webapp","https://docs.google.com/document"],
+                class: "document"
+            },
+            {
+                name: "Steam",
+                icon: "",
+                exec: ["uwsm-app", "--", "steam"],
+                class: "steam"
+            }
         ]
     }
 }
