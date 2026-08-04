@@ -16,7 +16,7 @@ QtObject {
             return false;
         }
         const needle = appId.toLowerCase()
-        if (currentToplevel.waylan && dcurrentToplevel.wayland.appId === needle){
+        if (currentToplevel.wayland && currentToplevel.wayland.appId === needle){
             return true
         }
         return (currentToplevel.title ?? "").toLowerCase().includes(needle)
@@ -51,6 +51,6 @@ QtObject {
         if (currentWorkspace && currentWorkspace.hasFullscreen) {
             return currentWorkspace.toplevels.values[0].title
         }
-        return "No fullscren active"
+        return "No fullscreen app"
     }
 }

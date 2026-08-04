@@ -12,6 +12,8 @@ PanelWindow {
     readonly property int barHeight: 28
     readonly property int topMargin: 5
 
+
+
     anchors.top: true
     implicitHeight: control.hovered && HyprClients.isCurrentWorkspaceFullScreen() ? barHeight : 0
     anchors.left: true
@@ -30,7 +32,6 @@ PanelWindow {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: topMargin
-
         property int expandedHeight: 0
         property int additionalHeight: barHeight        // same idiom as DockItem
         width: parent.width

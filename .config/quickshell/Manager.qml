@@ -1,21 +1,18 @@
 import Quickshell
-import Quickshell.Wayland
 import QtQuick
 import Qt.labs.folderlistmodel
 import QtQuick.Layouts
 
 import "widgets" as QsWidgets
+import qs.singletons
+// usr/bin/qs -p /home/dav/.config/quickshell/Manager.qml
 
-
-PanelWindow {
-	WlrLayershell.layer: WlrLayer.Background
-        exclusionMode: ExclusionMode.Ignore
-        anchors {
-        	top: true
-                bottom: true
-                left: true
-                right: true
-        }
+FloatingWindow {
+    visible: true
+    // QS_PATH="file:///home/dav/pCloudDrive" qs -p .config/quickshell/Manager.qml
+    readonly property string path: Quickshell.env("QS_PATH")
+    
+    Component.onCompleted: console.log(`path_manager: ${path}`)
 	color: "transparent" // opaque surface format (see notes above)
 	ListView {
 		width: screen.width
@@ -24,7 +21,7 @@ PanelWindow {
 
 	FolderListModel{
 		id: folderModel
-		folder: "file:///home/dav/pCloudDrive"
+		folder: path
 		sortField: FolderListModel.Name
 		// nameFilters: ["*.qml"]
 
@@ -39,7 +36,7 @@ PanelWindow {
 		gap: 10 
 		Repeater {
 			model: folderModel
-			QsWidgets.DesktopItem { name: fileBaseName; suffix: fileSuffix; isDir: fileIsDir; path: filePath; }
+			QsWidgets.DesktopItem { name: fileBaseName; suffix: fileSuffix; isDir: fileIsDir; isFloating: true }
 		}
 	}
 }
