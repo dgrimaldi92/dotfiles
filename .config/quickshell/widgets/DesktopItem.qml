@@ -11,10 +11,10 @@ Rectangle {
 	property bool isDir
 	property string path
 	property bool isFloating
-	property int iconSize: 42
+	property int iconSize: 32
 	antialiasing: false
 	width: 95
-	height: 99 
+	height: 80 
 	radius: 10 
 	color: Qt.rgba(0,0,0,0.35)
 
@@ -48,21 +48,31 @@ Rectangle {
 					environment: {"QS_PATH": `file://${path}`}
 				})
 			}
+			const exec = []
 			switch (suffix){
 					case "xmind": 
-						return Quickshell.execDetached(["xmind","--ozone-platform=x11", path])
+						 exec.push(...["xmind","--ozone-platform=x11", path]);
+						 break;
 					case "pdf":
-						return Quickshell.execDetached(["brave-origin", path])
+						exec.push(...["brave-origin", path]);
+						break;
 					case "md":
-						return Quickshell.execDetached(["brave-origin", path])
+						exec.push(...["brave-origin", path]);
+						break;
 					case "jpg":
 					case "png":
-						return Quickshell.execDetached(["uwsm-app", "--","brave-origin", path])
+						exec.push(...["uwsm-app", "--","brave-origin", path]);
+						break;
 					case "docx":
-						// return Quickshell.execDetached(["brave-origin", path])
+						// exec.push(...["brave-origin", path])
 					case "zip":
-						// return Quickshell.execDetached(["brave-origin", path])
-				}
+						// exec.push(...["brave-origin", path])
+						exec.push(...[]);
+						break;
+					}
+			Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
+            		Hyprland.dispatch(`hl.dsp.exec_cmd("${exec.join(' ')}", {workspace = "empty"})`)
+			return
 		}
 	}
         FlexboxLayout {

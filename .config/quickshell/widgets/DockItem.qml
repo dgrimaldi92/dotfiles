@@ -67,7 +67,8 @@ Rectangle {
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
             if (client) {
-                const workspaceName = client.workspace.name
+                const workspaceName = client.workspace ? client.workspace.name : undefined
+                console.log(`${workspaceName}, ${client}`)
                 if (
                     workspaceName && 
                     workspaceName.startsWith("special:minimized")
@@ -136,6 +137,7 @@ Rectangle {
 
                 opacity: {
                     const id = modelData.class;
+                    // console.log(`id: ${id}`, HyprClidnts.isdppRunning(id))
                     return HyprClients.isAppRunning(id) ? 1 : 0;
                 }
 

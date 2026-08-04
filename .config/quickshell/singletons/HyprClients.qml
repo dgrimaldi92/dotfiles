@@ -11,11 +11,13 @@ QtObject {
     // readonly property var toplevels: Hyprland.toplevels
     
     function matchAppInstance(appId, currentToplevel) {
+        // console.log(`appId: ${appId}`)
         // console.log(`currentToplevel.title: ${currentToplevel.title}`, appId.toLowerCase())
         if (!appId){
             return false;
         }
         const needle = appId.toLowerCase()
+        // console.log(`needle: ${needle}`,`waylandAppId: ${currentToplevel.wayland.appId}` )
         if (currentToplevel.wayland && currentToplevel.wayland.appId === needle){
             return true
         }
@@ -39,6 +41,12 @@ QtObject {
         //
         // if (!app)
         //     return;
+        if (!app.wayland){
+            const win = app.lastIpcObject
+            console.log("hello")
+            console.log(app.address)
+            Hyprland.dispatch(`hl.dsp.focus({ window = "address:0x${app.address}" })`)
+        }
         app.wayland.activate();
     }
 
