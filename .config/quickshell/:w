@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Wayland
 
 QtObject {
     id: root
@@ -27,22 +26,11 @@ QtObject {
             return true
         }
         // if (needle == "xmind")
-        // console.log(currentToplevel.title,"needle", needle)
-        if ((currentToplevel.title ?? "").toLowerCase().includes(needle) && needle === "xmind"){
-            console.log(currentToplevel.address, currentToplevel.wayland, currentToplevel.workspace, JSON.stringify(currentToplevel.lastIpcObject))
-            for (const v of ToplevelManager.toplevels.values ){
-                // no v.appId === "Xmind" when xmid is closed
- // DEBUG qml: 5640ba274430 null null {}
- // DEBUG qml: {"objectName":"","appId":"Xmind","title":"default","parent":null,"activated":false,"screens":[{"objectName":"","name":"HDMI-A-2","model":"MB16FC","serialNumber":"","x":0,"y":0,"width":1280,"height":800,"physicalPixelDensity":3.7005347593582885,"logicalPixelDensity":3.7795275590551185,"devicePixelRatio":2,"orientation":2,"primaryOrientation":2}],"maximized":false,"minimized":false,"fullscreen":false}
- // DEBUG qml: 5640bacfb930 null null {}
- // DEBUG qml: {"objectName":"","appId":"Xmind","title":"default","parent":null,"activated":false,"screens":[{"objectName":"","name":"HDMI-A-2","model":"MB16FC","serialNumber":"","x":0,"y":0,"width":1280,"height":800,"physicalPixelDensity":3.7005347593582885,"logicalPixelDensity":3.7795275590551185,"devicePixelRatio":2,"orientation":2,"primaryOrientation":2}],"maximized":false,"minimized":false,"fullscreen":false}
- // DEBUG qml: 5640bacb9b60 null null {}
- // DEBUG qml: {"objectName":"","appId":"Xmind","title":"default","parent":null,"activated":false,"screens":[{"objectName":"","name":"HDMI-A-2","model":"MB16FC","serialNumber":"","x":0,"y":0,"width":1280,"height":800,"physicalPixelDensity":3.7005347593582885,"logicalPixelDensity":3.7795275590551185,"devicePixelRatio":2,"orientation":2,"primaryOrientation":2}],"maximized":false,"minimized":false,"fullscreen":false}
-            if(v.appId === "Xmind"){ 
-                console.log(JSON.stringify(v))
-            }}
+        console.log(currentToplevel.title,"needle", needle)
+        if (currentToplevel.title == "xmind"){
+            console.log(JSON.stringify(currentToplevel.title),)
         }
-        return currentToplevel.wayland && (currentToplevel.title ?? "").toLowerCase().includes(needle)
+        return (currentToplevel.title ?? "").toLowerCase().includes(needle)
     }
 
     function getAppInstances(appId) {
