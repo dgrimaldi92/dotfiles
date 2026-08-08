@@ -7,42 +7,23 @@ import Quickshell.Wayland
 
 QtObject {
     id: root
-
+    
+    readonly property var waylandToplevels: Array.from(new Set(ToplevelManager.toplevels.values.filter(w => w.titile && w.title !== "")))
     // Alias so users of the singleton don't need to know about Hyprland.
     // readonly property var toplevels: Hyprland.toplevels
     
     function matchAppInstance(appId, currentToplevel) {
-        // console.log(`appId: ${appId}`)
-        // console.log(`currentToplevel.title: ${currentToplevel.title}`, appId.toLowerCase())
         if (!appId){
             return false;
         }
         const needle = appId.toLowerCase()
-        // console.log(`needle: ${needle}`)
-        // if (needle == "xmind"){
-        //     console.log(`needle: ${needle}`,`waylandAppId: ${JSON.stringify(currentToplevel.wayland)}`, currentToplevel.wayland && currentToplevel.wayland.appId === needle)
-        // }
         if (currentToplevel.wayland && currentToplevel.wayland.appId === needle){
-            // console.log(true)
             return true
         }
-        // if (needle == "xmind")
-        // console.log(currentToplevel.title,"needle", needle)
-        if ((currentToplevel.title ?? "").toLowerCase().includes(needle) && needle === "xmind"){
-            console.log(currentToplevel.address, currentToplevel.wayland, currentToplevel.workspace, JSON.stringify(currentToplevel.lastIpcObject))
-            for (const v of ToplevelManager.toplevels.values ){
-                // no v.appId === "Xmind" when xmid is closed
- // DEBUG qml: 5640ba274430 null null {}
- // DEBUG qml: {"objectName":"","appId":"Xmind","title":"default","parent":null,"activated":false,"screens":[{"objectName":"","name":"HDMI-A-2","model":"MB16FC","serialNumber":"","x":0,"y":0,"width":1280,"height":800,"physicalPixelDensity":3.7005347593582885,"logicalPixelDensity":3.7795275590551185,"devicePixelRatio":2,"orientation":2,"primaryOrientation":2}],"maximized":false,"minimized":false,"fullscreen":false}
- // DEBUG qml: 5640bacfb930 null null {}
- // DEBUG qml: {"objectName":"","appId":"Xmind","title":"default","parent":null,"activated":false,"screens":[{"objectName":"","name":"HDMI-A-2","model":"MB16FC","serialNumber":"","x":0,"y":0,"width":1280,"height":800,"physicalPixelDensity":3.7005347593582885,"logicalPixelDensity":3.7795275590551185,"devicePixelRatio":2,"orientation":2,"primaryOrientation":2}],"maximized":false,"minimized":false,"fullscreen":false}
- // DEBUG qml: 5640bacb9b60 null null {}
- // DEBUG qml: {"objectName":"","appId":"Xmind","title":"default","parent":null,"activated":false,"screens":[{"objectName":"","name":"HDMI-A-2","model":"MB16FC","serialNumber":"","x":0,"y":0,"width":1280,"height":800,"physicalPixelDensity":3.7005347593582885,"logicalPixelDensity":3.7795275590551185,"devicePixelRatio":2,"orientation":2,"primaryOrientation":2}],"maximized":false,"minimized":false,"fullscreen":false}
-            if(v.appId === "Xmind"){ 
-                console.log(JSON.stringify(v))
-            }}
+        if (currentToplevel.wayland && currentToplevel.title){
+            return currentToplevel.title.toLowerCase().includes(needle)
         }
-        return currentToplevel.wayland && (currentToplevel.title ?? "").toLowerCase().includes(needle)
+        return waylandToplevels.find(wayland => needle === wayland.appId.toLowerCase())
     }
 
     function getAppInstances(appId) {
@@ -57,10 +38,6 @@ QtObject {
         return Hyprland.toplevels.values.some(toplevel => matchAppInstance(appId, toplevel)) 
     }
 
-    // function getAppByTitle(title){
-    //     return Hyprland.toplevels.values.find(toplevel => 
-    // }
-
     function activate(app) {
         Hyprland.refreshToplevels()
         // const appInst = getAppInstances(appId);
@@ -70,11 +47,11 @@ QtObject {
         //     return;
         if (!app.wayland){
             const win = app.lastIpcObject
-            console.log("hello")
-            console.log(JSON.stringify(app))
-            for (const t of Hyprland.toplevels.values){
-                console.log(t.address, t.wayland?.appId, t.initialTitle)
-            }
+            // console.log("hello")
+            // console.log(JSON.stringify(app))
+            // for (const t of Hyprland.toplevels.values){
+            //     console.log(t.address, t.wayland?.appId, t.initialTitle)
+            // }
             Hyprland.refreshToplevels()
             Hyprland.dispatch(`hl.dsp.focus({ window = "class:^(Xmind)$" })`)
             Hyprland.refreshToplevels()

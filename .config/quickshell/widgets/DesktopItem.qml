@@ -4,6 +4,7 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import qs.singletons
 import Quickshell.Hyprland
+import Quickshell.Io
 
 Rectangle {
 	property string name
@@ -43,10 +44,13 @@ Rectangle {
 		hoverEnabled: true
 		onClicked: {
 			if (isDir) {
-				return Quickshell.execDetached({
-					command: ["qs", "-p", Quickshell.shellPath("Manager.qml")],
+				Quickshell.execDetached({
 					environment: {"QS_PATH": `file://${path}`}
 				})
+				const exec =["qs", "-p", Quickshell.shellPath("Manager.qml")]
+				Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
+            			return Hyprland.dispatch(`hl.dsp.exec_cmd("${exec.join(' ')}", {workspace = "empty"})`)
+				
 			}
 			const exec = []
 			switch (suffix){
