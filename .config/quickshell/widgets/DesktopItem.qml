@@ -44,13 +44,25 @@ Rectangle {
 		hoverEnabled: true
 		onClicked: {
 			if (isDir) {
-				Quickshell.execDetached({
-					environment: {"QS_PATH": `file://${path}`}
-				})
-				const exec =["qs", "-p", Quickshell.shellPath("Manager.qml")]
-				Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
-            			return Hyprland.dispatch(`hl.dsp.exec_cmd("${exec.join(' ')}", {workspace = "empty"})`)
+				//  Quickshell.execDetached({
+				// 	environment: {"QS_PATH": `file://${path}`}
+				// })
+				// Quickshell.execDetached({
+				// 	command: ["sh", "-c", "export QS_PATH=new_value"],
+				// 	environment: ({
+				// 	  QS_PATH: `file://${path}`
+				// 	})
+				// })
+				// const exec =["qs", "-p", Quickshell.shellPath("Manager.qml")]
 				
+				const qsPath = `file://${path}`
+				// const envCommand = `hyprctl keyword env QS_PATH "${qsPath}"`
+				// console.log(envCommand)
+				// Quickshell.execDetached(["hyprctl", "eval", `hl.dsp.exec_cmd(${envCommand})`]);
+				
+				const cmd = ["env", `QS_PATH='${qsPath}'`, "QS_APP_ID='file-manager'", "qs", "-p", `${Quickshell.shellPath("Manager.qml")}`]
+				Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
+            			return Hyprland.dispatch(`hl.dsp.exec_cmd("${cmd.join(' ')}", {workspace = "empty"})`)
 			}
 			const exec = []
 			switch (suffix){

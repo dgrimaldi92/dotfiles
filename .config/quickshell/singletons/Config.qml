@@ -89,8 +89,8 @@ QtObject {
             {
                 name: "Folder",
                 icon: "",
-                exec: ["qs", "-p", ".config/quickshell/Manager.qml"],
-                class: "steam"
+                exec: ["env","QS_APP_ID='file-manager'", "qs", "-p", ".config/quickshell/Manager.qml"],
+                class: "file-manager"
             }
         ]
         property Gradient glassGradient: Gradient {

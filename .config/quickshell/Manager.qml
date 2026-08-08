@@ -13,6 +13,10 @@ FloatingWindow {
     readonly property string path: Quickshell.env("QS_PATH")
     
     Component.onCompleted: console.log(`path_manager: ${path}`)
+    Text {
+	    text: `path: ${path}`
+	    color: "white"
+    }
 	color: "transparent" // opaque surface format (see notes above)
 	ListView {
 		width: screen.width

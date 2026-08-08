@@ -13,6 +13,7 @@ QtObject {
     // readonly property var toplevels: Hyprland.toplevels
     
     function matchAppInstance(appId, currentToplevel) {
+        console.log(appId)
         if (!appId){
             return false;
         }
@@ -53,7 +54,7 @@ QtObject {
             //     console.log(t.address, t.wayland?.appId, t.initialTitle)
             // }
             Hyprland.refreshToplevels()
-            Hyprland.dispatch(`hl.dsp.focus({ window = "class:^(Xmind)$" })`)
+            Hyprland.dispatch(`hl.dsp.focus({ window = "class:^(Xmind)$" })`) //TODO remove Xmind
             Hyprland.refreshToplevels()
             return
         }
