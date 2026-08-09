@@ -91,6 +91,13 @@ QtObject {
                 icon: "",
                 exec: ["env","QS_APP_ID='file-manager'", "qs", "-p", ".config/quickshell/Manager.qml"],
                 class: "file-manager"
+            },
+            {
+                name: "Heroic",
+                icon: "󰖺",
+                exec: ["uwsm-app", "--", "heroic"],
+                class: "heroic"
+                
             }
         ]
         property Gradient glassGradient: Gradient {

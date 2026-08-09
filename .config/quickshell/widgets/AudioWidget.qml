@@ -1,3 +1,4 @@
+
 import QtQuick
 import Quickshell
 import qs.singletons
@@ -23,7 +24,7 @@ Rectangle {
 
     Text {
         anchors.centerIn: parent
-        text: "󰂯"
+        text: ""
         font.family: "Symbols Nerd Font"
         font.pixelSize: 12
         color: ThemeManager.fgPrimary
@@ -35,7 +36,7 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            Quickshell.execDetached((["setsid", "uwsm-app", "--", "ghostty", "-e", "bluetui"]));
+            Quickshell.execDetached(["setsid", "uwsm-app", "--", "ghostty", "-e", "wiremix"])
         }
     }
 }

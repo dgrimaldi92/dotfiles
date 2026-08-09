@@ -135,6 +135,8 @@ Scope {
                     spacing: 20
 
                     QsWidgets.Wifi {}
+                    QsWidgets.Bluetooth {}
+                    QsWidgets.AudioWidget {}
                     QsWidgets.Terminal {}
                     QsWidgets.GpuWidget {}
                     QsWidgets.CpuWidget {}
