@@ -41,14 +41,14 @@ Scope {
 
                 property int horizontalPadding: 10
                 property int expandedHeight: Config.data.iconSize + variants.spacing + 8
-                property int additionalHeight: 0        // same idiom as DockItem
+                property int additionalHeight: 1         // same idiom as DockItem
                 width: row.width + horizontalPadding * 2
                 height: additionalHeight
 
                 Timer {
                     id: glassTimer
                     repeat: false
-                    property int pendingHeight: 0
+                    property int pendingHeight: 1  
                     onTriggered: glass.additionalHeight = pendingHeight
                 }
                 function delay(h, latestIndex) {
@@ -90,7 +90,7 @@ Scope {
 
             Rectangle {
                 id: dock
-                height: parent.height
+                height: parent.height 
                 width: parent.width
                 anchors.bottom: parent.bottom
                 color: "transparent"
@@ -102,6 +102,7 @@ Scope {
                     rows: 1
 
                     horizontalItemAlignment: Grid.AlignHCenter
+
                     verticalItemAlignment: Grid.AlignBottom
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 0

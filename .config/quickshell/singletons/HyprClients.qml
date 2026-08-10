@@ -8,27 +8,36 @@ import Quickshell.Wayland
 QtObject {
     id: root
     
-    readonly property var waylandToplevels: Array.from(new Set(ToplevelManager.toplevels.values.filter(w => w.titile && w.title !== "")))
+    readonly property var waylandToplevels: Array.from(new Set(ToplevelManager.toplevels.values.filter(val => val.title && val.title !== "")))
     // Alias so users of the singleton don't need to know about Hyprland.
     // readonly property var toplevels: Hyprland.toplevels
     
     function matchAppInstance(appId, currentToplevel) {
-        console.log(appId)
-        if (!appId){
-            return false;
-        }
-        const needle = appId.toLowerCase()
-        if (currentToplevel.wayland && currentToplevel.wayland.appId === needle){
-            return true
-        }
-        if (currentToplevel.wayland && currentToplevel.title){
-            return currentToplevel.title.toLowerCase().includes(needle)
-        }
-        return waylandToplevels.find(wayland => needle === wayland.appId.toLowerCase())
+        if (!appId) return false;
+
+        const needle = appId.toLowerCase();
+
+        // HyprlandToplevel → HyprlandClient → initialClass
+        const waylandAppId = currentToplevel.wayland?.appId?.toLowerCase();
+        if (waylandAppId && waylandAppId.includes(needle)) return true;
+
+        // Title fallback (still scoped to this specific toplevel)
+        if (currentToplevel.title && currentToplevel.title.toLowerCase().includes(needle)) return true;
+
+        return false;
     }
 
     function getAppInstances(appId) {
+        const needle = appId.toLowerCase();
+        const manager = ToplevelManager.toplevels.values.find(toplevel =>
+            (toplevel.appId && toplevel.appId.toLowerCase().includes(needle)) ||
+            (toplevel.title && toplevel.title.toLowerCase().includes(needle))
+        );   
+        if (!manager){
+            return
+        }
         return Hyprland.toplevels.values.find(toplevel => matchAppInstance(appId, toplevel));
+
     }
 
     function countAppInstances(appId) {
@@ -36,7 +45,13 @@ QtObject {
     }
 
     function isAppRunning(appId) {
-        return Hyprland.toplevels.values.some(toplevel => matchAppInstance(appId, toplevel)) 
+        // return Hyprland.toplevels.values.some(toplevel => matchAppInstance(appId, toplevel)) 
+        if (!appId) return false;
+        const needle = appId.toLowerCase();
+        return ToplevelManager.toplevels.values.some(toplevel =>
+            (toplevel.appId && toplevel.appId.toLowerCase().includes(needle)) ||
+            (toplevel.title && toplevel.title.toLowerCase().includes(needle))
+        );   
     }
 
     function activate(app) {
@@ -47,14 +62,9 @@ QtObject {
         // if (!app)
         //     return;
         if (!app.wayland){
-            const win = app.lastIpcObject
-            // console.log("hello")
-            // console.log(JSON.stringify(app))
-            // for (const t of Hyprland.toplevels.values){
-            //     console.log(t.address, t.wayland?.appId, t.initialTitle)
-            // }
-            Hyprland.refreshToplevels()
-            Hyprland.dispatch(`hl.dsp.focus({ window = "class:^(Xmind)$" })`) //TODO remove Xmind
+            if (app.title === "xmind") {
+                Hyprland.dispatch(`hl.dsp.focus({ window = "class:^(Xmind)$" })`) 
+            }
             Hyprland.refreshToplevels()
             return
         }

@@ -38,9 +38,9 @@ hl.dispatch
 | `quickshell` | status bar | `pacman -s quickshell` |
 | `quickshell` | wallpaper | `pacman -s quickshell` |
 | `uwsm uwsm-app` | session manager (wraps app launches) | `pacman -s uwsm uwsm-app` |
-| `wireplumber` | for audio manager | `sudo pacman -S wireplumber` |
+| `wireplumber` | for audio manager | `sudo pacman -S wireplumber pipewire pipewire-alsa wiremix alsa-utils ` |
 ---
 
 **other packages**: qutebrowser,bluetui,wiremix, ghostyy, yazi, nvim, lib32-nvidia-utils, btop, lm_sensors, impala
 
-**optional**: upower, retroarch, Heroic
+**optional**: upower, retroarch, heroic-games-launcher-bin

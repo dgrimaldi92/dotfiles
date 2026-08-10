@@ -68,7 +68,6 @@ Rectangle {
             const client = HyprClients.getAppInstances(modelData.class);
             if (client) {
                 const workspaceName = client.workspace ? client.workspace.name : undefined
-                console.log(`${workspaceName}, ${client}`)
                 if (
                     workspaceName && 
                     workspaceName.startsWith("special:minimized")

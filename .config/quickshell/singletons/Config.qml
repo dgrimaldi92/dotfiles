@@ -59,7 +59,7 @@ QtObject {
             {
                 name: "Xmind",
                 icon: "",
-                exec: ["xmind"],
+                exec: ["xmind", "-ozone-platform=x11"],
                 class: "Xmind"
             },
             {

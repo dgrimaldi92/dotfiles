@@ -67,17 +67,17 @@ Rectangle {
 			const exec = []
 			switch (suffix){
 					case "xmind": 
-						 exec.push(...["xmind","--ozone-platform=x11", path]);
+						 exec.push(...["xmind","--ozone-platform=x11", `'${path}'`]);
 						 break;
 					case "pdf":
-						exec.push(...["brave-origin", path]);
+						exec.push(...["brave-origin", `'${path}'`]);
 						break;
 					case "md":
-						exec.push(...["brave-origin", path]);
+						exec.push(...["brave-origin",  `'${path}'`]);
 						break;
 					case "jpg":
 					case "png":
-						exec.push(...["uwsm-app", "--","brave-origin", path]);
+						exec.push(...["uwsm-app", "--","brave-origin",  `'${path}'`]);
 						break;
 					case "docx":
 						// exec.push(...["brave-origin", path])
