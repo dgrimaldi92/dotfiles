@@ -14,13 +14,12 @@ Rectangle {
 	property bool isFloating
 	property int iconSize: 32
 	antialiasing: false
-	width: 95
-	height: 80 
 	radius: 10 
 	color: Qt.rgba(0,0,0,0.35)
+	clip: true
 
 	
-	// gradient: "SunnyMorning" 
+	// // gradient: "SunnyMorning" 
 	gradient: Gradient {
 		orientation: Gradient.Vertical
 		GradientStop { position: 0.06; color: "#80FFFFFF" }
@@ -44,21 +43,8 @@ Rectangle {
 		hoverEnabled: true
 		onClicked: {
 			if (isDir) {
-				//  Quickshell.execDetached({
-				// 	environment: {"QS_PATH": `file://${path}`}
-				// })
-				// Quickshell.execDetached({
-				// 	command: ["sh", "-c", "export QS_PATH=new_value"],
-				// 	environment: ({
-				// 	  QS_PATH: `file://${path}`
-				// 	})
-				// })
-				// const exec =["qs", "-p", Quickshell.shellPath("Manager.qml")]
 				
 				const qsPath = `file://${path}`
-				// const envCommand = `hyprctl keyword env QS_PATH "${qsPath}"`
-				// console.log(envCommand)
-				// Quickshell.execDetached(["hyprctl", "eval", `hl.dsp.exec_cmd(${envCommand})`]);
 				
 				const cmd = ["env", `QS_PATH='${qsPath}'`, "QS_APP_ID='file-manager'", "qs", "-p", `${Quickshell.shellPath("Manager.qml")}`]
 				Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
@@ -94,7 +80,6 @@ Rectangle {
         FlexboxLayout {
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            height: parent.length
 	    direction: FlexboxLayout.Column
 	    width: parent.width 
 	    wrap: FlexboxLayout.Wrap
@@ -104,7 +89,7 @@ Rectangle {
                 height:iconSize 
 
                 color: "transparent"
-	    Text {
+    		Text {
                     width: parent.width
                     height: width
 		    text: {
@@ -130,8 +115,16 @@ Rectangle {
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: iconSize
                     horizontalAlignment: Text.AlignHCenter
-                    color: "#eecdb4f8"
-        	}
+		    color: {
+			switch (suffix){
+				case "xmind":
+					return "#e95454"
+				case "pdf":
+					return "#b30b00"
+			}
+			return "#eecdb4f8" 
+		    }
+	    	}
 	}
 
             Rectangle {
@@ -145,7 +138,7 @@ Rectangle {
                     width: parent.width
                     text: name 
                     font.family: "JetBrainsMono Nerd Font"
-                    font.pixelSize: 10 
+                    font.pixelSize: 8 
                     horizontalAlignment: Text.AlignHCenter
                     color: "#FFFFFF"
 		    elide: Text.ElideRight

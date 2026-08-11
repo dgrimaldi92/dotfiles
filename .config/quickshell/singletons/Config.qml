@@ -100,19 +100,19 @@ QtObject {
                 
             }
         ]
-        property Gradient glassGradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.00; color: "#D9FFFFFF" }  // top specular
-            GradientStop { position: 0.06; color: "#38FFFFFF" }
-            GradientStop { position: 0.12; color: "#14FFFFFF" }
-            GradientStop { position: 0.30; color: "#0DB4D2FF" }  // glass body
-            GradientStop { position: 0.48; color: "#08A0C8FF" }
-            // GradientStop { position: 0.50; color: "#2EFFFFFF" }  // mid crease
-            // GradientStop { position: 0.52; color: "#08A0C8FF" }
-            GradientStop { position: 0.75; color: "#0FB4CDFF" }  // lower body
-            GradientStop { position: 0.88; color: "#1FC8E1FF" }
-            GradientStop { position: 0.94; color: "#66FFFFFF" }  // bottom rim
-            GradientStop { position: 1.00; color: "#0DFFFFFF" }
-        } 
+        // property Gradient glassGradient: Gradient {
+        //     orientation: Gradient.Vertical
+        //     GradientStop { position: 0.00; color: "#D9FFFFFF" }  // top specular
+        //     GradientStop { position: 0.06; color: "#38FFFFFF" }
+        //     GradientStop { position: 0.12; color: "#14FFFFFF" }
+        //     GradientStop { position: 0.30; color: "#0DB4D2FF" }  // glass body
+        //     GradientStop { position: 0.48; color: "#08A0C8FF" }
+        //     // GradientStop { position: 0.50; color: "#2EFFFFFF" }  // mid crease
+        //     // GradientStop { position: 0.52; color: "#08A0C8FF" }
+        //     GradientStop { position: 0.75; color: "#0FB4CDFF" }  // lower body
+        //     GradientStop { position: 0.88; color: "#1FC8E1FF" }
+        //     GradientStop { position: 0.94; color: "#66FFFFFF" }  // bottom rim
+        //     GradientStop { position: 1.00; color: "#0DFFFFFF" }
+        // } 
     }
 }

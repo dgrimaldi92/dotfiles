@@ -1,122 +1,131 @@
 import Quickshell
-import Quickshell.Widgets
 import QtQuick
-import Quickshell.Io
-import QtQuick.Controls
-import QtQuick.Layouts
 import Quickshell.Wayland
 
 import "widgets" as QsWidgets
 import qs.singletons
 
 Scope {
-    property string name: "default"
+    id: root
 
-    property list<int> screenIds: Quickshell.screens.map((_, i) => i)
-    property list<ShellScreen> screens: Quickshell.screens.filter((_, i) => screenIds.includes(i))
+    readonly property int iconGap: 8
 
     Variants {
-        id: variants
-        property int spacing: 8
-        model: screens
+        model: Quickshell.screens
 
         PanelWindow {
             id: window
+
+            required property var modelData
+            screen: modelData
+
+            readonly property var apps: Config.data.apps
+            readonly property int length: (Config.data.iconSize + root.iconGap) * apps.length
+            readonly property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? 0.3) + 0.775)
+
+            // ── fullscreen auto-hide ──────────────────────────────
+            readonly property bool fullscreen: HyprClients.currentWorkspaceFullScreen
+            readonly property bool revealed: !fullscreen || edgeHover.hovered
+
+            anchors { left: false; right: false; top: false; bottom: true }
+
+            implicitWidth: length + 500
+            implicitHeight: Math.max(breadth, glass.expandedHeight)
+            color: "transparent"
+
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.namespace: "quickshell:dock"
+
+            // A fullscreen window stacks above `top`, so it wins the pointer over
+            // anything on that layer. Only escalate while fullscreen, so a
+            // notification daemon on Overlay still covers the dock the rest of the time.
+            WlrLayershell.layer:  WlrLayer.Overlay
+
+            HoverHandler { id: edgeHover }
+
+            // 1px trigger strip, only while fullscreen
+            Item {
+                id: hotzone
+                anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+                height: window.fullscreen ? 1 : 0
+            }
+
             mask: Region {
-                item: glass
+                item: glass                    // height 0 when collapsed → contributes nothing
                 regions: [
+                    Region { item: hotzone },  // height 0 when not fullscreen → ditto
                     Region {
-                        item: row
+                        x: row.x
+                        y: row.y
+                        width: window.revealed ? row.width : 0
+                        height: window.revealed ? row.height : 0
                     }
                 ]
             }
-            
+
+            onRevealedChanged: if (!revealed) collapse()
+
+            function setExpanded(expanded, startIndex) {
+                const from = startIndex ?? row.current;
+                glass.delay(expanded ? glass.expandedHeight : 0, from);
+                for (let i = 0; i < repeater.count; i++) {
+                    const item = repeater.itemAt(i);
+                    if (item)
+                        item.delay(expanded ? Config.data.iconSize / 4 + root.iconGap : 0, from);
+                }
+            }
+            function expand(startIndex) { setExpanded(true, startIndex); }
+            function collapse(startIndex) { setExpanded(false, startIndex); }
+
             QsWidgets.LiquidGlass {
                 id: glass
 
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottomMargin: 0 
+                anchors.bottom: parent.bottom
 
                 property int horizontalPadding: 10
-                property int expandedHeight: Config.data.iconSize + variants.spacing + 8
-                property int additionalHeight: 1         // same idiom as DockItem
                 width: row.width + horizontalPadding * 2
+
+                property int expandedHeight: Config.data.iconSize + root.iconGap + 8
+                property int additionalHeight: 0
                 height: additionalHeight
 
                 Timer {
                     id: glassTimer
                     repeat: false
-                    property int pendingHeight: 1  
+                    property int pendingHeight: 0
                     onTriggered: glass.additionalHeight = pendingHeight
                 }
+
                 function delay(h, latestIndex) {
                     glassTimer.pendingHeight = h;
-                    // rise immediately; on hide, wait for the farthest icon to finish descending
-                    glassTimer.interval = h ? 0 : Math.max(latestIndex, window.apps.length - 1 - latestIndex) * 25;
+                    glassTimer.interval = h ? 0 : Math.max(latestIndex, repeater.count - 1 - latestIndex) * 25;
                     glassTimer.restart();
                 }
             }
 
-            anchors {
-                left: false
-                right: false
-                top: false
-                bottom: true
-            }
+            Grid {
+                id: row
 
-            readonly property var apps: Config.data.apps
-            property int length: (Config.data.iconSize + variants.spacing) * apps.length
-            property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? .3) + 0.775)
+                visible: window.revealed       // don't draw over fullscreen content
 
-            implicitWidth: length + 500
-            implicitHeight: breadth 
-            color: "transparent"
+                columns: window.apps.length
+                rows: 1
+                spacing: 1
 
-            function expand(startIndex) {
-                glass.delay(glass.expandedHeight, startIndex ?? row.current);
-                apps.forEach((_, ind) => {
-                    repeater.itemAt(ind).delay(Config.data.iconSize / 4 + variants.spacing, startIndex); // if move y enabled use *1.25
+                horizontalItemAlignment: Grid.AlignHCenter
+                verticalItemAlignment: Grid.AlignBottom
 
-                });
-            }
-            function collapse(startIndex) {
-                glass.delay(0, startIndex);
-                apps.forEach((_, ind) => {
-                    repeater.itemAt(ind).delay(0, startIndex);
-                });
-            }
-
-            Rectangle {
-                id: dock
-                height: parent.height 
-                width: parent.width
                 anchors.bottom: parent.bottom
-                color: "transparent"
+                anchors.horizontalCenter: parent.horizontalCenter
 
-                Grid {
-                    id: row
+                property int current: -1
 
-                    columns: window.apps.length
-                    rows: 1
+                Repeater {
+                    id: repeater
+                    model: window.apps
 
-                    horizontalItemAlignment: Grid.AlignHCenter
-
-                    verticalItemAlignment: Grid.AlignBottom
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 0
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 1
-
-                    property int current: -1
-
-                    Repeater {
-                        id: repeater
-                        model: window.apps
-
-                        QsWidgets.DockItem {}
-                    }
+                    QsWidgets.DockItem {}
                 }
             }
         }
