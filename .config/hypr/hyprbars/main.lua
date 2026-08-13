@@ -29,7 +29,7 @@ function minimize_toggle()
 	local wsName = "special:minimized_" .. minimizedClass
 	local tagName = "minimized_" .. minimizedClass
 
-	hl.dispatch(hl.dsp.window.tag({ tag = tagName, window = win }))
+	hl.dispatch(hl.dsp.window.tag({ tag = tagName, window = activeWindow }))
 	hl.dispatch(hl.dsp.window.move({ workspace = wsName, follow = false }))
 	-- if hl.get_workspace(wsName) then
 	-- 	hl.dispatch(hl.dsp.window.move({ workspace = hl.get_active_workspace(), window = "tag:" .. tagName }))

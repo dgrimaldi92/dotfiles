@@ -8,6 +8,7 @@ o.exec_on_start("dbus:q-update-activation-environment --systemd --all")
 o.exec_on_start("ghostty")
 o.exec_on_start("systemctl --user start pipewire pipewire-pulse wireplumber")
 o.exec_on_start("systemctl start bluetooth")
+o.exec_on_start("systemctl start openrazer-daemon")
 -- o.exec_on_start("hyprpaper") -- sudo pacman -R hyprpaper
 
 o.exec_on_start("wl-paste --type text --watch cliphist store")

@@ -40,7 +40,7 @@ QtObject {
             },
             {
                 name: "ChatGPT",
-                icon: "󰚩",
+                icon: "",
                 exec: ["omarchy-launch-webapp","https://chatgpt.com"],
                 class: "chatgpt"
             },
@@ -59,7 +59,7 @@ QtObject {
             {
                 name: "Xmind",
                 icon: "",
-                exec: ["xmind", "-ozone-platform=x11"],
+                exec: ["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5"],
                 class: "Xmind"
             },
             {

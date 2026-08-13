@@ -1,25 +1,31 @@
 #!/bin/bash
 
 active=$(hyprctl activewindow -j)
-addr=$(echo "$active" | jq -r ".address")
+addr=$(echo "$active" | jaq -r ".address")
 window="address:$addr"
 
+# Get monitor information for the current window
+monitor_info=$(hyprctl activewindow -j | jaq '.[0]')
+width=$(echo "$monitor_info" | jaq -r ".width")
+height=$(echo "$monitor_info" | jaq -r ".height")
+scale=$(echo "$monitor_info" | jaq -r ".scale")
+
+# Scale-aware logical pixels (Hyprland works in logical coords)
+log_width=$(echo "$width $scale" | awk '{printf "%d", $1 / $2}')
+log_height=$(echo "$height $scale" | awk '{printf "%d", $1 / $2}')
+
 hypr_dispatch() {
-  hyprctl dispatch "$1" >/dev/null 2>&1 || hyprctl dispatch "$2" "$window" >/dev/null
+  hyprctl dispatch "$1" >/dev/null 2>&1 || hyprctl dispatch "$2" >/dev/null
 }
 
-# Make sure the window is floating first
 hypr_dispatch \
-  "hl.dsp.window.float({ window = \"$window\", action = \"toggle_on\" })" \
-  togglefloating
+  "hl.dsp.window.float({ window = \"$window\", action = \"set\" })" \
+  "togglefloating $window"
 
-# Center it
 hypr_dispatch \
-  "hl.dsp.window.center({ window = \"$window\" })" \
-  centerwindow
+  "hl.dsp.window.resize({ window = \"$window\", x = $log_width, y = $log_height })" \
+  "resizewindowpixel exact $log_width $log_height,$window"
 
-# Nudge down by hyprbars bar_height (28px) so the bar doesn't get eaten
-# by your Quickshell top bar reserved area — tune this value if needed
 hypr_dispatch \
-  "hl.dsp.window.move({ window = \"$window\", x = 0, y = 28, relative = true })" \
-  "movewindowpixel 0 28"
+  "hl.dsp.window.move({ window = \"$window\", x = 0, y = 0 })" \
+  "movewindowpixel exact 0 0,$window"

@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# # ~/.local/bin/handy-bt   —   usage: handy-bt [toggle|reset]
+# set -euo pipefail
+#
+# HEADSETS=(
+#   "80:99:E7:2B:A3:06"   # preferred mic
+#   "EC:46:54:A2:B0:AD"   # fallback
+# )
+#
+# STATE="$XDG_RUNTIME_DIR/handy-bt.state"
+#
+# notify() { hyprctl notify -1 3000 "rgb(ffffff)" "$1" >/dev/null 2>&1 || true; }
+#
+# has_card()  { pactl list short cards   | grep -q "bluez_card\.$1"; }
+# bt_source() { pactl list short sources | awk -v u="$1" '$2 ~ u {print $2; exit}'; }
+#
+# all_a2dp() {
+#     local mac u
+#     for mac in "${HEADSETS[@]}"; do
+#         u="${mac//:/_}"
+#         has_card "$u" && pactl set-card-profile "bluez_card.$u" a2dp-sink 2>/dev/null || true
+#     done
+# }
+#
+# start() {
+#     local mac u="" src=""
+#     for mac in "${HEADSETS[@]}"; do
+#         if has_card "${mac//:/_}"; then u="${mac//:/_}"; break; fi
+#     done
+#     if [[ -z $u ]]; then
+#         notify "No headset connected"; exit 0
+#     fi
+#
+#     { echo "$u"; pactl get-default-source; } > "$STATE"
+#
+#     if ! pactl set-card-profile "bluez_card.$u" headset-head-unit-msbc 2>/dev/null \
+#        && ! pactl set-card-profile "bluez_card.$u" headset-head-unit 2>/dev/null; then
+#         notify "Profile switch failed"
+#         rm -f "$STATE"; exit 1
+#     fi
+#
+#     for _ in {1..20}; do
+#         src="$(bt_source "$u")"; [[ -n $src ]] && break; sleep 0.1
+#     done
+#     if [[ -z $src ]]; then
+#         notify "HFP source never appeared"
+#         rm -f "$STATE"; all_a2dp; exit 1
+#     fi
+#
+#     pactl set-default-source "$src"
+#     sleep 0.2
+#     pkill -USR2 -x -n handy || true
+#     notify "handy recording starts"
+# }
+#
+# stop() {
+#     local u prev
+#     if ! { read -r u; read -r prev; } < "$STATE" 2>/dev/null; then
+#         notify "Corrupt state, resetting"
+#         rm -f "$STATE"; all_a2dp; exit 1
+#     fi
+#     pkill -USR2 -x -n handy || true
+#     sleep 0.3
+#     pactl set-default-source "$prev" 2>/dev/null || true
+#     if has_card "$u"; then
+#         pactl set-card-profile "bluez_card.$u" a2dp-sink 2>/dev/null \
+#             || notify "Failed to restore A2DP — try 'handy-bt reset'"
+#     fi
+#     rm -f "$STATE"
+#     notify "handy recording stop"
+# }
+#
+# case "${1:-toggle}" in
+#     toggle) if [[ -e $STATE ]]; then stop; else start; fi ;;
+#     reset)  rm -f "$STATE"; all_a2dp
+#             notify "Back to A2DP" ;;
+#     *)      echo "usage: handy-bt [toggle|reset]" >&2; exit 2 ;;
+# esac
+
