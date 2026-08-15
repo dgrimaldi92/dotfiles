@@ -133,7 +133,8 @@ Scope {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 20
-
+                    
+                    QsWidgets.Record {}
                     QsWidgets.Wifi {}
                     QsWidgets.Bluetooth {}
                     QsWidgets.AudioWidget {}

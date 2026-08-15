@@ -10,8 +10,8 @@ o.bind("SUPER + ALT + F", "Full width", hl.dsp.window.fullscreen({ mode = "maxim
 o.bind("SUPER + O", "Pop window out (float & pin)", "omarchy-hyprland-window-pop")
 o.bind("SUPER + L", "Toggle workspace layout", "omarchy-hyprland-workspace-layout-toggle")
 
-o.bind("SUPER + H", "Activate transcription", "pkill -URS2 -n handy")
-o.bind("SUPER + SHIFT + H", "Activate transcription", "omarchy-setup-handy reset")
+o.bind("SUPER + H", "Activate transcription", "omarchy-setup-handy")
+-- o.bind("SUPER + SHIFT + H", "Activate transcription", "omarchy-setup-handy reset")
 
 o.bind("SUPER + LEFT", "Focus on left window", hl.dsp.focus({ direction = "l" }))
 o.bind("SUPER + RIGHT", "Focus on right window", hl.dsp.focus({ direction = "r" }))

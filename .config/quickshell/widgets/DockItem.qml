@@ -54,16 +54,9 @@ Rectangle {
         id: itemMouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onEntered: {
-            row.current = index;
-            window.expand();
-        }
-        onExited: {
-            if (row.current == index) {
-                row.current = -1;
-                window.collapse(index);
-            }
-        }
+        onEntered: window.hoverEnter(index) 
+        onExited: window.hoverLeave(index) 
+
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
             if (client) {

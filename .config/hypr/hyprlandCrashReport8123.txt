@@ -1,12 +1,12 @@
 --------------------------------------------
    Hyprland Crash Report
 --------------------------------------------
-I tried so hard, and got so far...
-
+I tried so hard, and got so far...  
 Hyprland received signal 6(ABRT)
 Version: 39d7e209c79d451efab1b21151d5938289da838d
 Tag: v0.55.2
 Date: Sat May 16 12:59:19 2026
+
 Flags:
 
 System info:

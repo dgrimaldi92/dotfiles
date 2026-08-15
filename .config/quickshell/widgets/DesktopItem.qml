@@ -53,7 +53,7 @@ Rectangle {
 			const exec = []
 			switch (suffix){
 					case "xmind": 
-						 exec.push(...["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", `'${path}'`]);
+						 exec.push(...["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling", `'${path}'`]);
 						 break;
 					case "pdf":
 						exec.push(...["brave-origin", `'${path}'`]);

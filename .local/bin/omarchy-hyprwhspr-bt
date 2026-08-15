@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+# ~/.local/bin/omarchy-hyprwhspr-bt   —   usage: omarchy-hyprwhspr-bt [toggle|reset|status]
+set -euo pipefail
+
+HEADSETS=(
+  "80:99:E7:2B:A3:06"   # preferred mic
+  "EC:46:54:A2:B0:AD"   # fallback
+)
+
+STATE="$XDG_RUNTIME_DIR/hyprwhspr-bt.state"
+
+notify() { hyprctl notify -1 3000 "rgb(ffffff)" "$1" >/dev/null 2>&1 || true; }
+
+has_card() { pactl list short cards | grep -q "bluez_card\.$1"; }
+
+bt_source() { pactl list short sources | awk -v u="$1" '$2 ~ u {print $2; exit}'; }
+
+# Print every profile name available on a card, one per line
+card_profiles() {
+    local u="$1"
+    pactl list cards | awk -v card="bluez_card.$u" '
+        $0 ~ "Name: "card { infield=1 }
+        infield && /^\s*Profiles:/ { inprof=1; next }
+        infield && inprof && /^\s+[A-Za-z0-9_-]+:/ {
+            line=$0
+            sub(/^\s+/, "", line)
+            split(line, parts, ":")
+            print parts[1]
+            next
+        }
+        infield && inprof && /^\s*(Active Profile|Sinks|Sources|Ports):/ { inprof=0 }
+        infield && /^Card #/ && !($0 ~ card) { infield=0 }
+    '
+}
+
+# Print the currently active profile name on a card
+active_profile() {
+    local u="$1"
+    pactl list cards | awk -v card="bluez_card.$u" '
+        $0 ~ "Name: "card { infield=1 }
+        infield && /^\s*Active Profile:/ {
+            line=$0
+            sub(/^\s*Active Profile:\s*/, "", line)
+            print line
+            exit
+        }
+    '
+}
+
+# Pick the best available handsfree-mic profile for a card
+pick_headset_profile() {
+    local u="$1"
+    local profiles
+    profiles="$(card_profiles "$u")"
+    for want in headset-head-unit-msbc headset-head-unit; do
+        grep -qx "$want" <<<"$profiles" && { echo "$want"; return; }
+    done
+    grep -im1 'headset\|hsp\|hfp' <<<"$profiles" || true
+}
+
+# Pick the best available A2DP playback profile for a card
+pick_a2dp_profile() {
+    local u="$1"
+    local profiles
+    profiles="$(card_profiles "$u")"
+    grep -qx "a2dp-sink" <<<"$profiles" && { echo "a2dp-sink"; return; }
+    grep -im1 '^a2dp-sink' <<<"$profiles" || true
+}
+
+restore_all_a2dp() {
+    local mac u prof
+    for mac in "${HEADSETS[@]}"; do
+        u="${mac//:/_}"
+        has_card "$u" || continue
+        prof="$(pick_a2dp_profile "$u")"
+        [[ -n $prof ]] && pactl set-card-profile "bluez_card.$u" "$prof" 2>/dev/null || true
+    done
+}
+
+start() {
+    local mac u="" src="" hs_profile prev_profile
+
+    for mac in "${HEADSETS[@]}"; do
+        if has_card "${mac//:/_}"; then u="${mac//:/_}"; break; fi
+    done
+    if [[ -z $u ]]; then
+        notify "No headset connected"; exit 0
+    fi
+
+    hs_profile="$(pick_headset_profile "$u")"
+    if [[ -z $hs_profile ]]; then
+        notify "No handsfree profile found on this headset"
+        exit 1
+    fi
+
+    prev_profile="$(active_profile "$u")"
+
+    # save: card uuid / prior default source / prior card profile
+    {
+        echo "$u"
+        pactl get-default-source
+        echo "$prev_profile"
+    } > "$STATE"
+
+    if ! pactl set-card-profile "bluez_card.$u" "$hs_profile" 2>/dev/null; then
+        notify "Profile switch to $hs_profile failed"
+        rm -f "$STATE"; exit 1
+    fi
+
+    for _ in {1..20}; do
+        src="$(bt_source "$u")"; [[ -n $src ]] && break; sleep 0.1
+    done
+    if [[ -z $src ]]; then
+        notify "HFP source never appeared"
+        rm -f "$STATE"; restore_all_a2dp; exit 1
+    fi
+
+    pactl set-default-source "$src"
+    sleep 0.2
+    hyprwhspr record start
+    notify "hyprwhspr recording starts"
+}
+
+stop() {
+    local u prev_source prev_profile
+
+    if ! { read -r u; read -r prev_source; read -r prev_profile; } < "$STATE" 2>/dev/null; then
+        notify "Corrupt state, resetting"
+        rm -f "$STATE"; restore_all_a2dp; exit 1
+    fi
+
+    hyprwhspr record stop
+    sleep 0.3
+    pactl set-default-source "$prev_source" 2>/dev/null || true
+
+    if has_card "$u"; then
+        if [[ -n $prev_profile ]]; then
+            pactl set-card-profile "bluez_card.$u" "$prev_profile" 2>/dev/null \
+                || notify "Failed to restore $prev_profile — try 'omatchy-hyprwhspr-bt reset'"
+        else
+            restore_all_a2dp
+        fi
+    fi
+
+    rm -f "$STATE"
+    notify "hyprwhspr recording stop"
+}
+
+status() {
+    [[ -e $STATE ]] && echo "recording" || echo "idle"
+}
+
+case "${1:-toggle}" in
+    toggle) if [[ -e $STATE ]]; then stop; else start; fi ;;
+    status) status ;;
+    reset)  rm -f "$STATE"; restore_all_a2dp
+            notify "Back to A2DP" ;;
+    *)      echo "usage: omarchy-hyprwhspr-bt [toggle|reset|status]" >&2; exit 2 ;;
+esac

@@ -16,6 +16,9 @@ QtObject {
         // Damping divisor for non-peak icons; higher = sharper drop-off
         property real damp: 1.0
 
+        // Debounce time
+        property int dockDwell: 450
+
         // ── Layout ─────────────────────────────────────────────────────
         property int iconSize: 48           // base icon px (also drives breadth)
         property string orientation: "horizontal"  // "horizontal" | "vertical"
@@ -59,7 +62,7 @@ QtObject {
             {
                 name: "Xmind",
                 icon: "",
-                exec: ["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5"],
+                exec: ["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling"],
                 class: "Xmind"
             },
             {
@@ -67,6 +70,12 @@ QtObject {
                 icon: "",
                 exec: ["omarchy-launch-webapp","https://grok.com"],
                 class: "grok"
+            },
+            {
+                name: "Claude",
+                icon: "",
+                exec: [ "omarchy-launch-webapp","https://claude.ai"],
+                class: "claude"
             },
             {
                 name: "Gmail",

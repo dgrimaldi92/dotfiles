@@ -22,6 +22,7 @@ Scope {
             readonly property var apps: Config.data.apps
             readonly property int length: (Config.data.iconSize + root.iconGap) * apps.length
             readonly property int breadth: Config.data.iconSize * ((Config.data.scaleFactor ?? 0.3) + 0.775)
+            readonly property int debounce: 200
 
             // ── fullscreen auto-hide ──────────────────────────────
             readonly property bool fullscreen: HyprClients.currentWorkspaceFullScreen
@@ -43,6 +44,68 @@ Scope {
 
             HoverHandler { id: edgeHover }
 
+
+            // ── hover intent ───────────────────────────────────────
+            readonly property int dwellMs: Config.data.dockDwell
+            readonly property int graceMs: 80
+
+            property bool dockExpanded: false
+            property int pendingIndex: -1
+
+            Timer {
+                id: dwellTimer
+                interval: window.dwellMs
+                repeat: false
+                onTriggered: {
+                    window.dockExpanded = true;
+                    row.current = window.pendingIndex;
+                    window.expand(window.pendingIndex);
+                }
+            }
+
+            Timer {
+                id: graceTimer
+                interval: window.graceMs
+                repeat: false
+                property int fromIndex: -1
+                onTriggered: {
+                    window.dockExpanded = false;
+                    row.current = -1;
+                    window.collapse(fromIndex);
+                }
+            }
+
+            function hoverEnter(index) {
+                graceTimer.stop();              // still inside the dock
+                pendingIndex = index;
+                if (dockExpanded) {             // already open → follow the cursor instantly
+                    dwellTimer.stop();
+                    row.current = index;
+                    expand(index);
+                } else {
+                    dwellTimer.restart();       // wait for the pointer to settle
+                }
+            }
+
+            function hoverLeave(index) {
+                if (pendingIndex === index) {
+                    dwellTimer.stop();
+                    pendingIndex = -1;
+                }
+                if (row.current === index)
+                    graceTimer.fromIndex = index, graceTimer.restart();
+            }
+
+            function hoverReset() {
+                dwellTimer.stop();
+                graceTimer.stop();
+                pendingIndex = -1;
+                dockExpanded = false;
+                row.current = -1;
+                collapse();
+            }
+
+
             // 1px trigger strip, only while fullscreen
             Item {
                 id: hotzone
@@ -63,7 +126,7 @@ Scope {
                 ]
             }
 
-            onRevealedChanged: if (!revealed) collapse()
+            onRevealedChanged: if (!revealed) hoverReset()
 
             function setExpanded(expanded, startIndex) {
                 const from = startIndex ?? row.current;
@@ -99,7 +162,7 @@ Scope {
 
                 function delay(h, latestIndex) {
                     glassTimer.pendingHeight = h;
-                    glassTimer.interval = h ? 0 : Math.max(latestIndex, repeater.count - 1 - latestIndex) * 25;
+                    glassTimer.interval = h ? debounce : Math.max(latestIndex, repeater.count - 1 - latestIndex) * 25;
                     glassTimer.restart();
                 }
             }

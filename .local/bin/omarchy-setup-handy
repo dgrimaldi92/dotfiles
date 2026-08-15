@@ -77,3 +77,35 @@
 #     *)      echo "usage: handy-bt [toggle|reset]" >&2; exit 2 ;;
 # esac
 
+# Switch the Bluetooth card to its headset profile, dictate with Handy,
+# then put the card back to A2DP.
+set -euo pipefail
+
+MIC_PROFILE="headset-head-unit"
+# IDLE_PROFILE="a2dp-sink-aac"
+IDLE_PROFILE="a2dp-sink"
+
+notify() { hyprctl notify -1 3000 "rgb(ffffff)" "$1" >/dev/null 2>&1 || true; }
+
+# first bluez card reported by pactl
+CARD="$(pactl list short cards | awk '/bluez/ {print $2; exit}')"
+[[ -n "$CARD" ]] || { notify "no bluetooth card found"; exit 1; }
+pgrep -x handy >/dev/null || { notify "handy is not running"; exit 1; }
+
+echo "card: $CARD"
+
+restore() {
+  sleep 1                                    # let transcription land first
+  pactl set-card-profile "$CARD" "$IDLE_PROFILE"
+  notify "restored $IDLE_PROFILE"
+}
+trap restore EXIT
+
+pactl set-card-profile "$CARD" "$MIC_PROFILE"
+sleep 0.5                                    # give pipewire time to re-route
+pactl list cards | grep 'Active Profile'
+
+pkill -12 -n handy                         # start
+notify "recording... press Enter to stop"
+read -r
+pkill -12 -n handy                         # stop
