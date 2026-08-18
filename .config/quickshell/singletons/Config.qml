@@ -17,17 +17,36 @@ QtObject {
         property real damp: 1.0
 
         // Debounce time
-        property int dockDwell: 450
+        property int dockDwell: 550
 
         // ── Layout ─────────────────────────────────────────────────────
         property int iconSize: 48           // base icon px (also drives breadth)
         property string orientation: "horizontal"  // "horizontal" | "vertical"
         property var apps: [
+            
+            {
+                name: "Folder",
+                icon: "",
+                exec: ["env","QS_PATH='file:///home/dav/pCloudDrive'", "QS_APP_ID='file-manager'", "qs", "-p", ".config/quickshell/Manager.qml"],
+                class: "file-manager"
+            },
             {
                 name: "Browser",
                 icon: "󰌀",
                 exec: [ "uwsm-app", "--", "brave-origin"],
                 class: "brave-origin"
+            },
+            {
+                name: "Xmind",
+                icon: "",
+                exec: ["uwsm-app", "--", "xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling"],
+                class: "Xmind"
+            },
+            {
+                name: "",
+                icon: "",
+                exec: [],
+                class: ""
             },
             {
                 name: "Terminal",
@@ -42,10 +61,10 @@ QtObject {
                 class: "nvim"
             },
             {
-                name: "ChatGPT",
-                icon: "",
-                exec: ["omarchy-launch-webapp","https://chatgpt.com"],
-                class: "chatgpt"
+                name: "WhatsApp",
+                icon: "󰖣",
+                exec: ["zapzap"],
+                class: "com.rtosta.zapzap"
             },
             // {
             //     name: "Files",
@@ -54,16 +73,16 @@ QtObject {
             //     class: ""
             // },     
             {
-                name: "WhatsApp",
-                icon: "󰖣",
-                exec: ["zapzap"],
-                class: "com.rtosta.zapzap"
+                name: "",
+                icon: "",
+                exec: [],
+                class: ""
             },
             {
-                name: "Xmind",
-                icon: "",
-                exec: ["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling"],
-                class: "Xmind"
+                name: "ChatGPT",
+                icon: "",
+                exec: ["omarchy-launch-webapp","https://chatgpt.com"],
+                class: "chatgpt"
             },
             {
                 name: "Grok",
@@ -76,6 +95,12 @@ QtObject {
                 icon: "",
                 exec: [ "omarchy-launch-webapp","https://claude.ai"],
                 class: "claude"
+            },
+            {
+                name: "",
+                icon: "",
+                exec: [],
+                class: ""
             },
             {
                 name: "Gmail",
@@ -96,18 +121,18 @@ QtObject {
                 class: "steam"
             },
             {
-                name: "Folder",
-                icon: "",
-                exec: ["env","QS_APP_ID='file-manager'", "qs", "-p", ".config/quickshell/Manager.qml"],
-                class: "file-manager"
-            },
+                name: "Youtube",
+                icon: "",
+                exec: ["omarchy-launch-webapp","https://youtube.com"],
+                class: "youtube"
+            }, 
             {
                 name: "Heroic",
                 icon: "󰖺",
                 exec: ["uwsm-app", "--", "heroic"],
                 class: "heroic"
                 
-            }
+            },
         ]
         // property Gradient glassGradient: Gradient {
         //     orientation: Gradient.Vertical

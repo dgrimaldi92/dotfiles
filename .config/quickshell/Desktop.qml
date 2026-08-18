@@ -9,10 +9,13 @@ import "widgets" as QsWidgets
 PanelWindow {
     id: root
 
+    readonly property string driveRoot: Quickshell.env("HOME") + "/pCloudDrive"
+    property bool driveMounted: false
     WlrLayershell.layer: WlrLayer.Background
     exclusionMode: ExclusionMode.Ignore
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
+    
 
     property int cellW: 90
     property int cellH: 75
@@ -46,9 +49,22 @@ PanelWindow {
 
     FolderListModel {
         id: folderModel
-        folder: "file:///home/dav/pCloudDrive"
+        folder: root.driveMounted ? "file://" + root.driveRoot : ""
         sortField: FolderListModel.Name
         showDirsFirst: true
+    }
+    Process {
+        id: mountCheck
+        command: ["mountpoint", "-q", root.driveRoot]
+        onExited: exitCode => root.driveMounted = (exitCode === 0)
+    }
+
+    Timer {
+        interval: 5000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: mountCheck.running = true
     }
 
     Item {

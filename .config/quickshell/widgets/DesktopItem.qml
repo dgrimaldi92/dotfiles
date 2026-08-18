@@ -13,6 +13,8 @@ Rectangle {
 	property string path
 	property bool isFloating
 	property int iconSize: 32
+	implicitWidth: 80
+	implicitHeight: 80
 	antialiasing: false
 	radius: 10 
 	color: Qt.rgba(0,0,0,0.35)
@@ -111,6 +113,7 @@ Rectangle {
 					case "zip":
 						return ""
 				}
+			    return ""
 			}
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: iconSize

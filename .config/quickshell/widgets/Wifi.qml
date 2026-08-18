@@ -5,7 +5,7 @@ import qs.singletons
 Rectangle {
     width: 20
     height: 20
-    color: shutdownMouseArea.containsMouse ? Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.25) : "transparent"
+    color: shutdownMouseArea.containsMouse ? Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, shutdownMouseArea.containsMouse ? 0.35 : 0.25) : "transparent"
     radius: 12
     border.width: shutdownMouseArea.containsMouse ? 1 : 0
     border.color: Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.5)

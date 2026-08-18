@@ -4,3 +4,4 @@ singleton Time Time.qml
 singleton ThemeManager ThemeManager.qml
 singleton Config Config.qml
 singleton HyprClients HyprClients.qml
+singleton HyprData HyprData.qml

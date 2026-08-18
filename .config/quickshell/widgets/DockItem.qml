@@ -56,7 +56,6 @@ Rectangle {
         hoverEnabled: true
         onEntered: window.hoverEnter(index) 
         onExited: window.hoverLeave(index) 
-
         onClicked: {
             const client = HyprClients.getAppInstances(modelData.class);
             if (client) {

@@ -1,0 +1,15 @@
+default partial alphanumeric_keys modifier_keys
+xkb_symbols "basic" {
+    include "us(basic)"
+    include "level3(ralt_switch)"
+
+    name[Group1] = "English (US, dead grave)";
+
+    //             level1       level2(Shift)  level3(RAlt)  level4
+    key <TLDE> { [ dead_grave,  asciitilde,    grave,        dead_tilde ] };
+
+    // accents the bare backtick can't reach — drop these if you don't need them
+    key <AD03> { [ e, E, dead_acute,      dead_acute      ] };
+    key <AD08> { [ i, I, dead_circumflex, dead_circumflex ] };
+    key <AD07> { [ u, U, dead_diaeresis,  dead_diaeresis  ] };
+};

@@ -40,3 +40,6 @@ hl.window_rule({
 	size = { "monitor_w * 0.5", "monitor_h * 0.5" },
 	opacity = "0.8 override 0.8 override 1.0 override",
 })
+hl.monitor({ output = "HDMI-A-2", mode = "1920x1200@74.94", position = "0x0", scale = 1.5 })
+hl.config({ cursor = { no_hardware_cursors = false } })
+hl.config({ input = { scroll_factor = 0.55 } })

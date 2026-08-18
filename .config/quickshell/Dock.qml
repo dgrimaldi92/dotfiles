@@ -162,7 +162,7 @@ Scope {
 
                 function delay(h, latestIndex) {
                     glassTimer.pendingHeight = h;
-                    glassTimer.interval = h ? debounce : Math.max(latestIndex, repeater.count - 1 - latestIndex) * 25;
+                    glassTimer.interval = h ? debounce - 150 : Math.max(latestIndex, repeater.count - 1 - latestIndex) * 25;
                     glassTimer.restart();
                 }
             }

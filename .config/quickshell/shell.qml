@@ -9,4 +9,5 @@ ShellRoot {
     Bar {}
     Dock {}
     TitleBar {}
+    Dragler {}
 }

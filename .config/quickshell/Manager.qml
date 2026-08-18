@@ -22,6 +22,7 @@ FloatingWindow {
 		width: screen.width
 		height: screen.height
 	}
+	onClosed: Qt.quit()
 
 	FolderListModel{
 		id: folderModel
@@ -40,7 +41,7 @@ FloatingWindow {
 		gap: 10 
 		Repeater {
 			model: folderModel
-			QsWidgets.DesktopItem { name: fileBaseName; suffix: fileSuffix; isDir: fileIsDir; isFloating: true }
+			QsWidgets.DesktopItem { name: fileBaseName; suffix: fileSuffix; isDir: fileIsDir; isFloating: true;  path: filePath  }
 		}
 	}
 }

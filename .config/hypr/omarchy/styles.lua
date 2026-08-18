@@ -27,16 +27,18 @@ local c = load_colors(os.getenv("HOME") .. "/.config/theme/color.toml")
 
 hl.config({
 	general = {
-		gaps_in = 5,
-		gaps_out = 10,
-		border_size = 2,
+		gaps_in = 4,
+		gaps_out = 8,
+		border_size = 1,
 
 		col = {
 			active_border = { colors = { "rgba(bb9af7ee)" }, angle = 45 },
 			inactive_border = "rgba(414868aa)",
 		},
 
-		resize_on_border = false,
+		resize_on_border = true,
+		extend_border_grab_area = 15,
+		hover_icon_on_border = true,
 		allow_tearing = false,
 		layout = "dwindle",
 	},
@@ -101,9 +103,9 @@ hl.config({
 		},
 	},
 
-	animations = {
-		enabled = true,
-	},
+	-- animations = {
+	-- 	enabled = true,
+	-- },
 })
 
 -- Default animations, see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
@@ -150,13 +152,8 @@ hl.config({
 		focus_on_activate = true,
 		anr_missed_pings = 3,
 		on_focus_under_fullscreen = 1,
+		animate_manual_resizes = false,
 	},
-
-	cursor = {
-		hide_on_key_press = true,
-		warp_on_change_workspace = 1,
-	},
-
 	binds = {
 		hide_special_on_workspace_change = true,
 	},

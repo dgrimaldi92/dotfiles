@@ -10,7 +10,8 @@ o.bind("SUPER + ALT + F", "Full width", hl.dsp.window.fullscreen({ mode = "maxim
 o.bind("SUPER + O", "Pop window out (float & pin)", "omarchy-hyprland-window-pop")
 o.bind("SUPER + L", "Toggle workspace layout", "omarchy-hyprland-workspace-layout-toggle")
 
-o.bind("SUPER + H", "Activate transcription", "omarchy-setup-handy")
+-- SUPER ALT, D, Speech-to-text, exec, /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record
+o.bind("SUPER + H", "Speech-to-text", "/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record")
 -- o.bind("SUPER + SHIFT + H", "Activate transcription", "omarchy-setup-handy reset")
 
 o.bind("SUPER + LEFT", "Focus on left window", hl.dsp.focus({ direction = "l" }))

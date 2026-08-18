@@ -10,24 +10,26 @@ Rectangle {
 
     property bool recording: false
 
-    color: root.recording
-        ? Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, micMouseArea.containsMouse ? 0.35 : 0.25)
-        : (micMouseArea.containsMouse ? Qt.rgba(ThemeManager.fgPrimary.r, ThemeManager.fgPrimary.g, ThemeManager.fgPrimary.b, 0.12) : "transparent")
+    color: {
+        if (root.recording) {
+            return Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, micMouseArea.containsMouse ? 0.35 : 0.25)
+        }
+        if (micMouseArea.containsMouse) {
+            return Qt.rgba(ThemeManager.fgPrimary.r, ThemeManager.fgPrimary.g, ThemeManager.fgPrimary.b, 0.12)
+        }
+        return "transparent"
+    }
     radius: 12
     border.width: (root.recording || micMouseArea.containsMouse) ? 1 : 0
-    border.color: root.recording
-        ? Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.6)
-        : Qt.rgba(ThemeManager.fgPrimary.r, ThemeManager.fgPrimary.g, ThemeManager.fgPrimary.b, 0.35)
-
-    Behavior on color {
-        ColorAnimation { duration: 150 }
+    border.color: {
+        if (root.recording) {
+            return Qt.rgba(ThemeManager.accentRed.r, ThemeManager.accentRed.g, ThemeManager.accentRed.b, 0.6)
+        }
+        return Qt.rgba(ThemeManager.fgPrimary.r, ThemeManager.fgPrimary.g, ThemeManager.fgPrimary.b, 0.35)
     }
-    Behavior on border.width {
-        NumberAnimation { duration: 150 }
-    }
-    Behavior on border.color {
-        ColorAnimation { duration: 150 }
-    }
+    Behavior on color { ColorAnimation { duration: 150 } }
+    Behavior on border.width { NumberAnimation { duration: 150 } }
+    Behavior on border.color { ColorAnimation { duration: 150 } }
 
     Text {
         anchors.centerIn: parent
@@ -36,9 +38,7 @@ Rectangle {
         font.pixelSize: 12
         color: root.recording ? ThemeManager.accentRed : ThemeManager.fgPrimary
 
-        Behavior on color {
-            ColorAnimation { duration: 150 }
-        }
+        Behavior on color { ColorAnimation { duration: 150 } }
     }
 
     MouseArea {
@@ -46,28 +46,43 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: toggleProcess.running = true
+
+        onClicked: {
+            Quickshell.execDetached(["omarchy-hyprwhspr-bt"])
+            if (!root.recording){
+                root.recording = true
+                statusTimer.start()
+                return
+            }
+            root.recording = false
+        }
     }
 
-    Process {
-        id: toggleProcess
-        command: ["omarchy-hyprwhspr-bt", "toggle"]
-        onExited: statusProcess.running = true
-    }
 
     Process {
         id: statusProcess
-        command: ["omarchy-hyprwhspr-bt", "status"]
+        command: ["hyprwhspr", "record", "status"]
+
         stdout: SplitParser {
-            onRead: data => root.recording = (data.trim() === "recording")
+            onRead: data => {
+                const status = data.trim()
+                const isIdle = status.toLowerCase().includes("idle")
+
+                if (isIdle && !root.recording) {
+                    statusTimer.stop()
+                }
+            }
         }
     }
 
     Timer {
+        id: statusTimer
         interval: 500
-        running: true
+        running: false
         repeat: true
-        triggeredOnStart: true
-        onTriggered: statusProcess.running = true
+
+        onTriggered: {
+            statusProcess.running = true
+        }
     }
 }
