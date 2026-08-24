@@ -9,5 +9,6 @@ ShellRoot {
     Bar {}
     Dock {}
     TitleBar {}
-    Dragler {}
+    WorkspaceOverview {}
+    Notification {}
 }

@@ -46,9 +46,9 @@ Rectangle {
 		onClicked: {
 			if (isDir) {
 				
-				const qsPath = `file://${path}`
-				
-				const cmd = ["env", `QS_PATH='${qsPath}'`, "QS_APP_ID='file-manager'", "qs", "-p", `${Quickshell.shellPath("Manager.qml")}`]
+				// const qsPath = `file://${path}`
+				// const cmd = ["env", `QS_PATH='${qsPath}'`, "QS_APP_ID='file-manager'", "qs", "-p", `${Quickshell.shellPath("Manager.qml")}`]
+				const cmd = [ "uwsm-app", "--", "pcmanfm-qt", `'${path}'` ]
 				Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
             			return Hyprland.dispatch(`hl.dsp.exec_cmd("${cmd.join(' ')}", {workspace = "empty"})`)
 			}

@@ -1,0 +1,6 @@
+{
+  "lastChangelogVersion": "0.84.2",
+  "theme": "dark",
+  "defaultProvider": "llama.cpp",
+  "defaultModel": "gemma26b-qat"
+}

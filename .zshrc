@@ -4,9 +4,6 @@
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Homebrew PATH
-export PATH=/opt/homebrew/bin:$PATH
-
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -73,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-bat fnm)
+plugins=(git fnm)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -112,8 +109,6 @@ export PATH=/home/$USER/.fnm:$PATH
 eval "$(fnm env --use-on-cd --version-file-strategy=recursive)"
 
 
-export PATH="$(brew --prefix)/opt/curl/bin:$PATH"
-
 . "$HOME/.local/bin/env"
 
 
@@ -135,6 +130,13 @@ function y() {
 	fi
 	rm -f -- "$tmp"
 }
-
+# starship inizialized on all terminal tab
 eval "$(starship init zsh)"
-alias carbonyl="carbonyl --force-dark-mode --enable-features=WebUIDarkMode"
+
+# setup rust
+export PATH="$HOME/.local/bin:$PATH"
+. "$HOME/.cargo/env"
+
+export PATH="$HOME/Documents/llama.cpp/build/bin:$PATH"
+
+

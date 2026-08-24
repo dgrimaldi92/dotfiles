@@ -22,8 +22,8 @@ Scope {
                 right: true
             }
 
-            property bool activeFloating: false
-            visible: !activeFloating
+            property bool activeFullscreen: false
+            visible: !activeFullscreen
 
             Process {
                 id: activeWin
@@ -31,7 +31,7 @@ Scope {
                 stdout: StdioCollector {
                     onStreamFinished: {
                         const parsedInfo = JSON.parse(this.text)
-                        root.activeFloating = Boolean(parsedInfo.floating)
+                        root.activeFullscreen = Boolean(parsedInfo.fullscreen > 0)
                     }
                 }
             }

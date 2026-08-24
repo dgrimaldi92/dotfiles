@@ -7,73 +7,30 @@ import Quickshell.Wayland
 
 QtObject {
     id: root
-    
-    readonly property var waylandToplevels: Array.from(new Set(ToplevelManager.toplevels.values.filter(val => val.title && val.title !== "")))
-    // Alias so users of the singleton don't need to know about Hyprland.
-    // readonly property var toplevels: Hyprland.toplevels
-    
-    function matchAppInstance(appId, currentToplevel) {
-        if (!appId) return false;
 
+    // hyprctl clients -j | jq -r '.[].initialClass'  →  put that in Config.data.apps[].class
+    function instances(appId) {
+        if (!appId) return [];
         const needle = appId.toLowerCase();
-
-        // HyprlandToplevel → HyprlandClient → initialClass
-        const waylandAppId = currentToplevel.wayland?.appId?.toLowerCase();
-        if (waylandAppId && waylandAppId.includes(needle)) return true;
-
-        // Title fallback (still scoped to this specific toplevel)
-        if (currentToplevel.title && currentToplevel.title.toLowerCase().includes(needle)) return true;
-
-        return false;
+        return ToplevelManager.toplevels.values
+            .filter(t => (t.appId || "").toLowerCase() === needle);
     }
 
-    function getAppInstances(appId) {
-        const needle = appId.toLowerCase();
-        const manager = ToplevelManager.toplevels.values.find(toplevel =>
-            (toplevel.appId && toplevel.appId.toLowerCase().includes(needle)) ||
-            (toplevel.title && toplevel.title.toLowerCase().includes(needle))
-        );   
-        if (!manager){
-            return
-        }
-        return Hyprland.toplevels.values.find(toplevel => matchAppInstance(appId, toplevel));
+    function getAppInstances(appId) { return instances(appId)[0] ?? null; }
+    function countAppInstances(appId) { return instances(appId).length; }
+    function isAppRunning(appId)     { return instances(appId).length > 0; }
 
+    // No strings. The Hyprland toplevel already points back at the wayland one.
+    function hyprlandFor(toplevel) {
+        return Hyprland.toplevels.values.find(t => t.wayland === toplevel) ?? null;
     }
 
-    function countAppInstances(appId) {
-        return Hyprland.toplevels.values.filter(toplevel => matchAppInstance(appId, toplevel));
+    function activate(toplevel) {
+        if (toplevel) toplevel.activate();
     }
 
-    function isAppRunning(appId) {
-        // return Hyprland.toplevels.values.some(toplevel => matchAppInstance(appId, toplevel)) 
-        if (!appId) return false;
-        const needle = appId.toLowerCase();
-        return ToplevelManager.toplevels.values.some(toplevel =>
-            (toplevel.appId && toplevel.appId.toLowerCase().includes(needle)) ||
-            (toplevel.title && toplevel.title.toLowerCase().includes(needle))
-        );   
-    }
-
-    function activate(app) {
-        Hyprland.refreshToplevels()
-        // const appInst = getAppInstances(appId);
-        // console.log(appInst)
-        //
-        // if (!app)
-        //     return;
-        if (!app.wayland){
-            if (app.title === "xmind") {
-                Hyprland.dispatch(`hl.dsp.focus({ window = "class:^(Xmind)$" })`) 
-            }
-            Hyprland.refreshToplevels()
-            return
-        }
-        app.wayland.activate();
-    }
-
-    function isCurrentWorkspaceFullScreen() {
-        return Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.hasFullscreen
-    }
+    readonly property bool currentWorkspaceFullScreen:
+        Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.hasFullscreen : false
 
     function currentFullScreenAppTitle() {
         const currentWorkspace = Hyprland.focusedWorkspace

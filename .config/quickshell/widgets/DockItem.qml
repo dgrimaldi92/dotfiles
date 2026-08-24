@@ -57,27 +57,19 @@ Rectangle {
         onEntered: window.hoverEnter(index) 
         onExited: window.hoverLeave(index) 
         onClicked: {
-            const client = HyprClients.getAppInstances(modelData.class);
-            if (client) {
-                const workspaceName = client.workspace ? client.workspace.name : undefined
-                if (
-                    workspaceName && 
-                    workspaceName.startsWith("special:minimized")
-                ){
-                    const windowName = workspaceName.replace('special','tag')
-                    Hyprland.dispatch(`hl.dsp.window.move({ workspace = "empty", window = "${windowName}" })`)
-	                Hyprland.dispatch(`hl.dsp.window.clear_tags({ window = "${windowName}" })`)
-                }
-                HyprClients.activate(client);
+            const top = HyprClients.getAppInstances(modelData.class);
+            if (!top) {
+                Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })');
+                Hyprland.dispatch(`hl.dsp.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`);
                 return;
             }
-            // https://wiki.hypr.land/Configuring/Advanced-and-C.ool/Using-hyprctl/#dispatch
-            // hyprctl dispatch exec "[workspace 5] ghostty -e impala"
-            // hyprctl dispatch 'hl.dsp.focus({ workspace = "empty" })' && ghostty
-            // hyprctl dispatch 'hl.exec_cmd("uwsm-app -- ghostty", {workspace = "empty"})'
-            // Quickshell.execDetached(["hyprctl", "eval", `hl.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`]);
-            Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
-            Hyprland.dispatch(`hl.dsp.exec_cmd("${modelData.exec.join(' ')}", {workspace = "empty"})`)
+            const ws = HyprClients.hyprlandFor(top)?.workspace?.name ?? "";
+            if (ws.startsWith("special:minimized")) {
+                const tag = ws.replace("special", "tag");
+                Hyprland.dispatch(`hl.dsp.window.move({ workspace = "empty", window = "${tag}" })`);
+                Hyprland.dispatch(`hl.dsp.window.clear_tags({ window = "${tag}" })`);
+            }
+            top.activate();
         }
         cursorShape: Qt.PointingHandCursor
         propagateComposedEvents: true

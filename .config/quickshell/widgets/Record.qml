@@ -32,6 +32,7 @@ Rectangle {
     Behavior on border.color { ColorAnimation { duration: 150 } }
 
     Text {
+        id: icon
         anchors.centerIn: parent
         text: "󰍬"
         font.family: "Symbols Nerd Font"
@@ -50,11 +51,9 @@ Rectangle {
         onClicked: {
             Quickshell.execDetached(["omarchy-hyprwhspr-bt"])
             if (!root.recording){
-                root.recording = true
                 statusTimer.start()
                 return
             }
-            root.recording = false
         }
     }
 
@@ -62,15 +61,25 @@ Rectangle {
     Process {
         id: statusProcess
         command: ["hyprwhspr", "record", "status"]
-
         stdout: SplitParser {
             onRead: data => {
                 const status = data.trim()
                 const isIdle = status.toLowerCase().includes("idle")
-
-                if (isIdle && !root.recording) {
+                const isRecording = status.toLowerCase().includes("recording") 
+                console.log(status)
+                if (isRecording){
+                    root.recording = true
+                }
+                if (isIdle && root.recording){
+                    root.recording = false
                     statusTimer.stop()
                 }
+                if (!isIdle && !isRecording) {
+                   icon.text = "E" 
+                }
+                // if (isIdle && !root.recording) {
+                //     statusTimer.stop()
+                // }
             }
         }
     }

@@ -26,7 +26,10 @@ Scope {
 
             // ── fullscreen auto-hide ──────────────────────────────
             readonly property bool fullscreen: HyprClients.currentWorkspaceFullScreen
-            readonly property bool revealed: !fullscreen || edgeHover.hovered
+            readonly property bool revealed: !fullscreen || edgeArmed
+
+            property bool edgeArmed: false
+            readonly property int edgeDwellMs: 1000
 
             anchors { left: false; right: false; top: false; bottom: true }
 
@@ -37,13 +40,9 @@ Scope {
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.namespace: "quickshell:dock"
 
-            // A fullscreen window stacks above `top`, so it wins the pointer over
-            // anything on that layer. Only escalate while fullscreen, so a
-            // notification daemon on Overlay still covers the dock the rest of the time.
-            WlrLayershell.layer:  WlrLayer.Overlay
-
-            HoverHandler { id: edgeHover }
-
+            // Only get above a fullscreen window when there is one. The rest of
+            // the time stay on Top so a notification daemon on Overlay wins.
+            WlrLayershell.layer: fullscreen ? WlrLayer.Overlay : WlrLayer.Top
 
             // ── hover intent ───────────────────────────────────────
             readonly property int dwellMs: Config.data.dockDwell
@@ -75,15 +74,22 @@ Scope {
                 }
             }
 
+            Timer {
+                id: reveal
+                interval: window.edgeDwellMs
+                repeat: false
+                onTriggered: window.edgeArmed = true
+            }
+
             function hoverEnter(index) {
-                graceTimer.stop();              // still inside the dock
+                graceTimer.stop();
                 pendingIndex = index;
-                if (dockExpanded) {             // already open → follow the cursor instantly
+                if (dockExpanded) {
                     dwellTimer.stop();
                     row.current = index;
                     expand(index);
                 } else {
-                    dwellTimer.restart();       // wait for the pointer to settle
+                    dwellTimer.restart();
                 }
             }
 
@@ -105,18 +111,35 @@ Scope {
                 collapse();
             }
 
-
-            // 1px trigger strip, only while fullscreen
+            // Collapsed this is a 2px trigger strip. Open it covers the whole
+            // dock. One item, so growing it never fires a spurious exit.
             Item {
-                id: hotzone
-                anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
-                height: window.fullscreen ? 1 : 0
+                id: dockZone
+                anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom }
+                width: row.width
+                height: window.revealed ? window.height : (window.fullscreen ? 1 : 0)
+
+                HoverHandler {
+                    id: zoneHover
+                    onHoveredChanged: {
+                        console.log("hello")
+                        console.log(window.fullscreen)
+                        if (zoneHover.hovered) {
+                            reveal.restart();
+                        } 
+                        else {
+                            reveal.stop();
+                            if (!window.fullscreen)
+                                window.edgeArmed = false;
+                        }
+                    }
+                }
             }
 
             mask: Region {
-                item: glass                    // height 0 when collapsed → contributes nothing
+                item: glass
                 regions: [
-                    Region { item: hotzone },  // height 0 when not fullscreen → ditto
+                    Region { item: dockZone },
                     Region {
                         x: row.x
                         y: row.y
@@ -170,7 +193,7 @@ Scope {
             Grid {
                 id: row
 
-                visible: window.revealed       // don't draw over fullscreen content
+                visible: window.revealed
 
                 columns: window.apps.length
                 rows: 1

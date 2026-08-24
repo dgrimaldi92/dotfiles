@@ -17,18 +17,25 @@ QtObject {
         property real damp: 1.0
 
         // Debounce time
-        property int dockDwell: 550
+        property int dockDwell: 600
+
 
         // ── Layout ─────────────────────────────────────────────────────
         property int iconSize: 48           // base icon px (also drives breadth)
         property string orientation: "horizontal"  // "horizontal" | "vertical"
         property var apps: [
             
+            // {
+            //     name: "Folder",
+            //     icon: "",
+            //     exec: ["env","QS_PATH='file:///home/dav/pCloudDrive'", "QS_APP_ID='file-manager'", "qs", "-p", ".config/quickshell/Manager.qml"],
+            //     class: "file-manager"
+            // },
             {
                 name: "Folder",
                 icon: "",
-                exec: ["env","QS_PATH='file:///home/dav/pCloudDrive'", "QS_APP_ID='file-manager'", "qs", "-p", ".config/quickshell/Manager.qml"],
-                class: "file-manager"
+                exec: [ "uwsm-app", "--", "pcmanfm-qt", "/home/dav/pCloudDrive" ],
+                class: "pcmanfm-qt"
             },
             {
                 name: "Browser",
@@ -41,6 +48,12 @@ QtObject {
                 icon: "",
                 exec: ["uwsm-app", "--", "xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling"],
                 class: "Xmind"
+            },
+            {
+                name: "Obsidian",
+                icon: "",
+                exec: ["uwsm-app", "--", "obsidian"],
+                class: "md.obsidian.Obsidian"
             },
             {
                 name: "",
@@ -60,6 +73,12 @@ QtObject {
                 exec: ["setsid", "uwsm-app", "--", "ghostty", "-e", "nvim"],
                 class: "nvim"
             },
+             {
+                name: "Pi",
+                icon: "󰐀",
+                exec: ["setsid", "uwsm-app", "--", "ghostty", "-e", "pi"],
+                class: "pi"
+            }, 
             {
                 name: "WhatsApp",
                 icon: "󰖣",
@@ -131,8 +150,8 @@ QtObject {
                 icon: "󰖺",
                 exec: ["uwsm-app", "--", "heroic"],
                 class: "heroic"
-                
             },
+
         ]
         // property Gradient glassGradient: Gradient {
         //     orientation: Gradient.Vertical

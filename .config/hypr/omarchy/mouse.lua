@@ -1,5 +1,18 @@
-local WIN_STEP = 0.1015789634
-local WIN_PTS = {
+--------------------------------------------------------------------
+-- Windows-style pointer curve for Razer DeathAdder V2
+--
+-- libinput's custom profile: x = device units/ms, gain = y/x.
+-- x is in RAW device units, so the curve is DPI-specific.
+-- Scaling step and points together keeps gain-vs-hand-speed
+-- invariant, so DPI is the only number to change.
+--------------------------------------------------------------------
+
+local DPI = 2400 -- must match the mouse's active onboard stage
+local GAIN = 4.23 -- 1/0.2363 -> ~1:1 factor at slow speeds
+
+local REF_DPI = 1000 -- DPI the source curve was generated for
+local REF_STEP = 0.1015789634 -- = 3.86/38, Windows' 3rd knee on point 38
+local REF_PTS = {
 	0.000,
 	0.024,
 	0.049,
@@ -42,18 +55,20 @@ local WIN_PTS = {
 	1.937,
 }
 
-local GAIN = 3.8 -- tune 3.0–4.5 by feel
-
-local pts = {}
-for i, y in ipairs(WIN_PTS) do
-	pts[i] = string.format("%.5f", y * GAIN)
+local function win_curve(dpi, gain)
+	local scale, pts = dpi / REF_DPI, {}
+	for i, y in ipairs(REF_PTS) do
+		pts[i] = string.format("%.5f", y * scale * gain)
+	end
+	return string.format("custom %.10f %s", REF_STEP * scale, table.concat(pts, " "))
 end
 
 hl.device({
 	name = "razer-razer-deathadder-v2",
-	accel_profile = "custom " .. WIN_STEP .. " " .. table.concat(pts, " "),
+	accel_profile = win_curve(DPI, GAIN),
 })
 
+--------------------------------------------------------------------
 hl.config({
 	input = {
 		sensitivity = 0.0,
