@@ -2,4 +2,8 @@
 
 # logs 
 /.pi/agent/session/
-.pi/agent/sessions/
+
+# github skills
+/.pi/agent/skills/hyprland/.github
+/.pi/agent/skills/hyprland/.git
+/.pi/agent/skills/hyprland/.gitignore
