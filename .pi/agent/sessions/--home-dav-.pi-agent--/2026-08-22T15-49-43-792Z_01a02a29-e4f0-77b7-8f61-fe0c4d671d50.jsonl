@@ -1,5 +1,0 @@
-{"type":"session","version":3,"id":"01a02a29-e4f0-77b7-8f61-fe0c4d671d50","timestamp":"2026-08-22T15:49:43.792Z","cwd":"/home/dav/.pi/agent"}
-{"type":"thinking_level_change","id":"8b9cca7b","parentId":null,"timestamp":"2026-08-22T15:49:43.817Z","thinkingLevel":"off"}
-{"type":"model_change","id":"6d69d01c","parentId":"8b9cca7b","timestamp":"2026-08-22T15:51:30.748Z","provider":"llama.cpp","modelId":"gemma26b-qat"}
-{"type":"message","id":"952382f0","parentId":"6d69d01c","timestamp":"2026-08-22T15:51:32.710Z","message":{"role":"user","content":[{"type":"text","text":"hi"}],"timestamp":1787413892707}}
-{"type":"message","id":"13001ec5","parentId":"952382f0","timestamp":"2026-08-22T15:51:34.384Z","message":{"role":"assistant","content":[{"type":"text","text":"Hello! How can I help you today?"}],"api":"openai-completions","provider":"llama.cpp","model":"gemma26b-qat","usage":{"input":1268,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":1278,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787413892717,"responseId":"chatcmpl-5UyDmOjzYPyTQIYisWbfO9D1VX8QI3OJ","rawStopReason":"stop"}}

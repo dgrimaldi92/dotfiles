@@ -1,5 +1,0 @@
-{"type":"session","version":3,"id":"01a032f2-d809-7b78-9552-00739fcf2c94","timestamp":"2026-08-24T08:46:10.953Z","cwd":"/home/dav"}
-{"type":"model_change","id":"6b5eda25","parentId":null,"timestamp":"2026-08-24T08:46:10.993Z","provider":"local-llama","modelId":"gemma-4-26b"}
-{"type":"thinking_level_change","id":"fcaa2595","parentId":"6b5eda25","timestamp":"2026-08-24T08:46:10.993Z","thinkingLevel":"off"}
-{"type":"message","id":"6fd02b70","parentId":"fcaa2595","timestamp":"2026-08-24T08:46:22.224Z","message":{"role":"user","content":[{"type":"text","text":"can u show me how to implement crawl4ai in my pi extensions"}],"timestamp":1787561182221}}
-{"type":"message","id":"f4c6f45d","parentId":"6fd02b70","timestamp":"2026-08-24T08:46:22.242Z","message":{"role":"assistant","content":[],"api":"openai-completions","provider":"local-llama","model":"gemma-4-26b","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","timestamp":1787561182232,"errorMessage":"400: {\"code\":400,\"message\":\"model 'gemma-4-26b' not found\",\"type\":\"invalid_request_error\"}"}}

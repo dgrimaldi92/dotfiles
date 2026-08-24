@@ -1,5 +1,0 @@
-{"type":"session","version":3,"id":"01a032f4-8dae-78bc-84f7-c074f8449d29","timestamp":"2026-08-24T08:48:02.990Z","cwd":"/home/dav"}
-{"type":"model_change","id":"0be748b8","parentId":null,"timestamp":"2026-08-24T08:48:03.029Z","provider":"local-llama","modelId":"gemma-4-26b"}
-{"type":"thinking_level_change","id":"f933e239","parentId":"0be748b8","timestamp":"2026-08-24T08:48:03.029Z","thinkingLevel":"off"}
-{"type":"message","id":"4c110765","parentId":"f933e239","timestamp":"2026-08-24T08:49:18.216Z","message":{"role":"user","content":[{"type":"text","text":"hello"}],"timestamp":1787561358213}}
-{"type":"message","id":"9838f0e0","parentId":"4c110765","timestamp":"2026-08-24T08:49:18.233Z","message":{"role":"assistant","content":[],"api":"openai-completions","provider":"local-llama","model":"gemma-4-26b","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","timestamp":1787561358223,"errorMessage":"400: {\"code\":400,\"message\":\"model 'gemma-4-26b' not found\",\"type\":\"invalid_request_error\"}"}}
