@@ -2,3 +2,4 @@
 
 # logs 
 /.pi/agent/session/
+.pi/agent/sessions/
