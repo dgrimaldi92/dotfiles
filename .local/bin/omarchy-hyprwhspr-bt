@@ -7,21 +7,145 @@ STATUS_PROGRESS="progress"
 get_status() {
     hyprwhspr record status | awk '{print tolower($NF)}'
 }
+#--------------------------------------------------------
 
 notify() {
-    hyprctl notify -1 3000 "rgb(ffffff)" "$1" >/dev/null 2>&1 || true; 
+    echo "$1" >/dev/null 2>&1 || true
 }
 
+have_jq() { command -v jq >/dev/null 2>&1; }
+
+# Per-card: active profile (with codec suffix) + which profiles are available.
+# The avail=[] list is the decisive field: if a2dp-sink is absent, it does not
+# exist for that card and nothing can switch to it.
+bt_profiles() {
+    if have_jq; then
+        pactl --format=json list cards 2>/dev/null | jq -r '
+          .[] | select(.name | startswith("bluez_card")) |
+          "\(.name | sub("bluez_card\\.";"")) active=\(.active_profile) avail=[" +
+          ([ .profiles | to_entries[]
+             | select(.value.available != false and .value.available != "no")
+             | .key ] | join(" ")) + "]"
+        ' 2>/dev/null | paste -sd' | ' -
+    else
+        pactl list cards 2>/dev/null | awk '
+            /Name: bluez_card/         { card=$2; next }
+            /Active Profile:/          { if (card) printf "%s active=%s ", card, $3 }
+            /available: (yes|true)/    { if (card) { gsub(/:$/,"",$1); printf "%s ", $1 } }
+        '
+    fi
+}
+
+# Bluetooth capture sources and their state. A source that exists but sits
+# SUSPENDED during a recording is the silence case.
+bt_sources() {
+    if have_jq; then
+        pactl --format=json list sources 2>/dev/null | jq -r '
+          .[] | select(.name | test("bluez_input")) |
+          "\(.name | sub("bluez_input\\.";"")) state=\(.state)"
+        ' 2>/dev/null | paste -sd' | ' -
+    else
+        pactl list sources short 2>/dev/null | awk '/bluez_input/{print $2" state="$NF}' \
+            | paste -sd' | ' -
+    fi
+}
+
+# What is actually attached to a capture source right now, and to which one.
+# Empty during a recording => the daemon opened nothing.
+who_is_recording() {
+    pactl list source-outputs 2>/dev/null | awk '
+        /Source:/          { s=$2 }
+        /application.name/ { gsub(/"/,""); print $3" <- src#"s }
+    ' | paste -sd'; ' -
+}
+
+default_source() {
+    pactl info 2>/dev/null | awk -F': ' '/Default Source/{print $2}'
+}
+
+# Service state, and crucially: how many seconds it has been active.
+# If presses fail below some uptime and succeed above it, the daemon is still
+# initialising. If they fail at any uptime, it is not a load-time problem.
+svc_state() {
+    local props active sub result mainstat nrestart enter_mono now_mono up
+    props=$(systemctl --user show hyprwhspr.service \
+        -p ActiveState -p SubState -p Result -p ExecMainStatus \
+        -p NRestarts -p ActiveEnterTimestampMonotonic 2>/dev/null)
+
+    active=$(  awk -F= '/^ActiveState=/{print $2}'   <<<"$props")
+    sub=$(     awk -F= '/^SubState=/{print $2}'      <<<"$props")
+    result=$(  awk -F= '/^Result=/{print $2}'        <<<"$props")
+    mainstat=$(awk -F= '/^ExecMainStatus=/{print $2}'<<<"$props")
+    nrestart=$(awk -F= '/^NRestarts=/{print $2}'     <<<"$props")
+    enter_mono=$(awk -F= '/^ActiveEnterTimestampMonotonic=/{print $2}' <<<"$props")
+
+    if [[ -n "${enter_mono:-}" && "$enter_mono" != "0" ]]; then
+        now_mono=$(awk '{printf "%d", $1 * 1000000}' /proc/uptime)
+        up=$(awk -v a="$now_mono" -v b="$enter_mono" 'BEGIN{printf "%.1f", (a-b)/1000000}')
+    else
+        up="n/a"
+    fi
+
+    printf 'active=%s/%s uptime=%ss result=%s exit=%s restarts=%s' \
+           "${active:-?}" "${sub:-?}" "$up" "${result:-?}" "${mainstat:-?}" "${nrestart:-?}"
+}
+
+# The tray's own view. This is the readiness oracle the daemon itself uses.
+tray_state() {
+    local json
+    json=$(timeout 3s "$TRAY_SH" status 2>/dev/null) || { printf 'tray=timeout'; return; }
+    printf 'tray_class=%s' "$(sed -n 's/.*"class":"\([^"]*\)".*/\1/p' <<<"$json")"
+}
+
+# Signal files the daemon and tray communicate through. `recording_control`
+# still holding "start" means the daemon never consumed the command.
+rt_files() {
+    local d out=""
+    if [[ -n "${XDG_RUNTIME_DIR:-}" ]]; then d="$XDG_RUNTIME_DIR/hyprwhspr"
+    else d="${TMPDIR:-/tmp}/hyprwhspr-$(id -u)"; fi
+    [[ -d "$d" ]] || { printf 'rt=missing'; return; }
+    local f
+    for f in recording_control recording_status audio_level model_unloaded; do
+        if [[ -f "$d/$f" ]]; then
+            out+="$f=[$(head -c 32 "$d/$f" 2>/dev/null | tr -d '\n')]@$(( $(date +%s) - $(stat -c %Y "$d/$f") ))s "
+        else
+            out+="$f=- "
+        fi
+    done
+    printf '%s' "${out% }"
+}
+
+# One combined snapshot line.
+# snapshot() {
+#     echo "  svc: $(svc_state) $(tray_state)"
+#     echo "  rt:  $(rt_files)"
+#     echo "  bt: profiles=[$(bt_profiles)]"
+#     echo "  bt: sources=[$(bt_sources)] default=[$(default_source)]"
+#     # echo "  bt: recording=[$(who_is_recording)]"
+# }
+#
+# echo "=== keypress ==="
+# status="$(get_status)"
+# echo "parsed status=[$status]"
+# snapshot
+#--------------------------------------------------------
 case "$(get_status)" in
     "$STATUS_IDLE")
         echo "System is idle"
-        /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record
+        pactl set-card-profile bluez_card.EC_46_54_A2_B0_AD headset-head-unit-msbc
+        output=$(/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record 2>&1)
         sleep 0.2
-        notify "Recording started"
+        echo $output
+        if [ $? -ne 0 ]; then
+            notify "$output"
+        else
+            notify "Recording started"
+        fi
         ;;
     "$STATUS_PROGRESS")
         echo "System is running"
-        hyprwhspr record stop
+        # hyprwhspr record stop
+        /usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record
         notify "Recording stopped"
         # Run cleanup in background
         (

@@ -1,0 +1,15 @@
+{
+  "skillful": {
+    "hiddenSkills": [
+      "crawl4ai",
+      "hyprland",
+      "setup-pstack",
+      "tdd",
+      "teach",
+      "technical-writing",
+      "typescript-best-practices",
+      "unslop"
+    ],
+    "toggleSlots": {}
+  }
+}
