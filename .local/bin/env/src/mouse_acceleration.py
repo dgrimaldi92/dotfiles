@@ -16,6 +16,7 @@ Usage:
 """
 
 import argparse
+import logging
 import struct
 import subprocess
 import sys
@@ -46,7 +47,9 @@ def fixed16_16(hex_str: str) -> float:
     return struct.unpack("<i", bytes.fromhex(hex_str))[0] / 0x10000
 
 
-def build_points(dpi: float, screen_dpi: float, scale: float, multiplier: float):
+def build_points(
+    dpi: float, screen_dpi: float, scale: float, multiplier: float
+) -> list:
     """Windows curve -> libinput units.
 
     x: inches/s          -> device units/ms   (x * dpi / 1000)
@@ -68,7 +71,7 @@ def interpolate(points, x: float) -> float:
     return ((x - x0) * y1 + (x1 - x) * y0) / (x1 - x0)
 
 
-def sample(points, count: int):
+def sample(points: list[list], count: int) -> tuple:
     """Sample evenly up to the 4th knee, plus two steps into the last segment."""
     step = points[-2][0] / (count - 2)
     ys = [interpolate(points, i * step) for i in range(count)]
@@ -118,8 +121,10 @@ def main() -> int:
         help="apply live via hyprctl eval (requires --device)",
     )
     args = p.parse_args()
+    max_points = 63
+    min_points = 2
 
-    if not 2 <= args.points <= 63:
+    if not min_points <= args.points <= max_points:
         p.error("--points must be between 2 and 63 (libinput caps the curve at 64)")
     if args.apply and not args.device:
         p.error("--apply requires --device (run `hyprctl devices` to find the name)")
@@ -137,26 +142,21 @@ def main() -> int:
     )
 
     if args.format == "lua":
-        print(lua_block)
+        logging.info(lua_block)
     else:
-        print(f"device {{\n    name = {name}\n    accel_profile = {curve}\n}}")
+        logging.info(f"device {{\n    name = {name}\n    accel_profile = {curve}\n}}")
 
-    print(
+    logging.info(
         f"\n# {args.dpi:g} DPI, {args.screen_dpi:g} screen DPI, scale {args.scale:g}, "
-        f"slider notch {args.notch} ({NOTCH_TO_MULTIPLIER[args.notch]}x)",
-        file=sys.stderr,
+        f"slider notch {args.notch} ({NOTCH_TO_MULTIPLIER[args.notch]}x)"
     )
-    print(
-        f"# gain at slowest tracked speed: {ys[1] / step:.3f} px per count",
-        file=sys.stderr,
-    )
+    logging.info(f"# gain at slowest tracked speed: {ys[1] / step:.3f} px per count")
 
     if args.apply:
         # 0.55 dropped `hyprctl keyword`; Lua configs are poked via eval.
         subprocess.run(["hyprctl", "eval", lua_block.replace("\n", " ")], check=True)
-        print(
-            f"# applied to '{args.device}' (runtime only, lost on next reload)",
-            file=sys.stderr,
+        logging.info(
+            f"# applied to '{args.device}' (runtime only, lost on next reload)"
         )
     return 0
 
