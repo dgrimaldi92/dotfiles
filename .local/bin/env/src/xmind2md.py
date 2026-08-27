@@ -43,6 +43,16 @@ class File(TypedDict):
     title: ReadOnly[str]
 
 
+def read_content_from_json(spreadsheet_topic: dict) -> Node:
+    kids = spreadsheet_topic.get("children") or {}
+    attached = kids.get("attached") or []
+    detached = kids.get("detached") or []
+    return Node(
+        content=(spreadsheet_topic.get("title") or "").strip(),
+        children=[read_content_from_json(c) for c in list(attached) + list(detached)],
+    )
+
+
 def read_content_from_xml(spreadsheet_topic: ET.Element[str]) -> Node:
     content = spreadsheet_topic.find("x:title", NS)
     children = []
@@ -56,24 +66,27 @@ def read_content_from_xml(spreadsheet_topic: ET.Element[str]) -> Node:
     )
 
 
-def read_content_from_json(spreadsheet_topic: dict) -> Node:  # ty:ignore[missing-type-argument]
-    kids = spreadsheet_topic.get("children") or {}
-    attached = kids.get("attached") or []
-    detached = kids.get("detached") or []
-    return Node(
-        content=(spreadsheet_topic.get("title") or "").strip(),
-        children=[read_content_from_json(c) for c in list(attached) + list(detached)],
-    )
+def read_zipfile(input_file: zipfile.ZipFile, file_format: Format) -> str:
+    try:
+        return input_file.read(file_format.value).decode("utf-8")
+    except KeyError as e:
+        raise ValueError(
+            f"The required file '{file_format.value}' was not found in the archive.",
+        ) from e
+    except UnicodeDecodeError as e:
+        raise ValueError(
+            f"Failed to decode '{file_format.value}' as UTF-8: {e}",
+        ) from e
 
 
 def read_containers(input_file: Path) -> Iterator[File]:
     if not zipfile.is_zipfile(input_file):
         # Some tools emit a bare content.json named .xmind
-        raise ValueError("Not_a_zip")
+        raise zipfile.BadZipFile("The input file doesn't contain an xmind file")
     with zipfile.ZipFile(input_file) as z:
         names = set(z.namelist())
         if Format.JSON in names:
-            content = json.loads(z.read("content.json").decode("utf-8"))
+            content = json.loads(read_zipfile(z, Format.JSON))
             entries = content if isinstance(content, list) else [content]
             for i, sheet in enumerate(entries, 1):
                 root = sheet.get("rootTopic")
@@ -85,7 +98,7 @@ def read_containers(input_file: Path) -> Iterator[File]:
                     node=read_content_from_json(root),
                 )
         elif Format.XML in names:
-            content = ET.fromstring(z.read("content.xml").decode("utf-8"))
+            content = ET.fromstring(read_zipfile(z, Format.XML))
             for i, sheet in enumerate(content.findall("x:sheet", NS), 1):
                 root = sheet.find("x:topic", NS)
                 if root is None:
@@ -97,7 +110,9 @@ def read_containers(input_file: Path) -> Iterator[File]:
                     title=str(title.text) if title is not None else f"Sheet {i}",
                 )
         else:
-            raise ValueError("content_None")
+            raise ValueError(
+                "The input file contains an xmind file, but no JSON or XML were found",
+            )
 
 
 # ----------- CONVERTING -------------
@@ -121,7 +136,7 @@ def slug(title: str | None) -> str:
 
 
 def write(destination: Path, output_list: list[str]) -> None:
-    with destination.open(mode="a", encoding="utf-8") as fh:  # <-- 101 opens
+    with destination.open(mode="w", encoding="utf-8") as fh:  # <-- 101 opens
         fh.writelines(output_list)
 
 
@@ -136,6 +151,7 @@ def main(
             writable=False,
             readable=True,
             resolve_path=True,
+            help="Xmind input file",
         ),
     ],
     outdir: Annotated[
@@ -145,8 +161,11 @@ def main(
             dir_okay=True,
             readable=True,
             resolve_path=True,
+            show_default="Current directory",
+            prompt=True,
+            help="Output directory where md will be stored",
         ),
-    ],
+    ] = Path(),
 ) -> None:
     try:
         for index, file in enumerate(read_containers(source)):
@@ -162,7 +181,11 @@ def main(
         zipfile.BadZipFile,
         OSError,
     ) as e:
-        typer.secho(str(e), fg=typer.colors.RED, err=True)
+        typer.secho(
+            f"Error processing {source.name}: {e!s}",
+            fg=typer.colors.RED,
+            err=True,
+        )
         raise typer.Exit(1) from e
 
 
