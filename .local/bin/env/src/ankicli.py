@@ -3,6 +3,7 @@
 # requires-python = ">=3.14"
 # dependencies = ["typer", "httpx"]
 # ///
+from enum import Enum, StrEnum
 import json
 import os
 from pathlib import Path
@@ -65,6 +66,11 @@ class Answer(TypedDict):
 
 class AnswerCardsParams(TypedDict):
     answers: list[Answer]
+
+
+class BatchOpts(StrEnum):
+    dry = "dry"
+    create = "create"
 
 
 def raise_typer(msg: str) -> None:
@@ -139,17 +145,15 @@ def note_payload(deck: str, item: dict) -> dict:
     }
 
 
-def require_deck(deck, create: bool) -> None:
+def create_deck(deck: str) -> None:
     existing = call("deckNames", None)
     if deck in existing:
         return
-    if not create:
-        raise_typer(f'no deck "{deck}". Pass --create, or check `anki decks`.')
-    call("createDeck", deck=deck)
+    call("createDeck", {"deck": deck})
 
 
-def batch_notes(content: str, deck: str, create: bool, dry_run: bool) -> None:
-    items: list[Note] | None = None
+def batch_notes(content: str, deck_name: str, batch_opts: BatchOpts) -> None:
+    items: list[Note] | None = []
     try:
         items: list[Note] = json.loads(content)
     except json.JSONDecodeError as e:
@@ -158,17 +162,24 @@ def batch_notes(content: str, deck: str, create: bool, dry_run: bool) -> None:
     if not isinstance(items, list):
         raise_typer("json should be a list")
 
-    if not dry_run:
-        require_deck(deck, create)
-    if dry_run:
+    if batch_opts == BatchOpts.create:
+        create_deck(deck_name)
+    if batch_opts == BatchOpts.dry:
         for n in items:
             first = next(iter(n["fields"].values()))
+            rich_print(f"[{n['modelName']}] {flatten(first, 100)}")
+        rich_print(f"# {len(items)} notes, not sent (--dry-run)")
         return
     # result = call("addNotes", notes)
     # ok = [r for r in result if r]
     # for n, r in zip(notes, result):
     #     if r is None:
     #         first = next(iter(n["fields"].values()))
+
+
+@app.command()
+def test() -> None:
+    rich_print(call("deckNames", None))
 
 
 @app.command()
@@ -186,13 +197,15 @@ def batch(
         ),
     ],
     deck: Annotated[str, typer.Option(help="Name of the deck")],
-    create: Annotated[bool, typer.Option()] = True,
-    dry_run: Annotated[bool, typer.Option()] = False,
+    batch_opts: Annotated[
+        BatchOpts,
+        typer.Option(case_sensitive=False),
+    ] = BatchOpts.create,
 ) -> None:
     """
     Insert anki cards from json into the batch
     """
-    batch_notes(file.read_text(), deck, create, dry_run)
+    batch_notes(file.read_text(), deck, batch_opts)
 
 
 if __name__ == "__main__":
