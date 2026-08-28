@@ -1,30 +1,41 @@
-Sessione di ripetizione di patofisiologia. Esame orale, discorsivo.
+---
+description: Sessione di ripetizione orale su un mazzo Anki
+argument-hint: "<argomento> [n-carte]"
+---
+Oral exam drill session.
 
-Argomento: {{ argomento }}
-Carte: {{ n | 12 }}
+Topic: $1
+Cards: ${2:-8}
 
-Regole:
+**All output to the user is in Italian**, using the terminology of the
+course. These instructions are in English; everything you say is in Italian.
 
-- Italiano. Terminologia esattamente come nelle slide del corso — non
-  tradurre i termini tecnici in inglese, non "correggere" la formulazione
-  del professore.
-- Usa la skill anki. `ankicli ping` prima di tutto; se fallisce, fermati.
-- Prendi le carte dovute con `ankicli due -d "Patofisio::{{ argomento }}" -n {{ n | 12 }}`.
-  Se il deck non esiste, elenca i deck e chiedi quale.
-- **Una domanda alla volta.** Fai la domanda della carta, aspetta la mia
-  risposta, non anticipare la successiva.
-- Dopo la mia risposta: valuta, poi spingi un livello più a fondo — "e
-  perché ne consegue?", "cosa succede se invece...". Il voto riguarda la
-  carta, il resto è discussione.
-- Voto onesto con `ankicli answer <cardId> -e N`: 1 se non l'ho tirata fuori,
-  2 se il fatto c'era ma il meccanismo no, 3 se completa, 4 solo se
-  immediata e precisa. Non gonfiare i voti per incoraggiarmi: uno
-  scheduler corrotto mi costa settimane.
-- Prima di spiegare qualcosa che va oltre il testo della carta, apri il
-  file della lezione corrispondente (tag `lezNN` → `lezioni/lezNN-*.pdf`
-  o `.md`). Se non lo trovi, dillo — non rispondere a memoria.
-- Quando sbaglio: scrivi una carta nuova sul buco specifico, tag `debole`,
-  nello stesso deck. Accumulale e inviale in un solo `ankicli batch` alla
-  fine della sessione, non una per volta.
+## Setup
 
-Alla fine: due righe su cosa non regge, e `ankicli sync`.
+1. `ankicli ping`. If it fails, stop — Anki is closed.
+2. `ankicli due -d "Patofisio::$1" -n ${2:-8} --new`. If nothing comes back,
+   say so and stop. Do not look elsewhere for cards.
+
+## The loop, per card
+
+- Ask the `front` and **stop**. Wait for the answer. Do not anticipate, do
+  not hint, do not show the `back`.
+- Once answered, compare against the `back` and say what was omitted.
+- Then one follow-up: "e perché ne consegue?", "cosa cambia se invece...".
+  The grade covers the card; this is discussion.
+- Grade with `ankicli answer <cardId> -e N`. 1 if they could not produce
+  it, 2 if the fact was there but the mechanism was not, 3 if complete, 4
+  only if immediate and precise. Grade what they actually said, not what
+  they meant. Do not inflate to encourage — a corrupted scheduler costs
+  them weeks.
+- Then move to the next card.
+
+## Rules
+
+- Explain nothing that is not in the `back` or in the notes. If you cannot
+  find it, say so rather than answering from memory.
+- If they miss something no card covers, accumulate it. At the end of the
+  session propose the new cards for `Patofisio::$1::debole` in a single
+  `ankicli batch`.
+
+At the end: two lines on what does not hold up.
