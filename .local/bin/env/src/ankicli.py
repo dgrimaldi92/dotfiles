@@ -1,3 +1,4 @@
+#!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.14"
 # dependencies = ["typer", "httpx"]
@@ -74,6 +75,11 @@ class CreateDeckParams(TypedDict):
     deck: str
 
 
+class DeleteDeckParams(TypedDict):
+    decks: list[str]
+    cardsToo: bool
+
+
 class Answer(TypedDict):
     cardId: int
     ease: int
@@ -108,6 +114,7 @@ def anki_caller[T: str](
     | AddNotesParams
     | CreateDeckParams
     | AnswerCardsParams
+    | DeleteDeckParams
     | None,
 ) -> T:
     body = {}
@@ -117,7 +124,7 @@ def anki_caller[T: str](
             json={
                 "action": action,
                 "version": API,
-                params: params or [],
+                "params": params or {},
             },
         )
         response.raise_for_status()
@@ -157,11 +164,6 @@ def ping() -> None:
     Check AnkiConnect is reachable
     """
     rich_print(f"ok  AnkiConnect v{anki_caller('version', None)}  {URL}")
-
-
-@app.command()
-def test() -> None:
-    rich_print(anki_caller("deckNames", None))
 
 
 @app.command()
@@ -238,6 +240,23 @@ def due(
 
 
 @app.command()
+def remove(
+    deck: Annotated[
+        str,
+        typer.Argument(help="Deck name, e.g. Patofisio::Cancro"),
+    ],
+) -> None:
+    """Delete a deck and its cards. Not undoable from the CLI."""
+    if deck not in anki_caller("deckNames", None):
+        raise_typer(f"no deck {deck!r}")
+
+    typer.confirm(f"delete {deck!r}?", abort=True)
+
+    anki_caller("deleteDecks", {"decks": [deck], "cardsToo": True})
+    rich_print(f"deleted {deck}")
+
+
+@app.command()
 def answer(
     card_id: Annotated[int, typer.Argument(help="cardId, as printed by `due`")],
     ease: Annotated[
@@ -249,9 +268,8 @@ def answer(
     if not anki_caller("answerCards", {"answers": [{"cardId": card_id, "ease": ease}]})[
         0
     ]:
-        typer.secho(f"card {card_id} not graded", fg=typer.colors.RED, err=True)
-        raise typer.Exit(1)
-    typer.echo(f"{card_id} → {ease}")
+        raise_typer(f"card {card_id} not graded")
+    rich_print(f"{card_id} → {ease}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,16 @@
+{
+  "name": "dgrimaldi-web-search",
+  "version": "1.0.0",
+  "description": "A web search extension for pi",
+  "main": "./extensions/index.ts",
+  "keywords": ["pi-package"],
+  "pi": {
+    "extensions": ["./extensions"],
+    "skills": ["./skills"],
+    "prompts": ["./prompts"]
+  },
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "latest",
+    "typebox": "^0.31.0"
+  }
+}
