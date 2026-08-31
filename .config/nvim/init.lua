@@ -943,60 +943,14 @@ require('lazy').setup({
       hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
     end,
   },
-  { -- minuet-ai: local AI inline completion via Ollama
-    'milanglacier/minuet-ai.nvim',
-    config = function()
-      require('minuet').setup {
-        notify = 'debug',
-        provider = 'openai_fim_compatible',
-        n_completions = 1, -- keep it snappy locally
-        request_timeout = 3,
-        provider_options = {
-          openai_fim_compatible = {
-            api_key = 'TERM', -- Ollama doesn't need a key
-            name = 'Ollama',
-            end_point = 'http://localhost:11434/v1/completions',
-            model = 'qwen2.5-coder:7b',
-            system = {
-              -- reuse default prompt unchanged
-              prompt = require('minuet.config').default_system_prefix_first.prompt,
-              -- only override guidelines
-              guidelines = [[
-Guidelines:
-1. Offer completions after the <cursorPosition> marker.
-2. Preserve existing whitespace and indentation exactly. This is REALLY IMPORTANT!
-3. Return completions separated by the marker <endCompletion>.
-4. DO NOT include comments or markdown code block fences. Return the result directly.
-5. Keep each completion to 1-2 lines maximum. Stop as soon as the statement is complete.
-6. Do NOT repeat or copy any existing code around <cursorPosition>.
-]],
-            },
-            optional = {
-              max_tokens = 64,
-            },
-          },
-        },
-        -- show as virtual text (ghost text), not in blink popup
-        virtualtext = {
-
-          auto_trigger_ft = { 'lua', 'rust', 'typescript', 'python' },
-          keymap = {
-            -- accept whole completion
-            accept = '<A-A>',
-            -- accept one line
-            accept_line = '<A-a>',
-            -- accept n lines (prompts for number)
-            -- e.g. "A-z 2 CR" will accept 2 lines
-            accept_n_lines = '<A-z>',
-            -- Cycle to prev completion item, or manually invoke completion
-            prev = '<A-[>',
-            -- Cycle to next completion item, or manually invoke completion
-            next = '<A-]>',
-            dismiss = '<A-e>',
-          },
-        },
-      }
-    end,
+  { -- Render Markdown inside neovim editor
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
   },
   { -- Collection of various small independent plugins/modules
     'nvim-mini/mini.nvim',
