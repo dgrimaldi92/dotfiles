@@ -1,4 +1,13 @@
-export default function renderResult(
+import { Text } from "@earendil-works/pi-tui";
+import { appendExpandedPreview, appendExpandHint, getTextContent } from "./utils";
+import type { SearchDepth, WebSearchDetails } from "@/search/domain/types";
+
+import type { WebSearchBoundaryError } from "@/search/api/websearch.ts";
+interface RenderTheme {
+  fg(name: string, value: string): string;
+  bold(value: string): string;
+}
+export function renderResult(
   result: {
     content: Array<{ type: string; text?: string }>;
     details?: WebSearchDetails;
@@ -6,7 +15,7 @@ export default function renderResult(
   },
   options: { expanded: boolean; isPartial: boolean },
   theme: RenderTheme,
-) {
+): Text {
   if (options.isPartial) {
     return new Text(theme.fg("warning", "Searching..."), 0, 0);
   }
@@ -38,5 +47,20 @@ export default function renderResult(
     }
   }
 
+  return new Text(text, 0, 0);
+}
+
+export function renderCall(
+  args: { query: string; depth?: SearchDepth; maxResults?: number },
+  theme: RenderTheme,
+): Text {
+  let text = theme.fg("toolTitle", theme.bold("websearch "));
+  text += theme.fg("accent", JSON.stringify(String(args.query)));
+  if (args.depth && args.depth !== "auto") {
+    text += theme.fg("muted", ` (${args.depth})`);
+  }
+  if (args.maxResults) {
+    text += theme.fg("dim", ` limit=${args.maxResults}`);
+  }
   return new Text(text, 0, 0);
 }

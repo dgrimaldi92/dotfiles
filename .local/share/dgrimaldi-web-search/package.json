@@ -2,27 +2,18 @@
   "name": "dgrimaldi-web-search",
   "version": "1.0.0",
   "description": "A web search extension for pi",
-  "main": "./extensions/index.ts",
-  "keywords": ["pi-package"],
-  "pi": {
-    "extensions": ["./extensions"],
-    "skills": ["./skills"],
-    "prompts": ["./prompts"]
-  },
-  "dependencies": {
-    "@earendil-works/pi-coding-agent": "latest",
-    "typebox": "^0.31.0"
-  },
+  "keywords": [
+    "pi-package"
+  ],
+  "main": "./extensions/src/index.ts",
   "scripts": {
     "check": "npm run typecheck && npm run test",
     "test": "node --import tsx --test test/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
-    "@earendil-works/pi-ai": "*",
-    "@earendil-works/pi-coding-agent": "*",
-    "@earendil-works/pi-tui": "*",
-    "typebox": "*"
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "latest",
+    "typebox": "^0.31.0"
   },
   "devDependencies": {
     "@earendil-works/pi-ai": "^0.84.0",
@@ -33,7 +24,27 @@
     "typebox": "^1.1.38",
     "typescript": "^5.9.2"
   },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
   "engines": {
     "node": ">=22.19.0"
+  },
+  "compilerOptions": {
+    "baseUrl": "./extensions/"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ],
+    "skills": [
+      "./skills"
+    ],
+    "prompts": [
+      "./prompts"
+    ]
   }
 }

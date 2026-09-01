@@ -1,5 +1,18 @@
 import { StringEnum } from "@earendil-works/pi-ai";
 import Type from "typebox";
+import { renderCall, renderResult } from "@/search/presentation/tui";
+import type {
+  ParseSearchQueryError,
+  WebSearchDetails,
+  WebToolsSettings,
+} from "@/search/domain/types";
+import { SEARCH_DEPTHS } from "@/search/domain/config";
+import type {
+  PiToolResult,
+  ToolOutputStore,
+  ToolOutputStoreError,
+} from "@/search/presentation/agent-view";
+import type { SearchWeb, SearchWebError } from "@/search/composition/web-search";
 
 export interface WebSearchToolComposition {
   readonly settings: WebToolsSettings["search"];
@@ -7,11 +20,19 @@ export interface WebSearchToolComposition {
   readonly outputStore: ToolOutputStore;
 }
 
+type ToolInputParseError =
+  | { readonly _tag: "InvalidToolInput"; readonly message: string }
+  | { readonly _tag: "InvalidToolField"; readonly field: string; readonly message: string }
+  | { readonly _tag: "UnknownToolField"; readonly field: string };
+
 type WebSearchBoundaryError =
   | ToolInputParseError
   | ParseSearchQueryError
   | SearchWebError
   | ToolOutputStoreError;
+
+export const toToolError = (error: WebSearchBoundaryError) =>
+  new Error(describeWebSearchError(error));
 
 export function createWebSearchTool(composition?: WebSearchToolComposition) {
   return {
@@ -101,30 +122,7 @@ export function createWebSearchTool(composition?: WebSearchToolComposition) {
         composed.cleanup();
       }
     },
-
-    renderCall(
-      args: { query: string; depth?: SearchDepth; maxResults?: number },
-      theme: RenderTheme,
-    ) {
-      let text = theme.fg("toolTitle", theme.bold("websearch "));
-      text += theme.fg("accent", JSON.stringify(String(args.query)));
-      if (args.depth && args.depth !== "auto") {
-        text += theme.fg("muted", ` (${args.depth})`);
-      }
-      if (args.maxResults) {
-        text += theme.fg("dim", ` limit=${args.maxResults}`);
-      }
-      return new Text(text, 0, 0);
-    },
-
-    renderResult(
-      result: {
-        content: Array<{ type: string; text?: string }>;
-        details?: WebSearchDetails;
-        isError?: boolean;
-      },
-      options: { expanded: boolean; isPartial: boolean },
-      theme: RenderTheme,
-    ) {},
+    renderCall,
+    renderResult,
   };
 }
