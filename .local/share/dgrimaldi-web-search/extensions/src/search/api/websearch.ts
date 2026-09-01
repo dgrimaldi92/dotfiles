@@ -1,18 +1,27 @@
 import { StringEnum } from "@earendil-works/pi-ai";
 import Type from "typebox";
 import { renderCall, renderResult } from "@/search/presentation/tui";
-import type {
-  ParseSearchQueryError,
-  WebSearchDetails,
-  WebToolsSettings,
-} from "@/search/domain/types";
+import type { WebSearchDetails, WebToolsSettings } from "@/search/domain/types";
 import { SEARCH_DEPTHS } from "@/search/domain/config";
-import type {
-  PiToolResult,
-  ToolOutputStore,
-  ToolOutputStoreError,
+import {
+  formatSearchResults,
+  projectTextOutput,
+  textContent,
+  type PiToolResult,
+  type ToolOutputStore,
+  type ToolOutputStoreError,
 } from "@/search/presentation/agent-view";
-import type { SearchWeb, SearchWebError } from "@/search/composition/web-search";
+import {
+  createSearchWeb,
+  type SearchWeb,
+  type SearchWebResult,
+} from "@/search/composition/web-search";
+import {
+  toWebSearchBoundaryError,
+  toWebSearchToolError,
+  type WebSearchBoundaryError,
+} from "@/search/domain/error";
+import { ok, Result } from "@/shared/result";
 
 export interface WebSearchToolComposition {
   readonly settings: WebToolsSettings["search"];
@@ -20,19 +29,45 @@ export interface WebSearchToolComposition {
   readonly outputStore: ToolOutputStore;
 }
 
-type ToolInputParseError =
-  | { readonly _tag: "InvalidToolInput"; readonly message: string }
-  | { readonly _tag: "InvalidToolField"; readonly field: string; readonly message: string }
-  | { readonly _tag: "UnknownToolField"; readonly field: string };
+/** Project a search-web service result to a Pi tool result with truncation protection. */
+export async function projectSearchWebResultToPiToolResult(
+  result: SearchWebResult,
+  store: ToolOutputStore,
+): Promise<Result<PiToolResult<WebSearchDetails>, ToolOutputStoreError>> {
+  const output = formatSearchResults(result.query, result.results);
+  const truncated = await projectTextOutput(output, {
+    store,
+    tempPrefix: "pi-websearch-",
+    fileName: "output.txt",
+  });
+  if (truncated._tag === "err") {
+    return truncated;
+  }
 
-type WebSearchBoundaryError =
-  | ToolInputParseError
-  | ParseSearchQueryError
-  | SearchWebError
-  | ToolOutputStoreError;
+  return ok({
+    content: [textContent(truncated.value.text)],
+    details: {
+      query: result.query,
+      depth: result.depth,
+      maxResults: result.maxResults,
+      provider: result.provider,
+      resultCount: result.results.length,
+      truncated: truncated.value.truncated,
+      fullOutputPath: truncated.value.fullOutputPath,
+      results: result.results,
+    },
+  });
+}
 
-export const toToolError = (error: WebSearchBoundaryError) =>
-  new Error(describeWebSearchError(error));
+function createDefaultWebSearchComposition(): WebSearchToolComposition {
+  const settings = getWebSearchSettings();
+  const provider = createSearchProvider(settings);
+  return {
+    settings,
+    searchWeb: createSearchWeb({ provider, settings }),
+    outputStore: new TempFileToolOutputStore(),
+  };
+}
 
 export function createWebSearchTool(composition?: WebSearchToolComposition) {
   return {

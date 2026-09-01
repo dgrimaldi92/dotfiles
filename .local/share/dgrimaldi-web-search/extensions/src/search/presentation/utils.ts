@@ -1,4 +1,5 @@
 import { keyHint } from "@earendil-works/pi-coding-agent";
+import { PiTextContent } from "./agent-view";
 
 export function getTextContent(
   content: Array<{ type: string; text?: string }> | undefined,
@@ -36,4 +37,8 @@ export function appendExpandedPreview(
 export function appendExpandHint(base: string, expanded: boolean): string {
   if (expanded) return base;
   return `${base} ${keyHint("app.tools.expand" as any, "for details")}`;
+}
+
+function textContent(text: string): PiTextContent {
+  return { type: "text", text };
 }

@@ -1,3 +1,4 @@
+import { err, ok, Result } from "@/shared/result";
 import {
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
@@ -5,12 +6,13 @@ import {
   truncateHead,
   type TruncationResult,
 } from "@earendil-works/pi-coding-agent";
-import type { FetchPageResult } from "./fetch-page.ts";
-import { err, ok, type Result } from "./result.ts";
-import type { SearchWebResult } from "./search-web.ts";
-import { writeTempTextFile } from "./temp.ts";
-import type { SearchDepth, SearchProviderName, WebFetchFormat } from "./domain/types.ts";
-import type { NormalizedSearchResult } from "./providers/types.ts";
+import { writeTempTextFile } from "../domain/port";
+import {
+  NormalizedSearchResult,
+  SearchDepth,
+  SearchProviderName,
+  WebFetchFormat,
+} from "../domain/types";
 
 export interface ToolOutputStore {
   writeTextFile(
@@ -86,6 +88,33 @@ interface ProjectedTextOutput {
 }
 
 /** Project a fetch-page service result to a Pi tool result with truncation protection. */
+export type PublicHttpUrl = string & { readonly __brand: "PublicHttpUrl" };
+export type FetchPageResult =
+  | {
+      readonly _tag: "Text";
+      readonly requestedUrl: PublicHttpUrl;
+      readonly finalUrl: PublicHttpUrl;
+      readonly format: WebFetchFormat;
+      readonly status: number;
+      readonly mime: string;
+      readonly contentType: string;
+      readonly charset?: string;
+      readonly decoder: string;
+      readonly bytes: number;
+      readonly text: string;
+    }
+  | {
+      readonly _tag: "Image";
+      readonly requestedUrl: PublicHttpUrl;
+      readonly finalUrl: PublicHttpUrl;
+      readonly format: WebFetchFormat;
+      readonly status: number;
+      readonly mime: string;
+      readonly contentType: string;
+      readonly bytes: number;
+      readonly data: Buffer;
+    };
+
 export async function projectFetchPageResultToPiToolResult(
   result: FetchPageResult,
   store: ToolOutputStore,
@@ -139,8 +168,15 @@ export async function projectFetchPageResultToPiToolResult(
 }
 
 /** Project a search-web service result to a Pi tool result with truncation protection. */
+export type SearchQuery = string & { readonly __brand: "SearchQuery" };
 export async function projectSearchWebResultToPiToolResult(
-  result: SearchWebResult,
+  result: {
+    readonly query: SearchQuery;
+    readonly depth: SearchDepth;
+    readonly maxResults: number;
+    readonly provider: SearchProviderName;
+    readonly results: readonly NormalizedSearchResult[];
+  },
   store: ToolOutputStore,
 ): Promise<Result<PiToolResult<WebSearchDetails>, ToolOutputStoreError>> {
   const output = formatSearchResults(result.query, result.results);
@@ -198,7 +234,7 @@ export function formatSearchResults(
   return lines.join("\n").trimEnd();
 }
 
-async function projectTextOutput(
+export async function projectTextOutput(
   output: string,
   options: {
     readonly store: ToolOutputStore;
@@ -235,7 +271,7 @@ async function projectTextOutput(
   return ok({ text, truncated: true, fullOutputPath: fullOutputPath.value, truncation });
 }
 
-function textContent(text: string): PiTextContent {
+export function textContent(text: string): PiTextContent {
   return { type: "text", text };
 }
 
