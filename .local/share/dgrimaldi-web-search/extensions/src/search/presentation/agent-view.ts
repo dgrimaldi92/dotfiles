@@ -13,6 +13,8 @@ import {
   SearchProviderName,
   WebFetchFormat,
 } from "../domain/types";
+import { PublicHttpUrl } from "@/shared/url-parser";
+import { PiImageContent, PiTextContent, PiToolResult } from "./utils";
 
 export interface ToolOutputStore {
   writeTextFile(
@@ -42,19 +44,7 @@ export class TempFileToolOutputStore implements ToolOutputStore {
   }
 }
 
-export type PiTextContent = { readonly type: "text"; readonly text: string };
-export type PiImageContent = {
-  readonly type: "image";
-  readonly data: string;
-  readonly mimeType: string;
-};
-
-export interface PiToolResult<Details> {
-  readonly content: Array<PiTextContent | PiImageContent>;
-  readonly details: Details;
-}
-
-export interface WebFetchDetails {
+interface WebFetchDetails {
   readonly requestedUrl: string;
   readonly finalUrl: string;
   readonly format: WebFetchFormat;
@@ -69,7 +59,7 @@ export interface WebFetchDetails {
   readonly fullOutputPath?: string;
 }
 
-export interface WebSearchDetails {
+interface WebSearchDetails {
   readonly query: string;
   readonly depth: SearchDepth;
   readonly maxResults: number;
@@ -88,8 +78,7 @@ interface ProjectedTextOutput {
 }
 
 /** Project a fetch-page service result to a Pi tool result with truncation protection. */
-export type PublicHttpUrl = string & { readonly __brand: "PublicHttpUrl" };
-export type FetchPageResult =
+type FetchPageResult =
   | {
       readonly _tag: "Text";
       readonly requestedUrl: PublicHttpUrl;
@@ -168,7 +157,7 @@ export async function projectFetchPageResultToPiToolResult(
 }
 
 /** Project a search-web service result to a Pi tool result with truncation protection. */
-export type SearchQuery = string & { readonly __brand: "SearchQuery" };
+type SearchQuery = string & { readonly __brand: "SearchQuery" };
 export async function projectSearchWebResultToPiToolResult(
   result: {
     readonly query: SearchQuery;

@@ -1,3 +1,4 @@
+import { PublicHttpUrl, parsePublicHttpUrl } from "@/shared/url-parser";
 import type { SearchDepth, SearchProviderName, WebFetchFormat, WebToolsSettings } from "./types";
 
 export const WEB_FETCH_FORMATS = [
@@ -101,7 +102,6 @@ export function getWebSearchSettings(
   };
 }
 
-type PublicHttpUrl = string & { readonly __brand: "PublicHttpUrl" };
 function parseSearchEndpoint(input: string, environmentVariable: string): PublicHttpUrl {
   const parsed = parsePublicHttpUrl(input);
   if (parsed._tag === "err") {

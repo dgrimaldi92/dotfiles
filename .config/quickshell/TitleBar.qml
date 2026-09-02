@@ -31,10 +31,10 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: topMargin
 
-        property int expandedHeight: 0
+        property int expandedHeight: 0 
         property int additionalHeight: barHeight        // same idiom as DockItem
         width: parent.width
-        height: control.hovered ? additionalHeight : 0
+        height: control.hovered ? additionalHeight : 10 
     }
 
     HoverHandler {

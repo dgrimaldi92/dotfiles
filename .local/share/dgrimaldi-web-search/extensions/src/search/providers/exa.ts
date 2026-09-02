@@ -1,4 +1,20 @@
 import { err, ok } from "@/shared/result";
+import { HttpTextClient, SearchProvider, SearchSites } from "./providers";
+import { PublicHttpUrl } from "@/shared/url-parser";
+import { ExaProtocolParseError, parseExaMcpResponse } from "./exa-protocol";
+import { parseExaSearchText } from "./exa-results";
+
+export const MAX_SEARCH_RESPONSE_BYTES = 1 * 1024 * 1024;
+function renderProtocolReason(error: ExaProtocolParseError): string {
+  switch (error._tag) {
+    case "InvalidJson":
+      return `Invalid JSON ${error.source} payload`;
+    case "InvalidMcpPayload":
+      return error.reason;
+    case "NoMcpMessages":
+      return "No MCP messages";
+  }
+}
 
 export const createExaSearchProvider = (deps: {
   readonly endpoint: PublicHttpUrl;

@@ -1,5 +1,16 @@
 import { keyHint } from "@earendil-works/pi-coding-agent";
-import { PiTextContent } from "./agent-view";
+
+export type PiTextContent = { readonly type: "text"; readonly text: string };
+export type PiImageContent = {
+  readonly type: "image";
+  readonly data: string;
+  readonly mimeType: string;
+};
+
+export interface PiToolResult<Details> {
+  readonly content: Array<PiTextContent | PiImageContent>;
+  readonly details: Details;
+}
 
 export function getTextContent(
   content: Array<{ type: string; text?: string }> | undefined,

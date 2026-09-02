@@ -52,7 +52,8 @@ QtObject {
             {
                 name: "Obsidian",
                 icon: "",
-                exec: ["uwsm-app", "--", "obsidian"],
+                exec: ["OBSIDIAN_USE_WAYLAND=1", "uwsm-app", "--", "obsidian", "-enable-features=UseOzonePlatform", "-ozone-platform=wayland" 
+],
                 class: "md.obsidian.Obsidian"
             },
             {
@@ -101,19 +102,19 @@ QtObject {
                 name: "ChatGPT",
                 icon: "",
                 exec: ["omarchy-launch-webapp","https://chatgpt.com"],
-                class: "chatgpt"
+                class: "brave-chatgpt.com__-Default"
             },
             {
                 name: "Grok",
                 icon: "",
                 exec: ["omarchy-launch-webapp","https://grok.com"],
-                class: "grok"
+                class: "brave-grok.com__-Default"
             },
             {
                 name: "Claude",
                 icon: "",
                 exec: [ "omarchy-launch-webapp","https://claude.ai"],
-                class: "claude"
+                class: "brave-claude.ai__-Default"
             },
             {
                 name: "",
@@ -125,13 +126,13 @@ QtObject {
                 name: "Gmail",
                 icon: "󰊫",
                 exec: ["omarchy-launch-webapp","https://gmail.com"],
-                class: "gmail"
+                class: "brave-gmail.com__-Default"
             }, 
             {
                 name: "Google Documents",
                 icon: "",
                 exec: ["omarchy-launch-webapp","https://docs.google.com/document"],
-                class: "document"
+                class: "brave-docs.google.com__document-Default"
             },
             {
                 name: "Steam",
@@ -143,7 +144,7 @@ QtObject {
                 name: "Youtube",
                 icon: "",
                 exec: ["omarchy-launch-webapp","https://youtube.com"],
-                class: "youtube"
+                class: "brave-youtube.com__-Default"
             }, 
             {
                 name: "Heroic",

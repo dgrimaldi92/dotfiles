@@ -44,27 +44,8 @@ export function renderSafeWebSearchError(error: WebSearchBoundaryError): string 
   }
 }
 
-export class OperationTimeoutError extends Error {
-  readonly _tag = "OperationTimeout" as const;
-
-  constructor(readonly timeoutSeconds: number) {
-    super(`Operation timed out after ${timeoutSeconds}s`);
-    this.name = "OperationTimeoutError";
-  }
-}
-
 export function toWebSearchToolError(error: WebSearchBoundaryError): Error {
   return new Error(renderSafeWebSearchError(error));
-}
-
-export function isOperationTimeoutError(value: unknown): value is OperationTimeoutError {
-  return (
-    value instanceof OperationTimeoutError ||
-    (typeof value === "object" &&
-      value !== null &&
-      "_tag" in value &&
-      value._tag === "OperationTimeout")
-  );
 }
 
 export function isAbortError(error: unknown): boolean {

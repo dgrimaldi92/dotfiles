@@ -4,20 +4,17 @@ import { renderCall, renderResult } from "@/search/presentation/tui";
 import type { WebSearchDetails, WebToolsSettings } from "@/search/domain/types";
 import { getWebSearchSettings, SEARCH_DEPTHS } from "@/search/domain/config";
 import {
-  formatSearchResults,
-  projectTextOutput,
+  projectSearchWebResultToPiToolResult,
+  TempFileToolOutputStore,
   textContent,
-  type PiToolResult,
   type ToolOutputStore,
-  type ToolOutputStoreError,
 } from "@/search/presentation/agent-view";
-import {
-  createSearchWeb,
-  type SearchWeb,
-  type SearchWebResult,
-} from "@/search/composition/web-search";
+import { createSearchWeb, type SearchWeb } from "@/search/composition/web-search";
 import { toWebSearchBoundaryError, toWebSearchToolError } from "@/search/domain/error";
-import { ok, Result } from "@/shared/result";
+import { SearchProvider } from "@/search/providers/providers";
+import { parseWebSearchToolParams } from "@/search/presentation/input";
+import { PiToolResult } from "@/search/presentation/utils";
+import { createOperationSignal } from "@/shared/network";
 
 export interface WebSearchToolComposition {
   readonly settings: WebToolsSettings["search"];
@@ -25,34 +22,13 @@ export interface WebSearchToolComposition {
   readonly outputStore: ToolOutputStore;
 }
 
-/** Project a search-web service result to a Pi tool result with truncation protection. */
-export async function projectSearchWebResultToPiToolResult(
-  result: SearchWebResult,
-  store: ToolOutputStore,
-): Promise<Result<PiToolResult<WebSearchDetails>, ToolOutputStoreError>> {
-  const output = formatSearchResults(result.query, result.results);
-  const truncated = await projectTextOutput(output, {
-    store,
-    tempPrefix: "pi-websearch-",
-    fileName: "output.txt",
-  });
-  if (truncated._tag === "err") {
-    return truncated;
+export function createSearchProvider(settings: WebToolsSettings["search"]): SearchProvider {
+  switch (settings.provider) {
+    case "exa":
+      return new ExaSearchProvider(settings.endpoint, new FetchHttpTextClient());
+    // case "parallel":
+    //   return new ParallelSearchProvider(settings.endpoint, new FetchHttpTextClient());
   }
-
-  return ok({
-    content: [textContent(truncated.value.text)],
-    details: {
-      query: result.query,
-      depth: result.depth,
-      maxResults: result.maxResults,
-      provider: result.provider,
-      resultCount: result.results.length,
-      truncated: truncated.value.truncated,
-      fullOutputPath: truncated.value.fullOutputPath,
-      results: result.results,
-    },
-  });
 }
 
 function createDefaultWebSearchComposition(): WebSearchToolComposition {
