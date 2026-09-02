@@ -5,16 +5,18 @@ import type { WebSearchDetails, WebToolsSettings } from "@/search/domain/types";
 import { getWebSearchSettings, SEARCH_DEPTHS } from "@/search/domain/config";
 import {
   projectSearchWebResultToPiToolResult,
-  TempFileToolOutputStore,
   textContent,
+  writeTempFile,
   type ToolOutputStore,
 } from "@/search/presentation/agent-view";
-import { createSearchWeb, type SearchWeb } from "@/search/composition/web-search";
-import { toWebSearchBoundaryError, toWebSearchToolError } from "@/search/domain/error";
+import { createSearchWeb, SearchWeb } from "@/search/composition/web-search";
 import { SearchProvider } from "@/search/providers/providers";
 import { parseWebSearchToolParams } from "@/search/presentation/input";
 import { PiToolResult } from "@/search/presentation/utils";
 import { createOperationSignal } from "@/shared/network";
+import { createExaSearchProvider } from "@/search/providers/exa";
+import { fetchHttpTextClient } from "@/shared/http-parser";
+import { toWebSearchBoundaryError, toWebSearchToolError } from "./errors";
 
 export interface WebSearchToolComposition {
   readonly settings: WebToolsSettings["search"];
@@ -25,7 +27,11 @@ export interface WebSearchToolComposition {
 export function createSearchProvider(settings: WebToolsSettings["search"]): SearchProvider {
   switch (settings.provider) {
     case "exa":
-      return new ExaSearchProvider(settings.endpoint, new FetchHttpTextClient());
+      return createExaSearchProvider({
+        endpoint: settings.endpoint,
+        http: fetchHttpTextClient(),
+      });
+    // settings.endpoint, new FetchHttpTextClient());
     // case "parallel":
     //   return new ParallelSearchProvider(settings.endpoint, new FetchHttpTextClient());
   }
@@ -37,7 +43,7 @@ function createDefaultWebSearchComposition(): WebSearchToolComposition {
   return {
     settings,
     searchWeb: createSearchWeb({ provider, settings }),
-    outputStore: new TempFileToolOutputStore(),
+    outputStore: writeTempFile(),
   };
 }
 

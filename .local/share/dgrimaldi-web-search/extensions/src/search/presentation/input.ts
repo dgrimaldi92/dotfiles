@@ -12,6 +12,11 @@ import {
   SEARCH_TIMEOUT_SECONDS,
 } from "@/search/domain/config";
 
+export type ToolInputParseError =
+  | { readonly _tag: "InvalidToolInput"; readonly message: string }
+  | { readonly _tag: "InvalidToolField"; readonly field: string; readonly message: string }
+  | { readonly _tag: "UnknownToolField"; readonly field: string };
+
 export interface RawWebSearchToolParams {
   readonly query: string;
   readonly maxResults?: number;
@@ -25,6 +30,16 @@ export interface WebSearchToolInput {
   readonly timeoutSeconds: number;
 }
 
+/** Parse and trim a non-empty search query from boundary input. */
+export function parseSearchQuery(input: string): Result<SearchQuery, ParseSearchQueryError> {
+  const query = input.trim();
+  if (!query) {
+    return err({ _tag: "EmptySearchQuery" });
+  }
+
+  // SAFETY: query is trimmed and non-empty.
+  return ok(query as SearchQuery);
+}
 /** Parse raw Pi websearch params into service-facing input. */
 export function parseWebSearchToolParams(
   raw: unknown,

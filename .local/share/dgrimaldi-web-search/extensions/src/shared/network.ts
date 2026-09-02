@@ -1,5 +1,3 @@
-import { ParsedContentType } from "./url-parser";
-
 interface ComposedSignal {
   signal: AbortSignal;
   cleanup: () => void;

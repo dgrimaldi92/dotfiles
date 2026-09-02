@@ -4,15 +4,17 @@ import type {
   SearchDepth,
   SearchProviderName,
   SearchQuery,
+  WebToolsSettings,
 } from "@/search/domain/types.js";
+import { SearchProvider, SearchProviderError } from "@/search/providers/providers";
 
-export interface SearchWebInput {
+interface SearchWebInput {
   readonly query: SearchQuery;
   readonly maxResults: number;
   readonly depth: SearchDepth;
 }
 
-export interface SearchWebResult {
+interface SearchWebResult {
   readonly query: SearchQuery;
   readonly depth: SearchDepth;
   readonly maxResults: number;
@@ -27,29 +29,32 @@ export interface SearchWebDependencies {
   readonly settings: WebToolsSettings["search"];
 }
 
-/** Execute a web search through the configured provider. */
-export type SearchWeb = (
-  input: SearchWebInput,
-  options?: { readonly signal?: AbortSignal },
-) => Promise<Result<SearchWebResult, SearchWebError>>;
+export type SearchWeb = ReturnType<typeof createSearchWeb>;
 
-export const createSearchWeb =
-  ({ provider, settings }: SearchWebDependencies): SearchWeb =>
-  async (input, options = {}) => {
-    if (!settings.enabled) {
-      return err({ _tag: "SearchDisabled" });
-    }
+export function createSearchWeb(dependencies: SearchWebDependencies) {
+  return {
+    search: async function (
+      input: SearchWebInput,
+      options: { readonly signal?: AbortSignal } = {},
+    ): Promise<Result<SearchWebResult, SearchWebError>> {
+      if (!dependencies.settings.enabled) {
+        return err({ _tag: "SearchDisabled" });
+      }
 
-    const providerResult = await provider.search(input, { signal: options.signal });
-    if (providerResult._tag === "err") {
-      return providerResult;
-    }
+      const providerResult = await dependencies.provider.search(input, {
+        signal: options.signal,
+      });
+      if (providerResult._tag === "err") {
+        return providerResult;
+      }
 
-    return ok({
-      query: input.query,
-      depth: input.depth,
-      maxResults: input.maxResults,
-      provider: provider.name,
-      results: providerResult.value,
-    });
+      return ok({
+        query: input.query,
+        depth: input.depth,
+        maxResults: input.maxResults,
+        provider: dependencies.provider.name,
+        results: providerResult.value,
+      });
+    },
   };
+}

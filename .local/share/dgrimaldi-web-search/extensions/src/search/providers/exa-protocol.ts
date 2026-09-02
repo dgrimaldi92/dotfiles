@@ -37,7 +37,7 @@ function normalizeExaDepth(depth: SearchDepth): ExaDepth {
 }
 
 /** Encode an Exa MCP search request DTO. */
-export function encodeExaSerrchRequest(input: SearchProviderRequest): ExaMcpRequestDto {
+export function encodeExaSearchRequest(input: SearchProviderRequest): ExaMcpRequestDto {
   return {
     jsonrpc: "2.0",
     id: 1,

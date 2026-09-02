@@ -16,6 +16,11 @@ import {
 import { PublicHttpUrl } from "@/shared/url-parser";
 import { PiImageContent, PiTextContent, PiToolResult } from "./utils";
 
+export type ToolOutputStoreError = {
+  readonly _tag: "TempFileWriteFailed";
+  readonly cause: unknown;
+};
+
 export interface ToolOutputStore {
   writeTextFile(
     prefix: string,
@@ -24,24 +29,20 @@ export interface ToolOutputStore {
   ): Promise<Result<string, ToolOutputStoreError>>;
 }
 
-export type ToolOutputStoreError = {
-  readonly _tag: "TempFileWriteFailed";
-  readonly cause: unknown;
-};
-
-export class TempFileToolOutputStore implements ToolOutputStore {
-  /** Write full tool output to a temporary text file. */
-  async writeTextFile(
-    prefix: string,
-    fileName: string,
-    content: string,
-  ): Promise<Result<string, ToolOutputStoreError>> {
-    try {
-      return ok(await writeTempTextFile(prefix, fileName, content));
-    } catch (cause: unknown) {
-      return err({ _tag: "TempFileWriteFailed", cause });
-    }
-  }
+export function writeTempFile(): ToolOutputStore {
+  return {
+    writeTextFile: async function (
+      prefix: string,
+      fileName: string,
+      content: string,
+    ): Promise<Result<string, ToolOutputStoreError>> {
+      try {
+        return ok(await writeTempTextFile(prefix, fileName, content));
+      } catch (cause: unknown) {
+        return err({ _tag: "TempFileWriteFailed", cause });
+      }
+    },
+  };
 }
 
 interface WebFetchDetails {
