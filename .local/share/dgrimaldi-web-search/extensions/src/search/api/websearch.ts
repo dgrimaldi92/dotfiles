@@ -2,7 +2,7 @@ import { StringEnum } from "@earendil-works/pi-ai";
 import Type from "typebox";
 import { renderCall, renderResult } from "@/search/presentation/tui";
 import type { WebSearchDetails, WebToolsSettings } from "@/search/domain/types";
-import { SEARCH_DEPTHS } from "@/search/domain/config";
+import { getWebSearchSettings, SEARCH_DEPTHS } from "@/search/domain/config";
 import {
   formatSearchResults,
   projectTextOutput,
@@ -16,11 +16,7 @@ import {
   type SearchWeb,
   type SearchWebResult,
 } from "@/search/composition/web-search";
-import {
-  toWebSearchBoundaryError,
-  toWebSearchToolError,
-  type WebSearchBoundaryError,
-} from "@/search/domain/error";
+import { toWebSearchBoundaryError, toWebSearchToolError } from "@/search/domain/error";
 import { ok, Result } from "@/shared/result";
 
 export interface WebSearchToolComposition {
