@@ -1,16 +1,6 @@
 {
-  "lastChangelogVersion": "0.84.4",
-  "theme": "dark",
-  "defaultProvider": "llama.cpp",
-  "defaultModel": "gemma26b-qat",
-  "packages": [
-    "npm:@nicknisi/pi-cloak",
-    "npm:pi-skillful",
-    "../../.local/share/dgrimaldi-web-search"
-  ],
   "skillful": {
     "hiddenSkills": [
-      "anki",
       "architect",
       "blast-radius",
       "bro",
@@ -45,6 +35,7 @@
       "technical-writing",
       "typescript-best-practices",
       "unslop"
-    ]
+    ],
+    "toggleSlots": {}
   }
 }

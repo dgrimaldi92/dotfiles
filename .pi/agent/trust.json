@@ -1,3 +1,5 @@
 {
-  "/home/dav": true
+  "/home/dav": true,
+  "/home/dav/.local/bin/env": true,
+  "/home/dav/Documents/appunti": true
 }
