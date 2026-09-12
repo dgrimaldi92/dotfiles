@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "*",
+    "defuddle": "^0.19.3",
     "pino": "^10.3.1",
     "typebox": "*"
   },

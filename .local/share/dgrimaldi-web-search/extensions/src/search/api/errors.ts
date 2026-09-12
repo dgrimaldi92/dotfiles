@@ -1,17 +1,17 @@
 import { logger } from "../../shared/logger";
 import { isOperationTimeoutError } from "../../shared/network";
 import { SearchWebError } from "../composition/web-search";
-import { ParseSearchQueryError } from "../domain/types";
+import { ParseSearchQueryError } from "../domain/SearchDepth";
 import { ToolOutputStoreError } from "../presentation/agent-view";
 import { ToolInputParseError } from "../presentation/input";
 
-export type WebSearchBoundaryError =
+type WebSearchBoundaryError =
   | ToolInputParseError
   | ParseSearchQueryError
   | SearchWebError
   | ToolOutputStoreError;
 
-export function renderSafeWebSearchError(error: WebSearchBoundaryError): string {
+function renderSafeWebSearchError(error: WebSearchBoundaryError): string {
   let msg = "";
   switch (error._tag) {
     case "InvalidToolInput":

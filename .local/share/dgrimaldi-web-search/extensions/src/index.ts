@@ -1,6 +1,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { createWebSearchTool } from "./search/api/websearch";
 import { logShutDown, logStartup } from "./shared/logger";
+import { createWebSearchTool } from "./search/api/websearch";
+import { createWebFetchTool } from "./fetch/api/webfetch";
 
 export default function webToolsExtension(pi: ExtensionAPI) {
   // Startup: ensure log dir exists and register process-level signal handlers
@@ -15,6 +16,7 @@ export default function webToolsExtension(pi: ExtensionAPI) {
     logShutDown();
   });
   pi.registerTool(createWebSearchTool());
+  pi.registerTool(createWebFetchTool());
 
   // pi.registerCommand("websearch", {
   //   description: "Enable or disable web search",

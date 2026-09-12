@@ -7,8 +7,12 @@ import {
   type TruncationResult,
 } from "@earendil-works/pi-coding-agent";
 import { writeTempTextFile } from "../domain/port";
-import { NormalizedSearchResult } from "../domain/types";
-import { SearchDepth, SearchProviderName, WebFetchFormat } from "../domain/SearchDepth";
+import {
+  NormalizedSearchResult,
+  SearchDepth,
+  SearchProviderName,
+  WebFetchFormat,
+} from "../domain/types";
 import { PublicHttpUrl } from "../../shared/url-parser";
 import { PiImageContent, PiTextContent, PiToolResult } from "./utils";
 import { ToolOutputStoreError } from "../../shared/errors";

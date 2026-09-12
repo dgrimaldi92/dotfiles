@@ -1,9 +1,5 @@
-import {
-  NormalizedSearchResult,
-  SearchDepth,
-  SearchProviderName,
-  SearchQuery,
-} from "../domain/types";
+import { NormalizedSearchResult, SearchQuery } from "../domain/types";
+import { SearchDepth, SearchProviderName } from "../domain/SearchDepth";
 import { HttpClientError } from "../../shared/http-parser";
 import { Result } from "../../shared/result";
 

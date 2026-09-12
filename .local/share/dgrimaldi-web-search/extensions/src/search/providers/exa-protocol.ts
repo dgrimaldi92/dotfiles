@@ -1,5 +1,5 @@
 import { err, ok, Result } from "../../shared/result";
-import { SearchDepth } from "../domain/types";
+import { SearchDepth } from "../domain/SearchDepth";
 import { SearchProviderRequest } from "./providers";
 import {
   isSseResponse,

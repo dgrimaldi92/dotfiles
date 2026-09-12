@@ -1,11 +1,6 @@
+import { SearchDepth, SearchProviderName, WebToolsSettings } from "../../shared/web-tools.js";
 import { err, ok, type Result } from "../../shared/result.js";
-import type {
-  NormalizedSearchResult,
-  SearchDepth,
-  SearchProviderName,
-  SearchQuery,
-  WebToolsSettings,
-} from "../domain/types.js";
+import type { NormalizedSearchResult, SearchQuery } from "../domain/types.js";
 import { SearchProvider, SearchProviderError } from "../providers/providers";
 
 interface SearchWebInput {

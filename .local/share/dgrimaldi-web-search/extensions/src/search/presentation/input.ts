@@ -1,21 +1,9 @@
 import { err, ok, Result } from "../../shared/result.js";
-import {
-  ParseSearchQueryError,
-  SearchDepth,
-  SearchQuery,
-  WebToolsSettings,
-} from "../domain/types.js";
-import {
-  clampInteger,
-  SEARCH_DEPTHS,
-  SEARCH_MAX_RESULTS,
-  SEARCH_TIMEOUT_SECONDS,
-} from "../domain/config";
-
-export type ToolInputParseError =
-  | { readonly _tag: "InvalidToolInput"; readonly message: string }
-  | { readonly _tag: "InvalidToolField"; readonly field: string; readonly message: string }
-  | { readonly _tag: "UnknownToolField"; readonly field: string };
+import { SearchQuery } from "../domain/types.js";
+import { SEARCH_DEPTHS } from "../domain/config";
+import { ToolInputParseError } from "../../shared/errors.js";
+import { SearchDepth, WebToolsSettings, ParseSearchQueryError } from "../../shared/web-tools.js";
+import { clampInteger, SEARCH_MAX_RESULTS, SEARCH_TIMEOUT_SECONDS } from "../../shared/config.js";
 
 export interface RawWebSearchToolParams {
   readonly query: string;
@@ -40,7 +28,7 @@ export function parseWebSearchToolParams(
   }
 
   for (const key of Object.keys(raw)) {
-    if (key !== "query" && key !== "maxResults" && key !== "depth") {
+    if (key !== "query" && key !== "maxResults" && key !== "depth" && key !== "provider") {
       return err({ _tag: "UnknownToolField", field: key });
     }
   }

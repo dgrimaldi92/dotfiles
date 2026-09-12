@@ -1,7 +1,7 @@
 import { StringEnum } from "@earendil-works/pi-ai";
 import Type from "typebox";
 import { renderCall, renderResult } from "../presentation/tui";
-import type { WebSearchDetails, WebToolsSettings } from "../domain/types";
+import type { WebSearchDetails } from "../domain/types";
 import { getWebSearchSettings, SEARCH_DEPTHS, SEARCH_PROVIDERS } from "../domain/config";
 import {
   projectSearchWebResultToPiToolResult,
@@ -19,6 +19,7 @@ import { fetchHttpTextClient } from "../../shared/http-parser";
 import { toWebSearchBoundaryError, toWebSearchToolError } from "./errors";
 import { logger } from "../../shared/logger";
 import { createTavilySearchProvider } from "../providers/tavily";
+import { WebToolsSettings } from "../../shared/web-tools";
 
 export interface WebSearchToolComposition {
   readonly settings: WebToolsSettings["search"];
