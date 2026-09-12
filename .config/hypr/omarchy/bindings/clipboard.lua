@@ -13,3 +13,4 @@ end
 o.bind("SUPER + C", "Universal copy", send_shortcut_once("CTRL", "Insert"))
 o.bind("SUPER + V", "Universal paste", send_shortcut_once("SHIFT", "Insert"))
 o.bind("SUPER + X", "Universal cut", send_shortcut_once("CTRL", "X"))
+o.bind("SUPER + SHIFT + P", "Take a screenshot", "grimblast --notify copy area")

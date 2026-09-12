@@ -33,29 +33,36 @@ The agent will use the `dgrimaldi_web_search` tool automatically when it determi
 This extension is modeled after the professional structure used in the `pi-web-tools` repository. If you wish to expand this into a full-scale implementation, here is how the files are categorized by their "job":
 
 ### 1. The Orchestrator (The "Boss")
-*   **`websearch.ts`**: Defines the actual tool command, its description, parameters, and how results are rendered on your screen.
+
+- **`websearch.ts`**: Defines the actual tool command, its description, parameters, and how results are rendered on your screen.
 
 ### 2. The Logic Layer (The "Brain")
-*   **`search-web.ts`**: Coordinates between the user's settings and the actual search engine being used.
-*   **`websearch-input.ts`**: Validates that search queries are clean and valid before they are sent to the internet.
+
+- **`search-web.ts`**: Coordinates between the user's settings and the actual search engine being used.
+- **`websearch-input.ts`**: Validates that search queries are clean and valid before they are sent to the internet.
 
 ### 3. The Drivers (The "Workers")
-*Found in the `providers/` directory.*
-*   **`providers/types.ts`**: The rulebook that ensures all different search engines (Google, Exa, etc.) behave the same way for Pi.
-*   **`providers/exa.ts`**: A specific driver containing instructions on how to talk to a single provider like Exa.
+
+_Found in the `providers/` directory._
+
+- **`providers/types.ts`**: The rulebook that ensures all different search engines (Google, Exa, etc.) behave the same way for Pi.
+- **`providers/exa.ts`**: A specific driver containing instructions on how to talk to a single provider like Exa.
 
 ### 4. The Foundation (The "Rules")
-*   **`types.ts`**: Defines shared concepts like "Search Depth" or "Provider Names."
-*   **`result.ts`**: Handles the logic of returning either a success with data OR an error message.
-*   **`network.ts`**: Manages low-level internet tasks like timeouts and connection failures.
+
+- **`types.ts`**: Defines shared concepts like "Search Depth" or "Provider Names."
+- **`result.ts`**: Handles the logic of returning either a success with data OR an error message.
+- **`network.ts`**: Manages low-level internet tasks like timeouts and connection failures.
 
 ## Development
 
 ### Prerequisites
+
 - Node.js (v18+)
 - npm or yarn
 
 ### Running with local changes
+
 If you want to modify and test this extension without installing it globally, you can use the `-e` flag:
 
 ```bash

@@ -8,7 +8,7 @@ import qs.singletons
 Scope {
     id: root
 
-    readonly property int iconGap: 8
+    readonly property int iconGap: 0
 
     Variants {
         model: Quickshell.screens

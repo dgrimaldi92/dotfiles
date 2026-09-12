@@ -1,12 +1,11 @@
-import { err, ok, Result } from "../../shared/result";
-import { mapHttpClientError, SearchProvider, SearchProviderError } from "./providers";
-import { PublicHttpUrl } from "../../shared/url-parser";
-import { encodeExaSearchRequest, parseExaMcpResponse } from "./exa-protocol";
-import { parseSearchText } from "./results";
 import { HttpTextClient, MAX_SEARCH_RESPONSE_BYTES } from "../../shared/http-parser";
+import { PublicHttpUrl } from "../../shared/url-parser";
+import { mapHttpClientError, SearchProvider, SearchProviderError } from "./providers";
+import { Result, err, ok } from "../../shared/result";
 import { NormalizedSearchResult } from "../domain/types";
+import { encodeTavilySearchRequest, parseTavilyMcpResponse } from "./tavily-protocol";
 import { ProtocolParseError } from "./utils";
-import { logger } from "../../shared/logger";
+import { ParseSearchTextResult } from "./results";
 
 function renderProtocolReason(error: ProtocolParseError): string {
   switch (error._tag) {
@@ -19,11 +18,11 @@ function renderProtocolReason(error: ProtocolParseError): string {
   }
 }
 
-export const createExaSearchProvider = (deps: {
+export const createTavilySearchProvider = (deps: {
   readonly endpoint: PublicHttpUrl;
   readonly http: HttpTextClient;
-}): SearchProvider => {
-  const name = "exa" as const;
+}): SearchProvider | undefined => {
+  const name = "tavily" as const;
 
   /** Search Exa through its MCP endpoint and return normalized public-web results. */
   return {
@@ -39,7 +38,7 @@ export const createExaSearchProvider = (deps: {
             accept: "application/json, text/event-stream",
             "content-type": "application/json",
           },
-          body: encodeExaSearchRequest(input),
+          body: encodeTavilySearchRequest(input),
           maxResponseBytes: MAX_SEARCH_RESPONSE_BYTES,
         },
         { signal: options.signal },
@@ -58,7 +57,8 @@ export const createExaSearchProvider = (deps: {
       }
 
       const contentType = response.value.headers.get("content-type") ?? "";
-      const protocol = parseExaMcpResponse(response.value.bodyText, contentType);
+
+      const protocol = parseTavilyMcpResponse(response.value.bodyText, contentType);
       if (protocol._tag === "err") {
         return err({
           _tag: "SearchProviderProtocolInvalid",
@@ -75,15 +75,16 @@ export const createExaSearchProvider = (deps: {
           safeMessage: providerError.safeMessage,
         });
       }
-
-      const searchText = protocol.value
+      const parsedText = protocol.value
         .filter((message) => message._tag === "Text")
-        .map((message) => message.text)
-        .join("\n\n")
-        .trim();
-      logger.info({ searchText });
-      const parsedResults = parseSearchText(searchText);
+        .map((message) => message.text) as unknown as string;
 
+      const parsedResponse = JSON.parse(parsedText);
+      const parsedResults: ParseSearchTextResult = {
+        results: parsedResponse["results"],
+        discardedSections: 0,
+        explicitNoResults: parsedResponse["results"].length,
+      };
       if (parsedResults.results.length === 0 && !parsedResults.explicitNoResults) {
         return err({ _tag: "SearchProviderNoRecognizedResults", provider: name });
       }

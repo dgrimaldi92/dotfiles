@@ -1,12 +1,12 @@
-import { err, ok, type Result } from "@/shared/result.js";
+import { err, ok, type Result } from "../../shared/result.js";
 import type {
   NormalizedSearchResult,
   SearchDepth,
   SearchProviderName,
   SearchQuery,
   WebToolsSettings,
-} from "@/search/domain/types.js";
-import { SearchProvider, SearchProviderError } from "@/search/providers/providers";
+} from "../domain/types.js";
+import { SearchProvider, SearchProviderError } from "../providers/providers";
 
 interface SearchWebInput {
   readonly query: SearchQuery;

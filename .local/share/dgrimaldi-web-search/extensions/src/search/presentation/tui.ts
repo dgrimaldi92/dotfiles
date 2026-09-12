@@ -1,8 +1,7 @@
 import { Text } from "@earendil-works/pi-tui";
 import { appendExpandedPreview, appendExpandHint, getTextContent } from "./utils";
-import type { SearchDepth, WebSearchDetails } from "@/search/domain/types";
+import type { SearchDepth, WebSearchDetails } from "../domain/types";
 
-import type { WebSearchBoundaryError } from "@/search/api/websearch.ts";
 interface RenderTheme {
   fg(name: string, value: string): string;
   bold(value: string): string;

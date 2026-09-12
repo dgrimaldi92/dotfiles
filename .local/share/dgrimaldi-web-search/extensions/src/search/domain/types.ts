@@ -1,4 +1,4 @@
-import { PublicHttpUrl } from "@/shared/url-parser";
+import { PublicHttpUrl } from "../../shared/url-parser";
 
 export const WEB_TOOLS_EXTENSION_NAME = "web-tools";
 
@@ -7,7 +7,7 @@ export type SearchQuery = string & { readonly __brand: "SearchQuery" };
 
 export type WebFetchFormat = "markdown" | "text" | "html";
 export type SearchDepth = "auto" | "fast" | "deep";
-export type SearchProviderName = "exa" | "parallel";
+export type SearchProviderName = "exa" | "tavily";
 
 export type ParseSearchQueryError = { readonly _tag: "EmptySearchQuery" };
 
@@ -33,6 +33,7 @@ export interface WebToolsSettings {
 export interface NormalizedSearchResult {
   readonly title: string;
   readonly url: PublicHttpUrl;
+  readonly content?: string;
   readonly snippet?: string;
   readonly publishedAt?: string;
   readonly source?: string;

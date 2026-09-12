@@ -72,7 +72,7 @@ export function parseContentType(contentTypeHeader: string | null | undefined): 
   const contentType = contentTypeHeader?.trim() ?? "";
   const [mimePart = ""] = contentType.split(";");
   const mime = mimePart.trim().toLowerCase();
-  const charsetMatch = contentType.match(/charset\s*=\s*['\"]?([^;'\"]+)/i);
+  const charsetMatch = contentType.match(/charset\s*=\s*['"]?([^;' "]+)/i);
   const charset = charsetMatch?.[1]?.trim().toLowerCase();
   return {
     contentType,

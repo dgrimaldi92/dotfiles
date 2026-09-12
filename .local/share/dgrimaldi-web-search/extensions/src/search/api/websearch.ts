@@ -1,22 +1,24 @@
 import { StringEnum } from "@earendil-works/pi-ai";
 import Type from "typebox";
-import { renderCall, renderResult } from "@/search/presentation/tui";
-import type { WebSearchDetails, WebToolsSettings } from "@/search/domain/types";
-import { getWebSearchSettings, SEARCH_DEPTHS } from "@/search/domain/config";
+import { renderCall, renderResult } from "../presentation/tui";
+import type { WebSearchDetails, WebToolsSettings } from "../domain/types";
+import { getWebSearchSettings, SEARCH_DEPTHS, SEARCH_PROVIDERS } from "../domain/config";
 import {
   projectSearchWebResultToPiToolResult,
   textContent,
   writeTempFile,
   type ToolOutputStore,
-} from "@/search/presentation/agent-view";
-import { createSearchWeb, SearchWeb } from "@/search/composition/web-search";
-import { SearchProvider } from "@/search/providers/providers";
-import { parseWebSearchToolParams } from "@/search/presentation/input";
-import { PiToolResult } from "@/search/presentation/utils";
-import { createOperationSignal } from "@/shared/network";
-import { createExaSearchProvider } from "@/search/providers/exa";
-import { fetchHttpTextClient } from "@/shared/http-parser";
+} from "../presentation/agent-view";
+import { createSearchWeb, SearchWeb } from "../composition/web-search";
+import { SearchProvider } from "../providers/providers";
+import { parseWebSearchToolParams } from "../presentation/input";
+import { PiToolResult } from "../presentation/utils";
+import { createOperationSignal } from "../../shared/network";
+import { createExaSearchProvider } from "../providers/exa";
+import { fetchHttpTextClient } from "../../shared/http-parser";
 import { toWebSearchBoundaryError, toWebSearchToolError } from "./errors";
+import { logger } from "../../shared/logger";
+import { createTavilySearchProvider } from "../providers/tavily";
 
 export interface WebSearchToolComposition {
   readonly settings: WebToolsSettings["search"];
@@ -31,14 +33,21 @@ export function createSearchProvider(settings: WebToolsSettings["search"]): Sear
         endpoint: settings.endpoint,
         http: fetchHttpTextClient(),
       });
+    case "tavily":
+      return createTavilySearchProvider({
+        endpoint: settings.endpoint,
+        http: fetchHttpTextClient(),
+      });
+
     // settings.endpoint, new FetchHttpTextClient());
     // case "parallel":
     //   return new ParallelSearchProvider(settings.endpoint, new FetchHttpTextClient());
   }
 }
 
-function createDefaultWebSearchComposition(): WebSearchToolComposition {
-  const settings = getWebSearchSettings();
+function createDefaultWebSearchComposition(params: unknown): WebSearchToolComposition {
+  const providerName = params["provider"] as (typeof SEARCH_PROVIDERS)[number];
+  const settings = getWebSearchSettings(providerName);
   const provider = createSearchProvider(settings);
   return {
     settings,
@@ -47,7 +56,9 @@ function createDefaultWebSearchComposition(): WebSearchToolComposition {
   };
 }
 
-export function createWebSearchTool(composition?: WebSearchToolComposition) {
+export function createWebSearchTool() {
+  //composition?: WebSearchToolComposition
+  // const actualComposition = createDefaultWebSearchComposition();
   return {
     name: "websearch",
     label: "Web Search",
@@ -72,22 +83,26 @@ export function createWebSearchTool(composition?: WebSearchToolComposition) {
             "Search depth. Overrides the web-tools search default depth setting. Provider support may vary.",
         }),
       ),
+      provider: StringEnum([...SEARCH_PROVIDERS], {
+        description:
+          "tavily = definite-answer lookups (facts, news, docs, prices, known pages); returns full page text. exa = semantic discovery ('find things like this') and entities (people, companies, repos, papers). Retry with exa if tavily results are weak",
+      }),
     }),
 
     async execute(
       _toolCallId: string,
       params: unknown,
-      signal?: AbortSignal,
-      onUpdate?: (update: PiToolResult<WebSearchDetails>) => void,
+      signal: AbortSignal,
+      onUpdate: (update: PiToolResult<WebSearchDetails>) => void,
     ) {
-      const actualComposition = composition ?? createDefaultWebSearchComposition();
+      const actualComposition = createDefaultWebSearchComposition(params);
       const parsed = parseWebSearchToolParams(params, actualComposition.settings);
       if (parsed._tag === "err") {
         throw toWebSearchToolError(parsed.error);
       }
 
       const composed = createOperationSignal(parsed.value.timeoutSeconds * 1000, signal);
-      onUpdate?.({
+      onUpdate({
         content: [textContent(`Searching for ${JSON.stringify(parsed.value.query)}...`)],
         details: {
           query: parsed.value.query,
@@ -117,6 +132,17 @@ export function createWebSearchTool(composition?: WebSearchToolComposition) {
           );
         }
 
+        logger.info({
+          content: [textContent(`Searching for ${JSON.stringify(parsed.value.query)}...`)],
+          details: {
+            query: parsed.value.query,
+            depth: parsed.value.depth,
+            maxResults: parsed.value.maxResults,
+            provider: actualComposition.settings.provider,
+            resultCount: 0,
+            result,
+          },
+        });
         const projected = await projectSearchWebResultToPiToolResult(
           result.value,
           actualComposition.outputStore,

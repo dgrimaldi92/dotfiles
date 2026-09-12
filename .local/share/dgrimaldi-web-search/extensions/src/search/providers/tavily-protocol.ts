@@ -1,67 +1,65 @@
-import { err, ok, Result } from "../../shared/result";
+import { err, Result } from "../../shared/result";
 import { SearchDepth } from "../domain/types";
 import { SearchProviderRequest } from "./providers";
 import {
-  isSseResponse,
   parseMcpPayload,
+  isSseResponse,
   parseSseMcpResponse,
   ProtocolMessage,
   ProtocolParseError,
 } from "./utils";
 
-const DEFAULT_CONTEXT_MAX_CHARACTERS = 2_000;
+type TavilyDepth = "basic" | "advanced" | "fast" | "ultra-fast";
 
-type ExaDepth = "auto" | "fast";
-
-interface ExaMcpRequestDto {
+interface TavilyMcpRequestDto {
   readonly jsonrpc: "2.0";
   readonly id: 1;
   readonly method: "tools/call";
   readonly params: {
-    readonly name: "web_search_exa";
+    readonly name: "tavily_search";
     readonly arguments: {
       readonly query: string;
-      readonly type: ExaDepth;
-      readonly numResults: number;
-      readonly livecrawl: "fallback";
-      readonly contextMaxCharacters: number;
+      readonly search_depth: TavilyDepth;
+      readonly max_results: number;
     };
   };
 }
 
-/** Map public web-tools search depth to Exa's supported protocol depth. */
-function normalizeExaDepth(depth: SearchDepth): ExaDepth {
-  return depth === "deep" ? "fast" : depth;
+/** Map public web-tools search depth to Tavily's supported protocol depth. */
+function normalizeTavilyDepth(depth: SearchDepth): TavilyDepth {
+  switch (depth) {
+    case "auto":
+      return "basic";
+    case "fast":
+      return "fast";
+    case "deep":
+      return "advanced";
+  }
 }
 
-/** Encode an Exa MCP search request DTO. */
-export function encodeExaSearchRequest(input: SearchProviderRequest): ExaMcpRequestDto {
+export function encodeTavilySearchRequest(input: SearchProviderRequest): TavilyMcpRequestDto {
   return {
     jsonrpc: "2.0",
     id: 1,
     method: "tools/call",
     params: {
-      name: "web_search_exa",
+      name: "tavily_search",
       arguments: {
         query: input.query,
-        type: normalizeExaDepth(input.depth),
-        numResults: input.maxResults,
-        livecrawl: "fallback",
-        contextMaxCharacters: DEFAULT_CONTEXT_MAX_CHARACTERS,
+        search_depth: normalizeTavilyDepth(input.depth),
+        max_results: input.maxResults,
       },
     },
   };
 }
 
-/** Parse Exa MCP JSON or SSE responses into safe protocol messages. */
-export function parseExaMcpResponse(
+export function parseTavilyMcpResponse(
   body: string,
   contentType: string,
 ): Result<readonly ProtocolMessage[], ProtocolParseError> {
   if (isSseResponse(body, contentType)) {
     return parseSseMcpResponse(body);
   }
-
   let payload: unknown;
   try {
     payload = JSON.parse(body);

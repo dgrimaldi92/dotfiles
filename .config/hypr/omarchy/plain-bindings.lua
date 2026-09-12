@@ -8,10 +8,15 @@ o.bind("SUPER + RETURN", "Terminal", { omarchy = "terminal" })
 o.bind("SUPER + SHIFT + RETURN", "Browser", { omarchy = "browser" })
 o.bind("SUPER + SHIFT + F", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { omarchy = "nautilus-cwd" })
-o.bind("SUPER + SHIFT + B", "Browser", { omarchy = "browser" })
-o.bind("SUPER + SHIFT + ALT + B", "Browser (private)", { omarchy = "browser --private" })
+o.bind("SUPER + SHIFT + B", "Browser", { launch = "brave-origin --incognito" })
+-- o.bind("SUPER + SHIFT + ALT + B", "Browser (private)", { omarchy = "browser --incognito" })
 o.bind("SUPER + SHIFT + W", "WhatApp", { launch = "zapzap" })
 o.bind("SUPER + SHIFT + N", "Editor", { omarchy = "editor" })
+o.bind(
+	"SUPER + SHIFT + O",
+	"Obsidian",
+	{ launch = "obsidian -enable-features=UseOzonePlatform -ozone-platform=wayland" }
+)
 
 o.bind("SUPER + SHIFT + A", "ChatGPT", { webapp = "https://chatgpt.com" })
 o.bind("SUPER + SHIFT + ALT + A", "Grok", { webapp = "https://grok.com" })

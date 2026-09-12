@@ -1,4 +1,4 @@
-import { err, ok, Result } from "@/shared/result";
+import { err, ok, Result } from "../../shared/result";
 import {
   DEFAULT_MAX_BYTES,
   DEFAULT_MAX_LINES,
@@ -13,7 +13,7 @@ import {
   SearchProviderName,
   WebFetchFormat,
 } from "../domain/types";
-import { PublicHttpUrl } from "@/shared/url-parser";
+import { PublicHttpUrl } from "../../shared/url-parser";
 import { PiImageContent, PiTextContent, PiToolResult } from "./utils";
 
 export type ToolOutputStoreError = {
@@ -195,16 +195,14 @@ export async function projectSearchWebResultToPiToolResult(
 }
 
 /** Format normalized search results as URL-forward text for LLM consumption. */
-export function formatSearchResults(
-  query: string,
-  results: readonly NormalizedSearchResult[],
-): string {
+function formatSearchResults(query: string, results: readonly NormalizedSearchResult[]): string {
   if (results.length === 0) {
     return `Search results for: ${query}\n\nNo results found.`;
   }
 
   const lines = [`Search results for: ${query}`, ""];
-  for (const [index, result] of results.entries()) {
+  for (let index = 0; index < results.length; index++) {
+    const result = results[index];
     lines.push(`${index + 1}. ${result.title}`);
     lines.push(`   URL: ${result.url}`);
     if (result.publishedAt) {
@@ -219,12 +217,15 @@ export function formatSearchResults(
     if (result.snippet) {
       lines.push(`   Snippet: ${result.snippet}`);
     }
+    if (result.content) {
+      lines.push(`   Content: ${result.content}`);
+    }
     lines.push("");
   }
   return lines.join("\n").trimEnd();
 }
 
-export async function projectTextOutput(
+async function projectTextOutput(
   output: string,
   options: {
     readonly store: ToolOutputStore;

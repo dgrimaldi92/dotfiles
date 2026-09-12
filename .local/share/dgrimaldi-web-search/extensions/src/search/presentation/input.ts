@@ -1,16 +1,16 @@
-import { err, ok, Result } from "@/shared/result.js";
+import { err, ok, Result } from "../../shared/result.js";
 import {
   ParseSearchQueryError,
   SearchDepth,
   SearchQuery,
   WebToolsSettings,
-} from "@/search/domain/types.js";
+} from "../domain/types.js";
 import {
   clampInteger,
   SEARCH_DEPTHS,
   SEARCH_MAX_RESULTS,
   SEARCH_TIMEOUT_SECONDS,
-} from "@/search/domain/config";
+} from "../domain/config";
 
 export type ToolInputParseError =
   | { readonly _tag: "InvalidToolInput"; readonly message: string }
@@ -30,22 +30,12 @@ export interface WebSearchToolInput {
   readonly timeoutSeconds: number;
 }
 
-/** Parse and trim a non-empty search query from boundary input. */
-export function parseSearchQuery(input: string): Result<SearchQuery, ParseSearchQueryError> {
-  const query = input.trim();
-  if (!query) {
-    return err({ _tag: "EmptySearchQuery" });
-  }
-
-  // SAFETY: query is trimmed and non-empty.
-  return ok(query as SearchQuery);
-}
 /** Parse raw Pi websearch params into service-facing input. */
 export function parseWebSearchToolParams(
   raw: unknown,
   settings: WebToolsSettings["search"],
 ): Result<WebSearchToolInput, ToolInputParseError | ParseSearchQueryError> {
-  if (!isPlainObject(raw)) {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
     return err({ _tag: "InvalidToolInput", message: "Expected an object" });
   }
 
@@ -60,10 +50,12 @@ export function parseWebSearchToolParams(
     return err({ _tag: "InvalidToolField", field: "query", message: "Expected a string" });
   }
 
-  const query = parseSearchQuery(queryValue);
-  if (query._tag === "err") {
-    return query;
+  const trimmedQuery = queryValue.trim();
+  if (!trimmedQuery) {
+    return err({ _tag: "EmptySearchQuery" });
   }
+
+  const query = trimmedQuery as SearchQuery;
 
   const maxResultsValue = raw["maxResults"];
   let maxResults = clampInteger(settings.defaultMaxResults, {
@@ -105,11 +97,7 @@ export function parseWebSearchToolParams(
     fallback: SEARCH_TIMEOUT_SECONDS.default,
   });
 
-  return ok({ query: query.value, maxResults, depth, timeoutSeconds });
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return ok({ query, maxResults, depth, timeoutSeconds });
 }
 
 function isSearchDepth(value: string): value is SearchDepth {

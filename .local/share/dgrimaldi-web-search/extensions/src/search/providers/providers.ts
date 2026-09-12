@@ -3,9 +3,9 @@ import {
   SearchDepth,
   SearchProviderName,
   SearchQuery,
-} from "@/search/domain/types";
-import { HttpClientError } from "@/shared/http-parser";
-import { Result } from "@/shared/result";
+} from "../domain/types";
+import { HttpClientError } from "../../shared/http-parser";
+import { Result } from "../../shared/result";
 
 export interface SearchProviderRequest {
   readonly query: SearchQuery;

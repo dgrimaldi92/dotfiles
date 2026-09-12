@@ -50,6 +50,7 @@ export function appendExpandHint(base: string, expanded: boolean): string {
   return `${base} ${keyHint("app.tools.expand" as any, "for details")}`;
 }
 
-function textContent(text: string): PiTextContent {
-  return { type: "text", text };
-}
+// Kept for future use when structured content is needed.
+// function textContent(text: string): PiTextContent {
+//   return { type: "text", text };
+// }

@@ -1,8 +1,9 @@
-import { isOperationTimeoutError } from "@/shared/network";
-import { SearchWebError } from "@/search/composition/web-search";
-import { ParseSearchQueryError } from "@/search/domain/types";
-import { ToolOutputStoreError } from "@/search/presentation/agent-view";
-import { ToolInputParseError } from "@/search/presentation/input";
+import { logger } from "../../shared/logger";
+import { isOperationTimeoutError } from "../../shared/network";
+import { SearchWebError } from "../composition/web-search";
+import { ParseSearchQueryError } from "../domain/types";
+import { ToolOutputStoreError } from "../presentation/agent-view";
+import { ToolInputParseError } from "../presentation/input";
 
 export type WebSearchBoundaryError =
   | ToolInputParseError
@@ -11,34 +12,50 @@ export type WebSearchBoundaryError =
   | ToolOutputStoreError;
 
 export function renderSafeWebSearchError(error: WebSearchBoundaryError): string {
+  let msg = "";
   switch (error._tag) {
     case "InvalidToolInput":
-      return error.message;
+      msg = error.message;
+      break;
     case "InvalidToolField":
-      return `${error.field}: ${error.message}`;
+      msg = `${error.field}: ${error.message}`;
+      break;
     case "UnknownToolField":
-      return `Unknown websearch field: ${error.field}`;
+      msg = `Unknown websearch field: ${error.field}`;
+      break;
     case "EmptySearchQuery":
-      return "Search query cannot be empty";
+      msg = "Search query cannot be empty";
+      break;
     case "SearchDisabled":
-      return "websearch is disabled in web-tools settings. Enable it to use this tool.";
+      msg = "websearch is disabled in web-tools settings. Enable it to use this tool.";
+      break;
     case "SearchProviderUnavailable":
-      return "Search provider unavailable";
+      msg = "Search provider unavailable";
+      break;
     case "SearchProviderStatusRejected":
-      return `Search request failed (${error.status})`;
+      msg = `Search request failed (${error.status})`;
+      break;
     case "SearchProviderResponseTooLarge":
-      return `Search response too large (${Math.floor(error.maxBytes / (1024 * 1024))}MB limit)`;
+      msg = `Search response too large (${Math.floor(error.maxBytes / (1024 * 1024))}MB limit)`;
+      break;
     case "SearchProviderProtocolInvalid":
-      return "Search provider returned an invalid response";
+      msg = "Search provider returned an invalid response";
+      break;
     case "SearchProviderReturnedError":
-      return error.safeMessage;
+      msg = error.safeMessage;
+      break;
     case "SearchProviderNoRecognizedResults":
-      return "Search provider returned an unrecognized response format";
+      msg = "Search provider returned an unrecognized response format";
+      break;
     case "SearchProviderCancelled":
-      return "Web search cancelled";
+      msg = "Web search cancelled";
+      break;
     case "TempFileWriteFailed":
-      return "Failed to write full websearch output";
+      msg = "Failed to write full websearch output";
+      break;
   }
+  logger.error(msg);
+  return msg;
 }
 
 export function toWebSearchToolError(error: WebSearchBoundaryError): Error {

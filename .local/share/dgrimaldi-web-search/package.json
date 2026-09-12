@@ -5,21 +5,27 @@
   "keywords": [
     "pi-package"
   ],
-  "main": "./extensions/src/index.ts",
+  "main": "./extensions/src/search/index.ts",
   "scripts": {
     "check": "npm run typecheck && npm run test",
+    "fmt": "oxfmt --write .",
+    "fmt:check": "oxfmt --check .",
+    "lint": "oxlint .",
     "test": "node --import tsx --test test/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@earendil-works/pi-coding-agent": "latest",
-    "typebox": "^0.31.0"
+    "@earendil-works/pi-coding-agent": "*",
+    "pino": "^10.3.1",
+    "typebox": "*"
   },
   "devDependencies": {
     "@earendil-works/pi-ai": "^0.84.0",
     "@earendil-works/pi-coding-agent": "^0.84.0",
     "@earendil-works/pi-tui": "^0.84.0",
     "@types/node": "^24.5.2",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
     "tsx": "^4.20.5",
     "typebox": "^1.1.38",
     "typescript": "^5.9.2"
@@ -38,7 +44,7 @@
   },
   "pi": {
     "extensions": [
-      "./extensions"
+      "./extensions/src"
     ],
     "skills": [
       "./skills"
