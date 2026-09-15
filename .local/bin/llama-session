@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# run-llama-server.sh
+# Launch llama-server with CUDA unified memory enabled and graph capture disabled.
+#
+# Usage:
+#   ./run-llama-server.sh [extra llama-server args...]
+#
+# Examples:
+#   ./run-llama-server.sh
+#   ./run-llama-server.sh --port 8080 --n-gpu-layers 40
+
+set -euo pipefail
+
+# --- Configuration -----------------------------------------------------------
+# Exported so llama-server picks them up at runtime.
+export GGML_CUDA_ENABLE_UNIFIED_MEMORY=1
+export GGML_CUDA_DISABLE_GRAPHS=1
+
+MODELS_DIR="$HOME/.models"
+PRESET_FILE="$HOME/.pi/router-presets.ini"
+THREADS="$(nproc)"
+
+# --- Preflight checks --------------------------------------------------------
+if ! command -v llama-server >/dev/null 2>&1; then
+    echo "error: 'llama-server' not found in PATH" >&2
+    exit 1
+fi
+
+if [[ ! -d "${MODELS_DIR}" ]]; then
+    echo "error: models dir '${MODELS_DIR}' does not exist" >&2
+    exit 1
+fi
+
+if [[ ! -f "${PRESET_FILE}" ]]; then
+    echo "error: preset file '${PRESET_FILE}' does not exist" >&2
+    exit 1
+fi
+
+# --- Launch ------------------------------------------------------------------
+echo "Starting llama-server:"
+echo "  models-dir : ${MODELS_DIR}"
+echo "  preset     : ${PRESET_FILE}"
+echo "  threads    : ${THREADS}"
+echo "  CUDA unified memory : on"
+echo "  CUDA graphs disabled: on"
+echo
+
+exec llama-server \
+    --models-dir "${MODELS_DIR}" \
+    --models-preset "${PRESET_FILE}" \
+    --threads "${THREADS}" \
+    "$@"
