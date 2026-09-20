@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./pi-extensions/*"]
+    },
+
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": ["ES2022"]
+  },
+  "exclude": ["test"]
+}
