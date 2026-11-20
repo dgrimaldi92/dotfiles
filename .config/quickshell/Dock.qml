@@ -1,5 +1,6 @@
 import Quickshell
 import QtQuick
+import QtQuick.Effects
 import Quickshell.Wayland
 
 import "widgets" as QsWidgets
@@ -34,8 +35,9 @@ Scope {
             anchors { left: false; right: false; top: false; bottom: true }
 
             implicitWidth: length + 500
-            implicitHeight: Math.max(breadth, glass.expandedHeight)
+            implicitHeight: Math.max(breadth, dockBackground.expandedHeight)
             color: "transparent"
+            
 
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.namespace: "quickshell:dock"
@@ -117,7 +119,7 @@ Scope {
                 id: dockZone
                 anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom }
                 width: row.width
-                height: window.revealed ? window.height : (window.fullscreen ? 1 : 0)
+                height: window.revealed ? window.height : (window.fullscreen ? 1 : 2)
 
                 HoverHandler {
                     id: zoneHover
@@ -137,9 +139,8 @@ Scope {
             }
 
             mask: Region {
-                item: glass
+                item: dockBackground
                 regions: [
-                    Region { item: dockZone },
                     Region {
                         x: row.x
                         y: row.y
@@ -153,7 +154,7 @@ Scope {
 
             function setExpanded(expanded, startIndex) {
                 const from = startIndex ?? row.current;
-                glass.delay(expanded ? glass.expandedHeight : 0, from);
+                dockBackground.delay(expanded ? dockBackground.expandedHeight : 0, from);
                 for (let i = 0; i < repeater.count; i++) {
                     const item = repeater.itemAt(i);
                     if (item)
@@ -163,8 +164,8 @@ Scope {
             function expand(startIndex) { setExpanded(true, startIndex); }
             function collapse(startIndex) { setExpanded(false, startIndex); }
 
-            QsWidgets.LiquidGlass {
-                id: glass
+            Rectangle {
+                id: dockBackground
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
@@ -175,12 +176,25 @@ Scope {
                 property int expandedHeight: Config.data.iconSize + root.iconGap + 8
                 property int additionalHeight: 0
                 height: additionalHeight
+                radius: 16
+                antialiasing: true
+
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.06; color: "#40FFFFFF" }
+                    GradientStop { position: 0.14; color: "#5F000000" }
+                    // GradientStop { position: 0.30; color: "#66000000" }
+                    // GradientStop { position: 0.48; color: "#62000000" }
+                    // GradientStop { position: 0.52; color: "#62000000" }
+                    // GradientStop { position: 0.75; color: "#66000000" }
+                    // GradientStop { position: 0.86; color: "#5F000000" }
+                }
 
                 Timer {
                     id: glassTimer
                     repeat: false
                     property int pendingHeight: 0
-                    onTriggered: glass.additionalHeight = pendingHeight
+                    onTriggered: dockBackground.additionalHeight = pendingHeight
                 }
 
                 function delay(h, latestIndex) {

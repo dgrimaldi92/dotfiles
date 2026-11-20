@@ -13,14 +13,16 @@ Rectangle {
 	property string path
 	property bool isFloating
 	property int iconSize: 32
-	implicitWidth: 80
-	implicitHeight: 80
 	antialiasing: false
 	radius: 10 
 	color: Qt.rgba(0,0,0,0.35)
 	clip: true
 
-	
+	function shellEscape(str) {
+		// Wrap in single quotes, escape any internal single quotes
+		return "'" + str.replace(/'/g, "'\\''") + "'"
+	}
+
 	// // gradient: "SunnyMorning" 
 	gradient: Gradient {
 		orientation: Gradient.Vertical
@@ -45,35 +47,32 @@ Rectangle {
 		hoverEnabled: true
 		onClicked: {
 			if (isDir) {
-				
-				// const qsPath = `file://${path}`
-				// const cmd = ["env", `QS_PATH='${qsPath}'`, "QS_APP_ID='file-manager'", "qs", "-p", `${Quickshell.shellPath("Manager.qml")}`]
-				const cmd = [ "uwsm-app", "--", "pcmanfm-qt", `'${path}'` ]
+				const cmd = [ "uwsm-app", "--", "pcmanfm-qt", shellEscape(path) ]
 				Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
             			return Hyprland.dispatch(`hl.dsp.exec_cmd("${cmd.join(' ')}", {workspace = "empty"})`)
 			}
 			const exec = []
 			switch (suffix){
-					case "xmind": 
-						 exec.push(...["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling", `'${path}'`]);
-						 break;
-					case "pdf":
-						exec.push(...["brave-origin", `'${path}'`]);
-						break;
-					case "md":
-						exec.push(...["brave-origin",  `'${path}'`]);
-						break;
-					case "jpg":
-					case "png":
-						exec.push(...["uwsm-app", "--","brave-origin",  `'${path}'`]);
-						break;
-					case "docx":
-						// exec.push(...["brave-origin", path])
-					case "zip":
-						// exec.push(...["brave-origin", path])
-						exec.push(...[]);
-						break;
-					}
+				case "xmind":
+					exec.push(...["xmind","--ozone-platform=x11","--force-device-scale-factor=1.5", "--enable-smooth-scrolling", shellEscape(path)]);
+					break;
+				case "pdf":
+					exec.push(...["brave-origin", shellEscape(path)]);
+					break;
+				case "md":
+					exec.push(...["brave-origin", shellEscape(path)]);
+					break;
+				case "jpg":
+				case "png":
+					exec.push(...["uwsm-app", "--","brave-origin", shellEscape(path)]);
+					break;
+				case "docx":
+					// exec.push(...["brave-origin", path])
+					break;
+				case "zip":
+					// exec.push(...["brave-origin", path])
+					break;
+				}
 			Hyprland.dispatch('hl.dsp.focus({ workspace = "empty" })')
             		Hyprland.dispatch(`hl.dsp.exec_cmd("${exec.join(' ')}", {workspace = "empty"})`)
 			return
@@ -145,7 +144,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     color: "#FFFFFF"
 		    elide: Text.ElideRight
-		    wrapMode: Text.WrapAnywhere 
+		    wrapMode: Text.NoWrap 
 		    layer.enabled: true
 
 		    layer.effect: MultiEffect {
@@ -158,4 +157,4 @@ Rectangle {
 
             }
     	}
-    }
+}

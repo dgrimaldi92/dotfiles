@@ -135,17 +135,23 @@ QtObject {
                 class: "brave-docs.google.com__document-Default"
             },
             {
+                name: "Youtube",
+                icon: "",
+                exec: ["omarchy-launch-webapp","https://youtube.com"],
+                class: "brave-youtube.com__-Default"
+            }, 
+            {
                 name: "Steam",
                 icon: "",
                 exec: ["uwsm-app", "--", "steam"],
                 class: "steam"
             },
             {
-                name: "Youtube",
-                icon: "",
-                exec: ["omarchy-launch-webapp","https://youtube.com"],
-                class: "brave-youtube.com__-Default"
-            }, 
+                name: "RetroArch",
+                icon: "󰯉",
+                exec: ["uwsm-app", "--", "retroarch"],
+                class: ""
+            },
             {
                 name: "Heroic",
                 icon: "󰖺",

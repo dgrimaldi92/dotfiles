@@ -19,14 +19,14 @@ Rectangle {
         id: gpuTempProcess
         command: ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader"]
         stdout: StdioCollector {
-            onStreamFinished: gpuTemp = this.text.trim()
+            onStreamFinished: gpuTemp = this.text[0] + this.text[1]
         }
         Component.onCompleted: running = true
     }
 
     Timer {
         interval: 10000
-        running: true
+        running: tru
         repeat: true
         onTriggered: gpuTempProcess.running = true
     }

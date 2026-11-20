@@ -19,7 +19,7 @@ PanelWindow {
 
     property int cellW: 90
     property int cellH: 75
-    property int gap: 10
+    property int gap: 2 
 
     // ---- persistence -------------------------------------------------
     FileView {
@@ -47,16 +47,13 @@ PanelWindow {
         stateFile.writeAdapter()
     }
 
-    FolderListModel {
-        id: folderModel
-        folder: root.driveMounted ? "file://" + root.driveRoot : ""
-        sortField: FolderListModel.Name
-        showDirsFirst: true
-    }
+    // ── Mount check runs regardless of LazyLoader state ──
     Process {
         id: mountCheck
         command: ["mountpoint", "-q", root.driveRoot]
-        onExited: exitCode => root.driveMounted = (exitCode === 0)
+        onExited: exitCode => {
+            root.driveMounted = (exitCode === 0)
+        }
     }
 
     Timer {
@@ -64,72 +61,112 @@ PanelWindow {
         running: true
         repeat: true
         triggeredOnStart: true
-        onTriggered: mountCheck.running = true
+        onTriggered: {
+            mountCheck.running = true
+        }
     }
 
-    Item {
-        id: field
-        anchors.fill: parent
-        anchors.topMargin: 32
+    // ── Icon grid — loads in background, then attaches to visual tree ──
+    LazyLoader {
+        id: iconGridLoader
+        loading: true
+        onActiveChanged: {
+            if (active && iconGridLoader.item) {
+                // LazyLoader keeps content in memory — attach it to the visual tree
+                const iconGrid = iconGridLoader.item
+                iconGrid.parent = root.contentItem
+                iconGrid.anchors.fill = root.contentItem
+                iconGrid.anchors.topMargin = 32
+            }
+        }
 
-        readonly property int stepX: root.cellW + root.gap
-        readonly property int stepY: root.cellH + root.gap
-        readonly property int rows: Math.max(1, Math.floor(height / stepY))
+        Item {
+            id: field
+            anchors.topMargin: 32
 
-        Repeater {
-            model: folderModel
+            readonly property int stepX: root.cellW + root.gap
+            readonly property int stepY: root.cellH + root.gap
+            readonly property int rows: Math.max(1, Math.floor(height / stepY))
 
-            Item {
-                id: slot
+            FolderListModel {
+                id: folderModel
+                folder: root.driveMounted
+                    ? "file://" + root.driveRoot
+                    : "file://" + Quickshell.env("HOME")
+                sortField: FolderListModel.Name
+                showDirsFirst: true
+            }
 
-                readonly property string key: filePath
-                readonly property int slotIndex: index
-                property bool placed: false
-
-                width: root.cellW
-                height: root.cellH
-                z: dragHandler.active ? 10 : 0
-
-                function layoutDefault() {
-                    if (placed) return
-                    x = Math.floor(slotIndex / field.rows) * field.stepX
-                    y = (slotIndex % field.rows) * field.stepY
+            ScriptModel {
+                id: iconModel
+                values: {
+                    const arr = []
+                    for (let i = 0; i < folderModel.count; i++) {
+                        arr.push({
+                            filePath: folderModel.get(i, "filePath"),
+                            fileBaseName: folderModel.get(i, "fileBaseName"),
+                            fileSuffix: folderModel.get(i, "fileSuffix"),
+                            fileIsDir: folderModel.get(i, "fileIsDir")
+                        })
+                    }
+                    return arr
                 }
+            }
 
-                Component.onCompleted: {
-                    const s = root.savedPos(key)
-                    if (s) { placed = true; x = s.x; y = s.y }
-                    else layoutDefault()
-                }
+            Repeater {
+                model: iconModel.values
 
-                // field.height is 0 during completion and changes on resize
-                Connections {
-                    target: field
-                    function onRowsChanged() { slot.layoutDefault() }
-                }
+                Item {
+                    id: slot
 
-                QsWidgets.DesktopItem {
-                    anchors.fill: parent
-                    name: fileBaseName
-                    suffix: fileSuffix
-                    isDir: fileIsDir
-                    path: filePath
-                }
+                    readonly property string key: modelData["filePath"]
+                    readonly property int slotIndex: index
+                    property bool placed: false
 
-                DragHandler {
-                    id: dragHandler
-                    target: slot
-                    xAxis.minimum: 0
-                    xAxis.maximum: field.width - slot.width
-                    yAxis.minimum: 0
-                    yAxis.maximum: field.height - slot.height
+                    width: root.cellW - 10
+                    height: root.cellH - 10
+                    z: dragHandler.active ? 10 : 0
 
-                    onActiveChanged: {
-                        if (active) return
-                        slot.x = Math.round(slot.x / field.stepX) * field.stepX
-                        slot.y = Math.round(slot.y / field.stepY) * field.stepY
-                        slot.placed = true
-                        root.storePos(slot.key, slot.x, slot.y)
+                    function layoutDefault() {
+                        if (placed) return
+                        x = Math.floor(slotIndex / field.rows) * field.stepX
+                        y = (slotIndex % field.rows) * field.stepY
+                    }
+
+                    Component.onCompleted: {
+                        const s = root.savedPos(key)
+                        if (s) { placed = true; x = s.x; y = s.y }
+                        else layoutDefault()
+                    }
+
+                    Connections {
+                        target: field
+                        function onRowsChanged() { slot.layoutDefault() }
+                    }
+
+                    QsWidgets.DesktopItem {
+                        anchors.fill: parent
+                        name: modelData.fileBaseName
+                        suffix: modelData.fileSuffix
+                        isDir: modelData.fileIsDir
+                        path: modelData.filePath
+                    }
+
+                    DragHandler {
+                        id: dragHandler
+                        target: slot
+                        xAxis.minimum: 0
+                        xAxis.maximum: field.width - slot.width
+                        yAxis.minimum: 0
+                        yAxis.maximum: field.height - slot.height
+
+                        onActiveChanged: {
+                            if (active) return
+                            slot.x = Math.round(slot.x / field.stepX) * field.stepX
+                            slot.y = Math.round(slot.y / field.stepY) * field.stepY
+                            slot.placed = true
+                            root.storePos(slot.key, slot.x, slot.y)
+                        }
                     }
                 }
             }
